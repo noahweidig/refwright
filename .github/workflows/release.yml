@@ -4,6 +4,16 @@ on:
   push:
     tags:
       - v**
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to create (default: v + version in package.json)"
+        required: false
+        type: string
+      prerelease:
+        description: "Mark as pre-release"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -12,6 +22,7 @@ permissions:
 
 jobs:
   create-release:
+    if: github.event_name == 'push'
     uses: zotero-plugin-dev/workflows/.github/workflows/release-plugin.yml@main
     # You can customize any of the inputs here.
     # If you omit an input, its default value will be used.
@@ -20,3 +31,36 @@ jobs:
       release: "npm run release"
     secrets:
       GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+
+  manual-release:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup JS
+        uses: zotero-plugin-dev/workflows/setup-js@main
+        with:
+          fetch-all: true
+      - name: Build
+        run: npm run build
+      - name: Create release with the .xpi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          INPUT_TAG: ${{ inputs.tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="${INPUT_TAG:-v$VERSION}"
+          XPI=$(ls .scaffold/build/*.xpi | head -n1)
+          FLAGS=""
+          if [ "$PRERELEASE" = "true" ]; then FLAGS="--prerelease"; fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$XPI" --clobber
+          else
+            gh release create "$TAG" "$XPI" --target "$GITHUB_SHA" --title "$TAG" --generate-notes $FLAGS
+          fi
+          # auto-update manifest, read by installed copies of the plugin
+          if gh release view release >/dev/null 2>&1; then
+            gh release upload release .scaffold/build/update.json --clobber
+          else
+            gh release create release .scaffold/build/update.json --target "$GITHUB_SHA" --title "update manifest" --notes "Update manifest for Zotero auto-update."
+          fi
