@@ -1,4 +1,8 @@
-# :lucide-shield-alert: Retractions and citations
+---
+icon: lucide/shield-alert
+---
+
+# Retractions and citations
 
 ## Retraction check
 

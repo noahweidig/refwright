@@ -2,7 +2,6 @@ import { STATUS_TAGS as T } from "../core/tags";
 import { getLocaleID, getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
 import * as A from "./actions";
-import { hasUsablePdf } from "./library";
 import { S } from "./state";
 
 const NS = "http://www.w3.org/1999/xhtml";
@@ -75,126 +74,6 @@ export async function registerColumn() {
       return span;
     },
   });
-}
-
-/* ---------- item pane ---------- */
-export function registerSection() {
-  if (!getPref("ui.itemSection")) return;
-  Zotero.ItemPaneManager.registerSection({
-    paneID: "refwright",
-    pluginID: pluginID(),
-    header: { l10nID: getLocaleID("section-header"), icon: icon() },
-    sidenav: {
-      l10nID: getLocaleID("section-sidenav"),
-      icon: icon("refwright-20.svg"),
-    },
-    onItemChange: ({ item, setEnabled }) => {
-      setEnabled(!!item?.isRegularItem());
-      return true;
-    },
-    onRender: ({ body, item }) => draw(body, item, undefined),
-    onAsyncRender: async ({ body, item }) =>
-      draw(body, item, await hasUsablePdf(item)),
-  });
-}
-
-function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
-  const doc = body.ownerDocument!;
-  const wrap = el(doc, "div", "refwright-pane");
-  const row = (
-    label: string,
-    state: "" | "bad" | "warn",
-    text: string,
-    btn?: [string, () => void],
-    icn?: string,
-  ) => {
-    const r = el(doc, "div", "refwright-row");
-    r.append(el(doc, "span", "k", label));
-    const v = el(doc, "span", `v ${state}`);
-    if (icn) {
-      const i = el(doc, "span", "refwright-icon red");
-      i.style.backgroundImage = `url(${icn})`;
-      v.append(i);
-    }
-    v.append(el(doc, "span", "t", text));
-    r.append(v);
-    if (btn) {
-      const b = el(doc, "button", "", btn[0]);
-      b.addEventListener("click", btn[1]);
-      r.append(b);
-    } else r.append(el(doc, "span"));
-    wrap.append(r);
-  };
-  const has = (t: string) => item.hasTag(t);
-  const pdfText =
-    pdf === undefined
-      ? "…"
-      : has(T.pdfCheck)
-        ? getString("column-check")
-        : pdf
-          ? getString("column-pdf")
-          : has(T.pdfMissing)
-            ? getString("status-pdf-missing")
-            : getString("column-no-pdf");
-  row(
-    getString("section-row-fulltext"),
-    has(T.pdfCheck) ? "warn" : "",
-    pdfText,
-    [getString("section-btn-find"), () => A.runTask("pdf", [item])],
-  );
-  const ret = has(T.retracted)
-    ? ["bad", getString("column-retracted")]
-    : has(T.notRetracted)
-      ? ["", getString("status-not-retracted")]
-      : has(T.retractionCheck)
-        ? ["warn", getString("status-retraction-check")]
-        : ["", getString("section-none")];
-  row(
-    getString("section-row-integrity"),
-    ret[0] as any,
-    ret[1],
-    [getString("section-btn-check"), () => A.runTask("full", [item])],
-    has(T.retracted)
-      ? "chrome://zotero/skin/16/universal/retracted.svg"
-      : undefined,
-  );
-  const cite = has(T.citeOk)
-    ? ["", getString("status-cite-ok")]
-    : has(T.citeIncomplete)
-      ? [
-          "warn",
-          getString("status-cite-incomplete", { args: { fields: "" } }).replace(
-            /:\s*$/,
-            "",
-          ),
-        ]
-      : has(T.citeMismatch)
-        ? [
-            "warn",
-            getString("status-cite-mismatch", { args: { fields: "" } }).replace(
-              /:\s*$/,
-              "",
-            ),
-          ]
-        : has(T.citeCheck)
-          ? ["warn", getString("status-cite-check")]
-          : ["", getString("section-none")];
-  row("", cite[0] as any, cite[1]);
-  const n = item
-    .getTags()
-    .filter(
-      (t) => !/^(fulltext|retraction|citation|refwright):/i.test(t.tag),
-    ).length;
-  row(getString("section-row-tags"), "", String(n), [
-    getString("section-btn-suggest"),
-    () => A.suggestTagsAction([item], false),
-  ]);
-  const c = item.getCollections().length;
-  row(getString("section-row-collections"), "", String(c), [
-    getString("section-btn-file"),
-    () => A.fileAction([item]),
-  ]);
-  body.replaceChildren(wrap);
 }
 
 /* ---------- menus ---------- */

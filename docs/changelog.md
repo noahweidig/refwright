@@ -1,4 +1,14 @@
+---
+icon: lucide/history
+---
+
 # Changelog
+
+## 0.1.2
+
+- Item pane is now three sections: **Find PDFs** (status, retraction and citation badges, actions), **Tags** (inline suggestions: click to add, × to reject, Add all) and **Collections** (current collections, ranked matches you click to file, Undo).
+- Every action now reports errors on screen and in the debug log instead of failing silently.
+- Docs: tabs, grid cards, per-page Lucide icons, item pane screenshots.
 
 ## 0.1.1
 

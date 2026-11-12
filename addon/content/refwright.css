@@ -318,64 +318,145 @@
   padding: 8px 0 0;
 }
 
-/* item pane section: same key/value rhythm as Zotero's Info pane */
+/* item pane sections */
 .refwright-pane {
   display: flex;
   flex-direction: column;
-  padding: 2px 0 6px;
+  gap: 8px;
+  padding: 6px 8px 10px;
 }
-.refwright-row {
-  display: grid;
-  grid-template-columns: minmax(64px, 88px) minmax(0, 1fr) auto;
-  align-items: center;
-  column-gap: 8px;
-  min-height: 26px;
-  padding: 0 6px;
-}
-.refwright-row .k {
-  color: var(--fill-secondary);
-  text-align: end;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.refwright-row .v {
+.refwright-line {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
-.refwright-row .v .t {
+.refwright-line.hero,
+.refwright-line.summary {
+  gap: 10px;
+}
+.refwright-line .text {
+  min-width: 0;
+  flex: 1;
+}
+.refwright-line .title {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.25;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.refwright-row .v.bad .t {
-  color: var(--accent-red);
-  font-weight: 600;
+.refwright-line .sub {
+  color: var(--fill-secondary);
+  font-size: 12px;
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.refwright-row .v.warn .t {
+.refwright-line.hero.good .title {
+  color: var(--accent-green);
+}
+.refwright-line.hero.warn .title {
   color: var(--accent-orange);
 }
-.refwright-row button {
-  min-width: 64px;
-  margin: 0;
-  padding: 0 8px;
-  min-height: 22px;
-  font-size: 12px;
+.refwright-line.hero.bad .title {
+  color: var(--accent-red);
 }
-.refwright-icon {
+.refwright-line.badges,
+.refwright-line.chips,
+.refwright-line.actions {
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+.refwright-glyph {
   display: inline-block;
   width: 16px;
   height: 16px;
-  background-size: contain;
-  background-repeat: no-repeat;
   flex: none;
-  -moz-context-properties: fill, fill-opacity;
-  fill: currentColor;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
 }
-.refwright-icon.red {
-  fill: var(--accent-red);
+.refwright-glyph.big {
+  width: 26px;
+  height: 26px;
+  color: var(--accent-blue);
+}
+.refwright-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0 10px;
+  min-height: 24px;
+  font-size: 12px;
+}
+.refwright-btn.primary {
+  background: var(--accent-blue);
+  color: var(--accent-white);
+  border-color: transparent;
+}
+.refwright-btn.primary:hover {
+  background: color-mix(in srgb, var(--accent-blue) 88%, black);
+}
+.refwright-btn .refwright-glyph {
+  width: 13px;
+  height: 13px;
+}
+.refwright-badge {
+  font-size: 11px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  color: var(--fill-secondary);
+}
+.refwright-badge.good {
+  color: var(--accent-green);
+  border-color: color-mix(in srgb, var(--accent-green) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-green) 10%, transparent);
+}
+.refwright-badge.warn {
+  color: var(--accent-orange);
+  border-color: color-mix(in srgb, var(--accent-orange) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-orange) 10%, transparent);
+}
+.refwright-badge.bad {
+  color: var(--accent-red);
+  border-color: color-mix(in srgb, var(--accent-red) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-red) 10%, transparent);
+  font-weight: 600;
+}
+.refwright-badge.idle {
+  opacity: 0.7;
+}
+.refwright-sub-h {
+  color: var(--fill-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+.refwright-chip.action {
+  cursor: pointer;
+}
+.refwright-chip.action:hover {
+  background: var(--accent-blue10);
+  border-color: var(--accent-blue50);
+  color: var(--fill-primary);
+}
+.refwright-chip .plus {
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+.refwright-dot.in {
+  background: var(--accent-blue);
+}
+.refwright-muted {
+  color: var(--fill-secondary);
 }
 .refwright-sugg {
   padding: 2px 8px 0 112px;

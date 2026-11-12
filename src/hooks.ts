@@ -7,8 +7,8 @@ import {
   registerColumn,
   registerMenus,
   registerPrefs,
-  registerSection,
 } from "./zotero/ui";
+import { registerSections } from "./zotero/sections";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 
@@ -25,7 +25,7 @@ async function onStartup() {
   registerPrefs();
   registerEndpoints();
   await registerColumn();
-  registerSection();
+  registerSections();
   notifierID = Zotero.Notifier.registerObserver(
     {
       notify: async (event: string, type: string) => {

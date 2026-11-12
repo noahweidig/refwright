@@ -1,4 +1,8 @@
-# :lucide-lock-keyhole: Privacy
+---
+icon: lucide/lock-keyhole
+---
+
+# Privacy
 
 No accounts, no analytics, no server of ours.
 

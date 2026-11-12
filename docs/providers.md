@@ -1,4 +1,8 @@
-# :lucide-bot: AI providers
+---
+icon: lucide/bot
+---
+
+# AI providers
 
 Each provider keeps its own key, model and base URL. **Test connection** loads the live model list.
 
