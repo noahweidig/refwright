@@ -136,7 +136,7 @@ function card(it: RItem): HTMLElement {
     body.push(
       h(
         "div",
-        { class: "refwright-line" },
+        { class: "refwright-field" },
         h("span", { class: "refwright-k" }, L.tags),
         h(
           "div",
@@ -156,7 +156,7 @@ function card(it: RItem): HTMLElement {
     body.push(
       h(
         "div",
-        { class: "refwright-line" },
+        { class: "refwright-field" },
         h("span", { class: "refwright-k" }, L.collections),
         h(
           "div",
