@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/carrel.css" type="text/css"?>
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="carrel-review"
+  class="zotero-dialog carrel-window"
+  width="780"
+  height="600"
+  persist="screenX screenY width height"
+>
+  <dialog id="carrel-review-dialog" buttons="cancel,accept,extra2">
+    <html:div class="carrel-shell">
+      <html:div id="tools" class="carrel-bar" hidden="hidden">
+        <html:input id="search" type="search" placeholder="/" />
+        <html:label class="carrel-slider">
+          <html:input id="thresh" type="range" min="0" max="80" value="0" />
+        </html:label>
+      </html:div>
+      <html:div id="note" class="carrel-note" hidden="hidden"></html:div>
+      <html:div class="carrel-bar sub">
+        <html:button id="all">⌃</html:button>
+        <html:span id="count" class="carrel-muted"></html:span>
+      </html:div>
+      <html:div id="list" class="carrel-scroll"></html:div>
+    </html:div>
+  </dialog>
+  <script src="chrome://__addonRef__/content/scripts/ui-review.js" />
+</window>

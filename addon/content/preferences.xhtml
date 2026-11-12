@@ -1,0 +1,547 @@
+<linkset>
+  <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+</linkset>
+<vbox
+  id="zotero-prefpane-__addonRef__"
+  onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
+>
+  <groupbox>
+    <label><html:h2>General</html:h2></label>
+    <description class="carrel-pref-desc"
+      >The contact email is sent to Unpaywall, NCBI, Europe PMC, Crossref and
+      OpenAlex, as their polite-use rules ask. No accounts, no
+      analytics.</description
+    >
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Contact email" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="contactEmail"
+        style="flex: 1"
+        placeholder="you@example.org"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Batch tag" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="batchTag"
+        style="width: 160px"
+      ></html:input>
+    </hbox>
+    <checkbox
+      preference="reportNote"
+      label="Write a report note on items with problems"
+    />
+    <checkbox
+      preference="previewOnly"
+      label="Preview only: show which source would supply each PDF, change nothing"
+    />
+    <checkbox
+      preference="rememberMisses"
+      label="Skip items with no open-access copy for 1 day"
+    />
+    <hbox
+      ><button id="carrel-forget-misses" label="Forget remembered misses"
+    /></hbox>
+    <checkbox preference="ui.column" label="Show the carrel column (restart)" />
+    <checkbox
+      preference="ui.itemSection"
+      label="Show the carrel item pane section (restart)"
+    />
+  </groupbox>
+  <groupbox>
+    <label><html:h2>PDF sources</html:h2></label>
+    <description class="carrel-pref-desc"
+      >Unpaywall, PubMed Central and OpenAlex links are always on. Sources run
+      in a fixed order and stop at the first valid PDF.</description
+    >
+    <checkbox preference="src.europepmc" label="Europe PMC" />
+    <checkbox preference="src.semanticscholar" label="Semantic Scholar" />
+    <checkbox preference="src.crossref" label="Crossref" />
+    <checkbox preference="src.core" label="CORE" />
+    <checkbox preference="src.openaire" label="OpenAIRE" />
+    <checkbox
+      preference="src.preprints"
+      label="Preprint servers and repositories"
+    />
+    <checkbox preference="src.hal" label="HAL" />
+    <checkbox preference="src.doaj" label="DOAJ" />
+    <checkbox preference="src.osti" label="OSTI" />
+    <checkbox preference="src.iascholar" label="Internet Archive Scholar" />
+    <checkbox
+      preference="internetArchive"
+      label="Retry dead links through the Internet Archive"
+    />
+    <checkbox
+      preference="publisherFallback"
+      label="Last resort: free-to-read publisher pages, using Zotero's own downloader and your browser session"
+    />
+    <checkbox
+      preference="titleLookup"
+      label="Look up title-only items (exact title and year within 1)"
+    />
+    <checkbox
+      preference="fillDoi"
+      label="Write a found DOI into an empty DOI field"
+    />
+    <checkbox
+      preference="recordOpenAlexId"
+      label="Record the OpenAlex ID in Extra"
+    />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="OpenAlex API key" style="min-width: 150px" />
+      <html:input
+        type="password"
+        preference="key.openalex"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <checkbox
+      preference="useHosted"
+      label="Use OpenAlex hosted full text (needs the key)"
+    />
+    <checkbox
+      preference="preferHosted"
+      label="Try hosted text before OpenAlex links"
+    />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="CORE API key (optional)" style="min-width: 150px" />
+      <html:input
+        type="password"
+        preference="key.core"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Semantic Scholar key (optional)" style="min-width: 150px" />
+      <html:input
+        type="password"
+        preference="key.s2"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>AI (optional)</html:h2></label>
+    <description class="carrel-pref-desc"
+      >Each provider keeps its own key, model and base URL. Keys live in Zotero
+      prefs and go only to the provider you choose. Ollama and a local custom
+      server stay on your machine.</description
+    >
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Language model" style="min-width: 150px" />
+      <menulist preference="ai.provider"
+        ><menupopup
+          ><menuitem value="openai" label="OpenAI" /><menuitem
+            value="anthropic"
+            label="Anthropic" /><menuitem
+            value="gemini"
+            label="Google Gemini" /><menuitem
+            value="deepseek"
+            label="DeepSeek" /><menuitem
+            value="openrouter"
+            label="OpenRouter" /><menuitem
+            value="cohere"
+            label="Cohere" /><menuitem
+            value="custom"
+            label="Custom (OpenAI-compatible)" /><menuitem
+            value="ollama"
+            label="Ollama (local)" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row"
+      ><label value="Model" style="min-width: 150px" /><html:input
+        id="carrel-ai-model"
+        type="text"
+        style="flex: 1"
+      ></html:input
+    ></hbox>
+    <hbox align="center" class="carrel-pref-row"
+      ><label value="API key" style="min-width: 150px" /><html:input
+        id="carrel-ai-key"
+        type="password"
+        style="flex: 1"
+      ></html:input
+    ></hbox>
+    <hbox align="center" class="carrel-pref-row"
+      ><label value="Base URL" style="min-width: 150px" /><html:input
+        id="carrel-ai-base"
+        type="text"
+        style="flex: 1"
+      ></html:input
+    ></hbox>
+    <hbox align="center"
+      ><button id="carrel-ai-test" label="Test connection" /><label
+        id="carrel-ai-result"
+        class="carrel-pref-desc"
+    /></hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Embeddings" style="min-width: 150px" />
+      <menulist preference="ai.embedProvider"
+        ><menupopup
+          ><menuitem value="openai" label="OpenAI" /><menuitem
+            value="gemini"
+            label="Google Gemini" /><menuitem
+            value="cohere"
+            label="Cohere" /><menuitem
+            value="custom"
+            label="Custom (OpenAI-compatible)" /><menuitem
+            value="ollama"
+            label="Ollama (local)" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row"
+      ><label value="Embedding model" style="min-width: 150px" /><html:input
+        id="carrel-ai-embed"
+        type="text"
+        style="flex: 1"
+      ></html:input
+    ></hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Temperature" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="ai.temperature"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Max tokens (0 = default)" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="ai.maxTokens"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Timeout (seconds)" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="ai.timeout"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Items per request" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="ai.batchSize"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <checkbox preference="ai.jsonMode" label="JSON mode" />
+  </groupbox>
+  <groupbox>
+    <label><html:h2>Tags</html:h2></label>
+    <description class="carrel-pref-desc"
+      >Status tags written by carrel (fulltext:, retraction:, citation:,
+      carrel:) are never suggested, cleaned or merged.</description
+    >
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Tagging method" style="min-width: 150px" />
+      <menulist preference="tag.method"
+        ><menupopup
+          ><menuitem
+            value="free"
+            label="Free: your library, OpenAlex, PubMed, keywords (no AI)" /><menuitem
+            value="ai"
+            label="AI" /></menupopup
+      ></menulist>
+    </hbox>
+    <checkbox
+      preference="tag.src.library"
+      label="Your library (needs enough tagged items)"
+    />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Minimum tagged items" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="tag.minTagged"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <checkbox
+      preference="tag.src.openalex"
+      label="OpenAlex keywords (by DOI)"
+    />
+    <checkbox
+      preference="tag.src.pubmed"
+      label="PubMed MeSH and author keywords (by DOI)"
+    />
+    <checkbox
+      preference="tag.src.crossref"
+      label="Crossref subjects (by DOI)"
+    />
+    <checkbox
+      preference="tag.src.keywords"
+      label="Offline keyword extraction when lookups find nothing"
+    />
+    <checkbox preference="tag.review" label="Review before applying" />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Seed keywords (comma list)" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="tag.seeds"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <checkbox preference="tag.onlySeeds" label="Only allow seed keywords" />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Tag language" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="tag.language"
+        style="width: 160px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Custom prompt (optional)" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="tag.prompt"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label
+        value="Marker tag (added to every touched item)"
+        style="min-width: 150px"
+      />
+      <html:input
+        type="text"
+        preference="tag.marker"
+        style="width: 160px"
+      ></html:input>
+    </hbox>
+    <checkbox preference="tag.automatic" label="Add tags as automatic (gray)" />
+    <checkbox
+      preference="tag.skipTagged"
+      label="Skip items that already have tags"
+    />
+  </groupbox>
+  <groupbox>
+    <label><html:h2>What the model sees</html:h2></label>
+    <checkbox preference="send.title" label="Title" />
+    <checkbox preference="send.abstract" label="Abstract" />
+    <checkbox preference="send.authors" label="Authors" />
+    <checkbox preference="send.journal" label="Journal" />
+    <checkbox preference="send.date" label="Date" />
+    <checkbox preference="send.tags" label="Existing tags" />
+    <checkbox preference="send.doi" label="DOI" />
+    <checkbox preference="send.pdfText" label="Extracted PDF text" />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="PDF text characters (0 = all)" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="send.pdfChars"
+        style="width: 90px"
+      ></html:input>
+    </hbox>
+    <checkbox
+      preference="send.libraryTags"
+      label="Share top library tags so the model reuses them"
+    />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Library tags to share" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="send.libraryTagCount"
+        style="width: 90px"
+      ></html:input>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>Tag cleanup</html:h2></label>
+    <checkbox preference="clean.slashes" label="Remove slashes" />
+    <checkbox preference="clean.weird" label="Remove odd characters" />
+    <checkbox
+      preference="clean.merge"
+      label="Merge duplicates (case, spacing, plurals)"
+    />
+    <checkbox
+      preference="clean.reuse"
+      label="Reuse the spelling of matching library tags"
+    />
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Letter case" style="min-width: 150px" />
+      <menulist preference="clean.case"
+        ><menupopup
+          ><menuitem value="keep" label="Keep" /><menuitem
+            value="lower"
+            label="lowercase" /><menuitem
+            value="snake"
+            label="snake_case" /><menuitem
+            value="kebab"
+            label="kebab-case" /><menuitem
+            value="title"
+            label="Title Case" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Word separator" style="min-width: 150px" />
+      <menulist preference="clean.separator"
+        ><menupopup
+          ><menuitem value="keep" label="Keep" /><menuitem
+            value="space"
+            label="Space" /><menuitem
+            value="underscore"
+            label="Underscore" /><menuitem
+            value="hyphen"
+            label="Hyphen" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Max tags per item" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="clean.maxTags"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Max words per tag" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="clean.maxWords"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Max length" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="clean.maxLength"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Prefix" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="clean.prefix"
+        style="width: 160px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Blacklist (comma list)" style="min-width: 150px" />
+      <html:input
+        type="text"
+        preference="clean.blacklist"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label
+        value="Replacements (one per line: from -> to)"
+        style="min-width: 150px"
+      />
+      <html:input
+        type="text"
+        preference="clean.replacements"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>Collections</html:h2></label>
+    <description class="carrel-pref-desc"
+      >Offline ranking learns from the papers already in each
+      collection.</description
+    >
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Ranking" style="min-width: 150px" />
+      <menulist preference="route.mode"
+        ><menupopup
+          ><menuitem
+            value="offline"
+            label="Offline (no key, nothing leaves your computer)" /><menuitem
+            value="embedding"
+            label="Embedding similarity" /><menuitem
+            value="llm"
+            label="LLM zero-shot" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label
+        value="Ignore collections containing (comma list)"
+        style="min-width: 150px"
+      />
+      <html:input
+        type="text"
+        preference="route.ignore"
+        style="flex: 1"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Minimum confidence % (0 = auto)" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="route.minConfidence"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="Collections per paper" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="route.perPaper"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <checkbox
+      preference="route.removeInbox"
+      label="Remove from the ignored collection (inbox) when filed"
+    />
+    <hbox
+      ><button id="carrel-clear-embed" label="Clear cached embeddings"
+    /></hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>Tag Manager</html:h2></label>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="AI scan: tags per request" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="tm.perRequest"
+        style="width: 90px"
+      ></html:input>
+    </hbox>
+    <hbox align="center" class="carrel-pref-row">
+      <label value="AI scan: requests per scan" style="min-width: 150px" />
+      <html:input
+        type="number"
+        preference="tm.requests"
+        style="width: 90px"
+      ></html:input>
+    </hbox>
+  </groupbox>
+  <groupbox>
+    <label><html:h2>Local write-back API</html:h2></label>
+    <description class="carrel-pref-desc"
+      >Needs Zotero > Settings > Advanced > “Allow other applications on this
+      computer to communicate with Zotero”. Only carrel:, fulltext:,
+      retraction:, citation:, GRADE:, RoB2:, ROBINS-I: and Quality: tags are
+      accepted.</description
+    >
+    <checkbox
+      preference="writeBackEnabled"
+      label="Let other programs on this computer add or remove tags"
+    />
+    <hbox align="center" class="carrel-pref-row"
+      ><label value="Token" style="min-width: 150px" /><html:input
+        id="carrel-wb-token"
+        type="password"
+        readonly="readonly"
+        style="flex: 1"
+      ></html:input
+    ></hbox>
+    <hbox
+      ><button id="carrel-wb-gen" label="Generate" /><button
+        id="carrel-wb-copy"
+        label="Copy" /><button id="carrel-wb-test" label="Test" /><label
+        id="carrel-wb-result"
+        class="carrel-pref-desc"
+    /></hbox>
+  </groupbox>
+</vbox>
