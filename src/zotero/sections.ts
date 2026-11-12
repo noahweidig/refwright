@@ -467,10 +467,12 @@ export function registerSections() {
     header: {
       l10nID: getLocaleID(`section-${key}-header` as any),
       icon: icon(`${glyphName}-16`),
+      darkIcon: icon(`${glyphName}-16-dark`),
     },
     sidenav: {
       l10nID: getLocaleID(`section-${key}-sidenav` as any),
       icon: icon(`${glyphName}-20`),
+      darkIcon: icon(`${glyphName}-20-dark`),
     },
     onItemChange: ({ item, setEnabled }: any) => {
       setEnabled(!!item?.isRegularItem());

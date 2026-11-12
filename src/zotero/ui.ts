@@ -78,7 +78,8 @@ export async function registerColumn() {
 
 /* ---------- menus ---------- */
 export function registerMenus() {
-  const I = icon();
+  const I = icon("refwright-menu.svg");
+  const D = icon("refwright-menu-dark.svg");
   const items = () => A.selected();
   Zotero.MenuManager.registerMenu({
     menuID: `${ref()}-item`,
@@ -89,6 +90,7 @@ export function registerMenus() {
         menuType: "submenu",
         l10nID: getLocaleID("menu-root"),
         icon: I,
+        darkIcon: D,
         menus: [
           {
             menuType: "menuitem",
@@ -150,6 +152,7 @@ export function registerMenus() {
         menuType: "menuitem",
         l10nID: getLocaleID("menu-collection-tag"),
         icon: I,
+        darkIcon: D,
         onCommand: () => A.collectionTagAction(),
       },
     ],
@@ -163,6 +166,7 @@ export function registerMenus() {
         menuType: "submenu",
         l10nID: getLocaleID("menu-root"),
         icon: I,
+        darkIcon: D,
         menus: [
           {
             menuType: "menuitem",
