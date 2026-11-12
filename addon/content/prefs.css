@@ -1,0 +1,24 @@
+/* preferences pane: spacing that matches Zotero's own panes */
+#zotero-prefpane-refwright groupbox {
+  margin-block-end: 14px;
+}
+#zotero-prefpane-refwright h2 {
+  margin-block: 0 6px;
+}
+#zotero-prefpane-refwright .refwright-pref-row {
+  margin-block: 3px;
+}
+#zotero-prefpane-refwright .refwright-pref-desc {
+  color: var(--fill-secondary);
+  margin: 0 0 6px;
+}
+#zotero-prefpane-refwright button {
+  margin-inline: 0 6px;
+}
+#zotero-prefpane-refwright input[type="text"],
+#zotero-prefpane-refwright input[type="password"] {
+  min-width: 120px;
+}
+#zotero-prefpane-refwright checkbox {
+  margin-block: 1px;
+}
