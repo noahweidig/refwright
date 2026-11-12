@@ -11,6 +11,7 @@ import {
 } from "./library";
 import { openRefwrightWindow, reviewLabels } from "./windows";
 import { getString } from "../utils/locale";
+import { guard } from "./guard";
 import { aiReady } from "./ai";
 import { getPref } from "../utils/prefs";
 import { S, saveState } from "./state";
@@ -41,7 +42,7 @@ const reportLabels = () => ({
   close: getString("progress-close"),
 });
 
-export async function runTask(task: Task, items: Zotero.Item[]) {
+async function _runTask(task: Task, items: Zotero.Item[]) {
   const regular = regularItems(items);
   if (!regular.length) return toast(getString("tags-none-selected"));
   if (regular.length > 60) {
@@ -66,7 +67,7 @@ export async function runTask(task: Task, items: Zotero.Item[]) {
   await run.done;
 }
 
-export async function runTagged(task: Task) {
+async function _runTagged(task: Task) {
   const tag = String(g("batchTag") || "refwright");
   const items = await itemsWithTag(tag, currentLibraryID());
   if (!items.length) return toast(getString("tagged-none", { args: { tag } }));
@@ -74,7 +75,7 @@ export async function runTagged(task: Task) {
 }
 
 /** Unified review: tags (free or AI), collections, or both. */
-export async function reviewAction(
+async function _reviewAction(
   input: Zotero.Item[],
   opts: { tags: "free" | "ai" | false; collections: boolean },
 ) {
@@ -211,7 +212,7 @@ export const suggestTagsAction = (items: Zotero.Item[], ai: boolean) =>
 export const fileAction = (items: Zotero.Item[]) =>
   reviewAction(items, { tags: false, collections: true });
 
-export async function undoFilingAction() {
+async function _undoFilingAction() {
   toast(
     (await undoFiling())
       ? getString("route-undone")
@@ -219,14 +220,14 @@ export async function undoFilingAction() {
   );
 }
 
-export async function collectionTagAction() {
+async function _collectionTagAction() {
   const col = pane()?.getSelectedCollection();
   if (!col) return;
   const items = col.getChildItems(false) as Zotero.Item[];
   return suggestTagsAction(items, g("tag.method") === "ai");
 }
 
-export function openTagManager() {
+function _openTagManager() {
   const libraryID = currentLibraryID();
   const abort = new AbortController();
   openRefwrightWindow("tagmanager.xhtml", {
@@ -278,7 +279,7 @@ export function openTagManager() {
   });
 }
 
-export async function exportMissing(items?: Zotero.Item[]) {
+async function _exportMissing(items?: Zotero.Item[]) {
   let list = items?.length ? regularItems(items) : [];
   if (!list.length) {
     const lib = currentLibraryID();
@@ -321,7 +322,7 @@ export async function exportMissing(items?: Zotero.Item[]) {
   toast(getString("export-done", { args: { count: rows.length } }), "success");
 }
 
-export function showAudit() {
+function _showAudit() {
   const rows = S()
     .audit.slice(-500)
     .reverse()
@@ -353,3 +354,12 @@ export function showAudit() {
     subscribe: () => {},
   });
 }
+
+export const runTask = guard(_runTask);
+export const runTagged = guard(_runTagged);
+export const reviewAction = guard(_reviewAction);
+export const undoFilingAction = guard(_undoFilingAction);
+export const collectionTagAction = guard(_collectionTagAction);
+export const exportMissing = guard(_exportMissing);
+export const openTagManager = guard(_openTagManager);
+export const showAudit = guard(_showAudit);

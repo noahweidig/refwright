@@ -1,4 +1,8 @@
-# :lucide-sliders-horizontal: Settings
+---
+icon: lucide/sliders-horizontal
+---
+
+# Settings
 
 **Zotero > Settings > refwright.** All preferences live under `extensions.zotero.refwright.*`.
 

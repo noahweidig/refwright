@@ -1,4 +1,8 @@
-# :lucide-folder-input: Collections
+---
+icon: lucide/folder-input
+---
+
+# Collections
 
 Right-click > **refwright > File into Collections…** for one paper or many.
 

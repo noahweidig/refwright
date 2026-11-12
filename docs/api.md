@@ -1,4 +1,8 @@
-# :lucide-plug-zap: Write-back API
+---
+icon: lucide/plug-zap
+---
+
+# Write-back API
 
 Lets another local program add or remove tags through Zotero's local server (`127.0.0.1`). **Off by default.**
 

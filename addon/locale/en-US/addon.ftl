@@ -103,3 +103,36 @@ tagged-run = Run on { $count } tagged items
 ai-ok = Connected. { $count } models available.
 ai-fail = Could not connect: { $message }
 prefs-title = refwright
+pdf-has = PDF attached
+pdf-none = No PDF yet
+pdf-missing-sub = No open-access copy found
+pdf-check-sub = Needs a look
+pdf-working = Looking…
+pdf-from = from { $host }
+badge-retracted = Retracted
+badge-not-retracted = Not retracted
+badge-retraction-check = Retraction unchecked
+badge-cite-ok = Citation OK
+badge-cite-incomplete = Citation incomplete
+badge-cite-mismatch = Citation mismatch
+badge-cite-check = Citation unchecked
+btn-find-pdf = Find PDF
+btn-preview = Preview sources
+btn-full-check = Full check
+btn-suggest = Suggest
+btn-suggest-ai = Suggest with AI
+btn-review = Review…
+btn-add-all = Add all
+btn-dismiss = Dismiss
+btn-undo = Undo
+tags-count = { $count ->
+    [one] { $count } tag
+   *[other] { $count } tags
+}
+tags-hint = Nothing is looked up until you click Suggest.
+tags-looking = Looking for tags…
+coll-in = In
+coll-best = Best matches
+coll-hint = Click a collection to file this item.
+coll-working = Ranking…
+coll-filed = Filed in { $name }

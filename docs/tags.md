@@ -1,4 +1,8 @@
-# :lucide-tags: Tags
+---
+icon: lucide/tags
+---
+
+# Tags
 
 ## Methods
 

@@ -1,4 +1,8 @@
-# :lucide-file-down: PDFs
+---
+icon: lucide/file-down
+---
+
+# PDFs
 
 Open-access only. Sources run in this order and stop at the first valid PDF:
 
