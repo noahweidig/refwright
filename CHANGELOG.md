@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3
+
+- Fix `AbortController is not defined`: the plugin sandbox has no web APIs, so `AbortController`, `AbortSignal`, `URL`, `TextDecoder`, `TextEncoder` and `setTimeout` now come from Zotero's hidden window. This is what made Find, Suggest and the other buttons do nothing.
+- Fix blank menu entries: menu labels now use Fluent's `.label` form, which Zotero's menus require. The refwright submenu in the item and Tools menus showed no options before.
+- Fix black icons in dark mode: section headers, sidebar buttons and menu icons now ship light and dark variants.
+
 ## 0.1.2
 
 - Item pane is now three sections: **Find PDFs** (status, retraction and citation badges, actions), **Tags** (inline suggestions: click to add, × to reject, Add all) and **Collections** (current collections, ranked matches you click to file, Undo).

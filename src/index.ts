@@ -4,6 +4,32 @@ import { config } from "../package.json";
 
 const basicTool = new BasicTool();
 
+/**
+ * The plugin sandbox has no web APIs of its own. Borrow them from the hidden
+ * DOM window, which always exists, so every module can use them normally.
+ */
+function shimWebGlobals() {
+  const win = () => (Services as any).appShell.hiddenDOMWindow as any;
+  for (const name of [
+    "AbortController",
+    "AbortSignal",
+    "URL",
+    "TextDecoder",
+    "TextEncoder",
+    "setTimeout",
+    "clearTimeout",
+  ]) {
+    Object.defineProperty(_globalThis, name, {
+      configurable: true,
+      get() {
+        const v = win()[name];
+        return name.endsWith("Timeout") ? v.bind(win()) : v;
+      },
+    });
+  }
+}
+shimWebGlobals();
+
 // @ts-expect-error - Plugin instance is not typed
 if (!basicTool.getGlobal("Zotero")[config.addonInstance]) {
   _globalThis.addon = new Addon();
