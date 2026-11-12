@@ -55,7 +55,7 @@ async function _runTask(task: Task, items: Zotero.Item[]) {
   }
   const run = startRun(task, regular);
   openRefwrightWindow("report.xhtml", {
-    title: `refwright — ${task === "pdf" ? getString("menu-find-pdfs") : task === "preview" ? getString("menu-preview") : task === "retraction" ? getString("menu-retractions") : task === "citation" ? getString("menu-citations") : getString("menu-full-check")}`,
+    title: `refwright — ${task === "pdf" ? getString("task-pdf") : task === "preview" ? getString("task-preview") : task === "retraction" ? getString("task-retraction") : task === "citation" ? getString("task-citation") : getString("task-full")}`,
     labels: reportLabels(),
     rows: run.rows,
     finished: () => run.finished,

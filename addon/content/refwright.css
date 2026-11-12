@@ -368,11 +368,12 @@
   width: 16px;
   height: 16px;
   flex: none;
-  background-color: currentColor;
-  mask-repeat: no-repeat;
-  mask-position: center;
-  mask-size: contain;
-  -webkit-mask-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* same mechanism Zotero uses: its icons paint with context-fill */
+  -moz-context-properties: fill, fill-opacity;
+  fill: currentColor;
 }
 .refwright-glyph.big {
   width: 26px;
@@ -387,14 +388,6 @@
   padding: 0 10px;
   min-height: 24px;
   font-size: 12px;
-}
-.refwright-btn.primary {
-  background: var(--accent-blue);
-  color: var(--accent-white);
-  border-color: transparent;
-}
-.refwright-btn.primary:hover {
-  background: color-mix(in srgb, var(--accent-blue) 88%, black);
 }
 .refwright-btn .refwright-glyph {
   width: 13px;
