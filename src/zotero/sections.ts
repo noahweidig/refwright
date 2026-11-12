@@ -11,7 +11,8 @@ import { suggestTags, TagChoice } from "./tagging";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
-const icon = (n: string) => `chrome://${ref()}/content/icons/${n}.svg`;
+/** Zotero's own icons: themed by Zotero itself, identical to the rest of the UI */
+const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
 
 type Kids = (Node | string | null | false | undefined)[];
 function el(doc: Document, tag: string, cls = "", ...kids: Kids): HTMLElement {
@@ -22,16 +23,16 @@ function el(doc: Document, tag: string, cls = "", ...kids: Kids): HTMLElement {
 }
 function glyph(doc: Document, name: string, cls = ""): HTMLElement {
   const i = el(doc, "span", `refwright-glyph ${cls}`);
-  i.style.maskImage = `url(${icon(name)})`;
+  i.style.backgroundImage = `url(${Z(name)})`;
   return i;
 }
 function button(
   doc: Document,
   label: string,
   onClick: () => void,
-  opts: { primary?: boolean; glyph?: string; title?: string } = {},
+  opts: { glyph?: string; title?: string } = {},
 ) {
-  const b = el(doc, "button", `refwright-btn${opts.primary ? " primary" : ""}`);
+  const b = el(doc, "button", "refwright-btn");
   if (opts.glyph) b.append(glyph(doc, opts.glyph));
   b.append(label);
   if (opts.title) b.title = opts.title;
@@ -134,7 +135,7 @@ async function drawPdf(body: HTMLElement, item: Zotero.Item, pdf?: boolean) {
   const hero = row(
     doc,
     `hero ${state}`,
-    glyph(doc, "mask-pdf", "big"),
+    glyph(doc, "attachment", "big"),
     el(
       doc,
       "div",
@@ -171,8 +172,7 @@ async function drawPdf(body: HTMLElement, item: Zotero.Item, pdf?: boolean) {
     doc,
     "actions",
     button(doc, getString("btn-find-pdf"), () => A.runTask("pdf", [item]), {
-      primary: !pdf,
-      glyph: "mask-pdf",
+      glyph: "attachment",
     }),
     button(doc, getString("btn-preview"), () => A.runTask("preview", [item])),
     button(doc, getString("btn-full-check"), () => A.runTask("full", [item])),
@@ -206,7 +206,7 @@ function drawTags(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "mask-tags", "big"),
+    glyph(doc, "tag", "big"),
     el(
       doc,
       "div",
@@ -250,8 +250,7 @@ function drawTags(body: HTMLElement, item: Zotero.Item) {
     doc,
     "actions",
     button(doc, getString("btn-suggest"), () => run(false), {
-      primary: true,
-      glyph: "mask-tags",
+      glyph: "tag",
     }),
     button(doc, getString("btn-suggest-ai"), () => run(true)),
     button(doc, getString("btn-review"), () =>
@@ -340,7 +339,7 @@ function drawColl(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "mask-collections", "big"),
+    glyph(doc, "folder", "big"),
     el(
       doc,
       "div",
@@ -432,8 +431,7 @@ function drawColl(body: HTMLElement, item: Zotero.Item) {
       doc,
       "actions",
       button(doc, getString("btn-suggest"), run, {
-        primary: !st.route,
-        glyph: "mask-collections",
+        glyph: "new-collection",
       }),
       button(doc, getString("btn-review"), () => A.fileAction([item])),
       S().filing &&
@@ -466,13 +464,11 @@ export function registerSections() {
     pluginID,
     header: {
       l10nID: getLocaleID(`section-${key}-header` as any),
-      icon: icon(`${glyphName}-16`),
-      darkIcon: icon(`${glyphName}-16-dark`),
+      icon: Z(glyphName),
     },
     sidenav: {
       l10nID: getLocaleID(`section-${key}-sidenav` as any),
-      icon: icon(`${glyphName}-20`),
-      darkIcon: icon(`${glyphName}-20-dark`),
+      icon: Z(glyphName),
     },
     onItemChange: ({ item, setEnabled }: any) => {
       setEnabled(!!item?.isRegularItem());
@@ -480,17 +476,17 @@ export function registerSections() {
     },
   });
   Zotero.ItemPaneManager.registerSection({
-    ...common("pdf", "pdf", "section-pdf"),
+    ...common("pdf", "pdf", "attachment"),
     onRender: ({ body, item }: any) => void drawPdf(body, item),
     onAsyncRender: async ({ body, item }: any) =>
       drawPdf(body, item, await hasUsablePdf(item)),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("tags", "tags", "section-tags"),
+    ...common("tags", "tags", "tag"),
     onRender: ({ body, item }: any) => drawTags(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("collections", "coll", "section-collections"),
+    ...common("collections", "coll", "folder"),
     onRender: ({ body, item }: any) => drawColl(body, item),
   } as any);
 }

@@ -28,7 +28,9 @@ export const WRITEBACK_PREFIXES = [
   "Quality:",
 ];
 
+/** also catches look-alikes such as "fulltext check-needed" or "citation_ok" */
 export const isReserved = (tag: string) =>
-  RESERVED_PREFIXES.some((p) => tag.toLowerCase().startsWith(p));
+  RESERVED_PREFIXES.some((p) => tag.toLowerCase().startsWith(p)) ||
+  /^(fulltext|retraction|citation)[\s_-]/i.test(tag);
 export const isWritebackAllowed = (tag: string) =>
   WRITEBACK_PREFIXES.some((p) => tag.startsWith(p));
