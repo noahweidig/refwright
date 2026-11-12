@@ -2,6 +2,7 @@ name: Release
 
 on:
   push:
+    branches: [main]
     tags:
       - v**
   workflow_dispatch:
@@ -15,14 +16,13 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-
 jobs:
   create-release:
-    if: github.event_name == 'push'
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     uses: zotero-plugin-dev/workflows/.github/workflows/release-plugin.yml@main
     # You can customize any of the inputs here.
     # If you omit an input, its default value will be used.
@@ -33,16 +33,32 @@ jobs:
       GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
 
   manual-release:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'branch')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Setup JS
         uses: zotero-plugin-dev/workflows/setup-js@main
         with:
           fetch-all: true
+      - name: Skip if this version is already released
+        id: gate
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="${INPUT_TAG:-v$VERSION}"
+          if [ "$GITHUB_EVENT_NAME" = "push" ] && gh release view "$TAG" >/dev/null 2>&1; then
+            echo "$TAG already released, nothing to do"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Build
+        if: steps.gate.outputs.skip != 'true'
         run: npm run build
       - name: Create release with the .xpi
+        if: steps.gate.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
           INPUT_TAG: ${{ inputs.tag }}
