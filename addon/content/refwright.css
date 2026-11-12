@@ -90,7 +90,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.refwright-line {
+.refwright-field {
   display: grid;
   grid-template-columns: 88px 1fr;
   gap: 8px;
@@ -106,13 +106,6 @@
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
-}
-.refwright-badge {
-  font-size: 11px;
-  padding: 1px 6px;
-  border-radius: 8px;
-  background: var(--fill-quinary);
-  color: var(--fill-secondary);
 }
 
 /* chips: styled like Zotero's tag selector entries */
@@ -454,15 +447,6 @@
 }
 .refwright-dot.in {
   background: var(--accent-blue);
-}
-.refwright-muted {
-  color: var(--fill-secondary);
-}
-.refwright-sugg {
-  padding: 2px 8px 0 112px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
 }
 .refwright-cell {
   display: inline-flex;
