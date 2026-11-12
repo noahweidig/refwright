@@ -1,11 +1,12 @@
 <linkset>
   <html:link rel="localization" href="__addonRef__-preferences.ftl" />
+  <html:link rel="stylesheet" href="chrome://__addonRef__/content/prefs.css" />
 </linkset>
 <vbox
   id="zotero-prefpane-__addonRef__"
   onload="Zotero.__addonInstance__.hooks.onPrefsEvent('load', { window })"
 >
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>General</html:h2></label>
     <description class="refwright-pref-desc"
       >The contact email is sent to Unpaywall, NCBI, Europe PMC, Crossref and
@@ -53,25 +54,45 @@
       label="Show the refwright item pane section (restart)"
     />
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>PDF sources</html:h2></label>
     <description class="refwright-pref-desc"
       >Unpaywall, PubMed Central and OpenAlex links are always on. Sources run
       in a fixed order and stop at the first valid PDF.</description
     >
-    <checkbox preference="src.europepmc" label="Europe PMC" />
-    <checkbox preference="src.semanticscholar" label="Semantic Scholar" />
-    <checkbox preference="src.crossref" label="Crossref" />
-    <checkbox preference="src.core" label="CORE" />
-    <checkbox preference="src.openaire" label="OpenAIRE" />
+    <checkbox
+      class="refwright-check"
+      preference="src.europepmc"
+      label="Europe PMC"
+    />
+    <checkbox
+      class="refwright-check"
+      preference="src.semanticscholar"
+      label="Semantic Scholar"
+    />
+    <checkbox
+      class="refwright-check"
+      preference="src.crossref"
+      label="Crossref"
+    />
+    <checkbox class="refwright-check" preference="src.core" label="CORE" />
+    <checkbox
+      class="refwright-check"
+      preference="src.openaire"
+      label="OpenAIRE"
+    />
     <checkbox
       preference="src.preprints"
       label="Preprint servers and repositories"
     />
-    <checkbox preference="src.hal" label="HAL" />
-    <checkbox preference="src.doaj" label="DOAJ" />
-    <checkbox preference="src.osti" label="OSTI" />
-    <checkbox preference="src.iascholar" label="Internet Archive Scholar" />
+    <checkbox class="refwright-check" preference="src.hal" label="HAL" />
+    <checkbox class="refwright-check" preference="src.doaj" label="DOAJ" />
+    <checkbox class="refwright-check" preference="src.osti" label="OSTI" />
+    <checkbox
+      class="refwright-check"
+      preference="src.iascholar"
+      label="Internet Archive Scholar"
+    />
     <checkbox
       preference="internetArchive"
       label="Retry dead links through the Internet Archive"
@@ -125,7 +146,7 @@
       ></html:input>
     </hbox>
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>AI (optional)</html:h2></label>
     <description class="refwright-pref-desc"
       >Each provider keeps its own key, model and base URL. Keys live in Zotero
@@ -233,9 +254,13 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <checkbox preference="ai.jsonMode" label="JSON mode" />
+    <checkbox
+      class="refwright-check"
+      preference="ai.jsonMode"
+      label="JSON mode"
+    />
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>Tags</html:h2></label>
     <description class="refwright-pref-desc"
       >Status tags written by refwright (fulltext:, retraction:, citation:,
@@ -280,7 +305,11 @@
       preference="tag.src.keywords"
       label="Offline keyword extraction when lookups find nothing"
     />
-    <checkbox preference="tag.review" label="Review before applying" />
+    <checkbox
+      class="refwright-check"
+      preference="tag.review"
+      label="Review before applying"
+    />
     <hbox align="center" class="refwright-pref-row">
       <label value="Seed keywords (comma list)" style="min-width: 150px" />
       <html:input
@@ -289,7 +318,11 @@
         style="flex: 1"
       ></html:input>
     </hbox>
-    <checkbox preference="tag.onlySeeds" label="Only allow seed keywords" />
+    <checkbox
+      class="refwright-check"
+      preference="tag.onlySeeds"
+      label="Only allow seed keywords"
+    />
     <hbox align="center" class="refwright-pref-row">
       <label value="Tag language" style="min-width: 150px" />
       <html:input
@@ -317,22 +350,46 @@
         style="width: 160px"
       ></html:input>
     </hbox>
-    <checkbox preference="tag.automatic" label="Add tags as automatic (gray)" />
+    <checkbox
+      class="refwright-check"
+      preference="tag.automatic"
+      label="Add tags as automatic (gray)"
+    />
     <checkbox
       preference="tag.skipTagged"
       label="Skip items that already have tags"
     />
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>What the model sees</html:h2></label>
-    <checkbox preference="send.title" label="Title" />
-    <checkbox preference="send.abstract" label="Abstract" />
-    <checkbox preference="send.authors" label="Authors" />
-    <checkbox preference="send.journal" label="Journal" />
-    <checkbox preference="send.date" label="Date" />
-    <checkbox preference="send.tags" label="Existing tags" />
-    <checkbox preference="send.doi" label="DOI" />
-    <checkbox preference="send.pdfText" label="Extracted PDF text" />
+    <checkbox class="refwright-check" preference="send.title" label="Title" />
+    <checkbox
+      class="refwright-check"
+      preference="send.abstract"
+      label="Abstract"
+    />
+    <checkbox
+      class="refwright-check"
+      preference="send.authors"
+      label="Authors"
+    />
+    <checkbox
+      class="refwright-check"
+      preference="send.journal"
+      label="Journal"
+    />
+    <checkbox class="refwright-check" preference="send.date" label="Date" />
+    <checkbox
+      class="refwright-check"
+      preference="send.tags"
+      label="Existing tags"
+    />
+    <checkbox class="refwright-check" preference="send.doi" label="DOI" />
+    <checkbox
+      class="refwright-check"
+      preference="send.pdfText"
+      label="Extracted PDF text"
+    />
     <hbox align="center" class="refwright-pref-row">
       <label value="PDF text characters (0 = all)" style="min-width: 150px" />
       <html:input
@@ -354,10 +411,18 @@
       ></html:input>
     </hbox>
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>Tag cleanup</html:h2></label>
-    <checkbox preference="clean.slashes" label="Remove slashes" />
-    <checkbox preference="clean.weird" label="Remove odd characters" />
+    <checkbox
+      class="refwright-check"
+      preference="clean.slashes"
+      label="Remove slashes"
+    />
+    <checkbox
+      class="refwright-check"
+      preference="clean.weird"
+      label="Remove odd characters"
+    />
     <checkbox
       preference="clean.merge"
       label="Merge duplicates (case, spacing, plurals)"
@@ -446,7 +511,7 @@
       ></html:input>
     </hbox>
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>Collections</html:h2></label>
     <description class="refwright-pref-desc"
       >Offline ranking learns from the papers already in each
@@ -500,7 +565,7 @@
       ><button id="refwright-clear-embed" label="Clear cached embeddings"
     /></hbox>
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>Tag Manager</html:h2></label>
     <hbox align="center" class="refwright-pref-row">
       <label value="AI scan: tags per request" style="min-width: 150px" />
@@ -519,7 +584,7 @@
       ></html:input>
     </hbox>
   </groupbox>
-  <groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>Local write-back API</html:h2></label>
     <description class="refwright-pref-desc"
       >Needs Zotero > Settings > Advanced > “Allow other applications on this

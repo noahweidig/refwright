@@ -140,7 +140,7 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
     getString("section-row-fulltext"),
     has(T.pdfCheck) ? "warn" : "",
     pdfText,
-    [getString("menu-find-pdfs"), () => A.runTask("pdf", [item])],
+    [getString("section-btn-find"), () => A.runTask("pdf", [item])],
   );
   const ret = has(T.retracted)
     ? ["bad", getString("column-retracted")]
@@ -148,12 +148,12 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
       ? ["", getString("status-not-retracted")]
       : has(T.retractionCheck)
         ? ["warn", getString("status-retraction-check")]
-        : ["", "—"];
+        : ["", getString("section-none")];
   row(
     getString("section-row-integrity"),
     ret[0] as any,
     ret[1],
-    [getString("menu-full-check"), () => A.runTask("full", [item])],
+    [getString("section-btn-check"), () => A.runTask("full", [item])],
     has(T.retracted)
       ? "chrome://zotero/skin/16/universal/retracted.svg"
       : undefined,
@@ -178,7 +178,7 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
           ]
         : has(T.citeCheck)
           ? ["warn", getString("status-cite-check")]
-          : ["", "—"];
+          : ["", getString("section-none")];
   row("", cite[0] as any, cite[1]);
   const n = item
     .getTags()
@@ -186,12 +186,12 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
       (t) => !/^(fulltext|retraction|citation|refwright):/i.test(t.tag),
     ).length;
   row(getString("section-row-tags"), "", String(n), [
-    getString("section-suggest"),
+    getString("section-btn-suggest"),
     () => A.suggestTagsAction([item], false),
   ]);
   const c = item.getCollections().length;
   row(getString("section-row-collections"), "", String(c), [
-    getString("section-file"),
+    getString("section-btn-file"),
     () => A.fileAction([item]),
   ]);
   body.replaceChildren(wrap);

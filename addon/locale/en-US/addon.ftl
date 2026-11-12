@@ -102,3 +102,4 @@ tagged-none = No items carry the batch tag “{ $tag }”
 tagged-run = Run on { $count } tagged items
 ai-ok = Connected. { $count } models available.
 ai-fail = Could not connect: { $message }
+prefs-title = refwright
