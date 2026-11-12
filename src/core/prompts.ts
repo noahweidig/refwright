@@ -1,0 +1,127 @@
+import { extractJson } from "./llm";
+
+export interface SendFields {
+  title: boolean;
+  abstract: boolean;
+  authors: boolean;
+  journal: boolean;
+  date: boolean;
+  tags: boolean;
+  doi: boolean;
+  pdfText: boolean;
+}
+export const defaultSendFields: SendFields = {
+  title: true,
+  abstract: true,
+  authors: true,
+  journal: true,
+  date: true,
+  tags: true,
+  doi: false,
+  pdfText: false,
+};
+export interface PromptItem {
+  id: number;
+  title?: string;
+  abstract?: string;
+  authors?: string;
+  journal?: string;
+  date?: string;
+  tags?: string[];
+  doi?: string;
+  pdfText?: string;
+}
+export interface TagPromptOptions {
+  seeds: string[];
+  onlySeeds: boolean;
+  language: string;
+  maxTags: number;
+  libraryTags: string[];
+  custom?: string;
+}
+
+export const DEFAULT_TAG_INSTRUCTIONS =
+  "You are a careful research librarian. Assign short, reusable topic tags to each paper. Prefer established terminology. Do not invent facts that are not in the metadata.";
+
+export function tagSystemPrompt(o: TagPromptOptions): string {
+  const lines = [o.custom?.trim() || DEFAULT_TAG_INSTRUCTIONS];
+  lines.push(`Return at most ${o.maxTags} tags per item.`);
+  lines.push(`Write tags in ${o.language || "English"}.`);
+  if (o.seeds.length)
+    lines.push(
+      o.onlySeeds
+        ? `Only use tags from this list: ${o.seeds.join(", ")}.`
+        : `Prefer these seed keywords when they fit: ${o.seeds.join(", ")}.`,
+    );
+  if (o.libraryTags.length)
+    lines.push(
+      `Reuse this existing vocabulary when a tag fits: ${o.libraryTags.join(", ")}.`,
+    );
+  lines.push(
+    'Output only JSON: {"items":[{"id":<id>,"tags":["tag", ...]}]} with one entry per input item.',
+  );
+  return lines.join("\n");
+}
+
+export function tagUserPrompt(items: PromptItem[], f: SendFields): string {
+  return JSON.stringify(
+    items.map((i) => {
+      const o: Record<string, unknown> = { id: i.id };
+      if (f.title && i.title) o.title = i.title;
+      if (f.abstract && i.abstract) o.abstract = i.abstract;
+      if (f.authors && i.authors) o.authors = i.authors;
+      if (f.journal && i.journal) o.journal = i.journal;
+      if (f.date && i.date) o.date = i.date;
+      if (f.tags && i.tags?.length) o.existingTags = i.tags;
+      if (f.doi && i.doi) o.doi = i.doi;
+      if (f.pdfText && i.pdfText) o.pdfText = i.pdfText;
+      return o;
+    }),
+  );
+}
+
+export function parseTagReply(text: string): Map<number, string[]> {
+  const j = extractJson(text);
+  const arr: any[] = Array.isArray(j) ? j : (j.items ?? []);
+  const out = new Map<number, string[]>();
+  for (const r of arr)
+    if (r && r.id != null && Array.isArray(r.tags))
+      out.set(
+        Number(r.id),
+        r.tags.map((t: unknown) => String(t)).filter(Boolean),
+      );
+  return out;
+}
+
+export const MERGE_SYSTEM =
+  'You merge synonymous tags in a reference library. Given tags (name, uses) and candidate merge targets, return only groups of tags that mean the same thing. Output JSON: {"groups":[{"target":"<one of the tags>","merge":["<tag>", ...]}]}. Never merge tags that differ in meaning. Omit tags with no synonym.';
+
+export function mergeUserPrompt(
+  tags: { name: string; count: number }[],
+  targets: string[],
+) {
+  return JSON.stringify({ tags: tags.map((t) => [t.name, t.count]), targets });
+}
+export function parseMergeReply(
+  text: string,
+): { target: string; merge: string[] }[] {
+  const j = extractJson(text);
+  return (j.groups ?? [])
+    .filter((g: any) => g?.target && Array.isArray(g.merge) && g.merge.length)
+    .map((g: any) => ({
+      target: String(g.target),
+      merge: g.merge.map(String),
+    }));
+}
+
+export const ROUTE_SYSTEM =
+  'You file papers into a user\'s reference-manager collections. Given one paper and the list of collection names, return the best matches, most relevant first, at most 8. Output only JSON: [{"collection":"<exact name>","confidence":"high|medium|low"}].';
+export function routeUserPrompt(
+  p: { title: string; abstract?: string },
+  names: string[],
+) {
+  return JSON.stringify({ paper: p, collections: names });
+}
+
+/** rough token estimate shown before an AI tag scan */
+export const estimateTokens = (s: string) => Math.ceil(s.length / 4);
