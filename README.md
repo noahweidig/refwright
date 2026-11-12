@@ -32,4 +32,6 @@ Pure logic lives in `src/core` (no Zotero globals, unit-tested in `unit/`). Zote
 
 0.1.0. Core logic is unit-tested (57 tests). The Zotero integration layer has not been run inside a live Zotero yet.
 
+Docs: `pip install zensical && zensical build` (sources in `docs/`, Lucide icons in `overrides/.icons/lucide`).
+
 License: AGPL-3.0-or-later.
