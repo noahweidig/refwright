@@ -40,7 +40,7 @@ export function aiReady(): boolean {
 export function chat(system: string, user: string, signal?: AbortSignal) {
   const { p, cfg } = cfgFor(g("ai.provider"));
   if (p.needsKey && !cfg.key)
-    throw new Error(`${p.label}: add an API key in carrel settings`);
+    throw new Error(`${p.label}: add an API key in refwright settings`);
   return complete(zoteroHttp, p, cfg, system, user, chatOptions(), signal);
 }
 
@@ -50,7 +50,7 @@ export function embedTexts(texts: string[], signal?: AbortSignal) {
   const model = g(`ai.${p.id}.embedModel`) || p.embedModel || "";
   if (!model) throw new Error(`${p.label}: set an embedding model`);
   if (p.needsKey && !cfg.key)
-    throw new Error(`${p.label}: add an API key in carrel settings`);
+    throw new Error(`${p.label}: add an API key in refwright settings`);
   return embed(zoteroHttp, p, { ...cfg, model }, texts, signal);
 }
 

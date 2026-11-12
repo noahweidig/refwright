@@ -2,27 +2,27 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-platform/content/zotero.css"?>
-<?xml-stylesheet href="chrome://__addonRef__/content/carrel.css" type="text/css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/refwright.css" type="text/css"?>
 <window
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  id="carrel-tagmanager"
-  class="zotero-dialog carrel-window"
+  id="refwright-tagmanager"
+  class="zotero-dialog refwright-window"
   width="900"
   height="640"
   persist="screenX screenY width height"
 >
-  <dialog id="carrel-tagmanager-dialog" buttons="accept">
-    <html:div class="carrel-split">
-      <html:div class="carrel-side">
+  <dialog id="refwright-tagmanager-dialog" buttons="accept">
+    <html:div class="refwright-split">
+      <html:div class="refwright-side">
         <html:div id="nav"></html:div>
-        <html:div class="carrel-side-foot">
+        <html:div class="refwright-side-foot">
           <html:button id="undo"></html:button>
-          <html:span id="total" class="carrel-muted"></html:span>
-          <html:span id="status" class="carrel-muted"></html:span>
+          <html:span id="total" class="refwright-muted"></html:span>
+          <html:span id="status" class="refwright-muted"></html:span>
         </html:div>
       </html:div>
-      <html:div id="pane" class="carrel-main carrel-scroll"></html:div>
+      <html:div id="pane" class="refwright-main refwright-scroll"></html:div>
     </html:div>
   </dialog>
   <script src="chrome://__addonRef__/content/scripts/ui-tagmanager.js" />

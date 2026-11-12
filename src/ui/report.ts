@@ -29,7 +29,7 @@ function draw() {
         h(
           "td",
           { class: "state" },
-          h("span", { class: `carrel-dot st-${r.status}` }),
+          h("span", { class: `refwright-dot st-${r.status}` }),
         ),
         h("td", { class: "item", title: r.title }, r.title),
         h("td", { class: "res", title: r.text }, r.text),

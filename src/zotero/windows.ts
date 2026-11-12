@@ -2,8 +2,8 @@ import { getString } from "../utils/locale";
 
 type Ctrl = Record<string, any>;
 
-/** Open one of carrel's chrome windows with a controller object. */
-export function openCarrelWindow(file: string, ctrl: Ctrl, size = "") {
+/** Open one of refwright's chrome windows with a controller object. */
+export function openRefwrightWindow(file: string, ctrl: Ctrl, size = "") {
   const main = Zotero.getMainWindow();
   return main.openDialog(
     `chrome://${addon.data.config.addonRef}/content/${file}`,

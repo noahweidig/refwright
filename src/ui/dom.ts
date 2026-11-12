@@ -31,7 +31,7 @@ export const arg = <T>(): T => {
 };
 export function icon(path: string): HTMLElement {
   return h("span", {
-    class: "carrel-icon",
+    class: "refwright-icon",
     style: { backgroundImage: `url(${path})` },
   });
 }

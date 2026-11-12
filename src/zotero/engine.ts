@@ -50,7 +50,7 @@ export function enabledSources(): Source[] {
 function makeCtx(http: Http, signal: AbortSignal): Ctx {
   return {
     http,
-    email: contactEmail() || "carrel@users.noreply.github.com",
+    email: contactEmail() || "refwright@users.noreply.github.com",
     keys: {
       core: (getPref("key.core") as string) || undefined,
       s2: (getPref("key.s2") as string) || undefined,
@@ -290,7 +290,7 @@ async function attachPdf(
   url: string,
   source: string,
 ) {
-  const name = `carrel-${Date.now()}-${item.id}.pdf`;
+  const name = `refwright-${Date.now()}-${item.id}.pdf`;
   const tmp = PathUtils.join(Zotero.getTempDirectory().path, name);
   await IOUtils.write(tmp, bytes);
   try {
@@ -414,7 +414,7 @@ async function reportNote(
     if (note) await note.eraseTx();
     return;
   }
-  const html = `<h2>carrel report</h2><ul>${[...lines].map(([k, v]) => `<li data-kind="${k}">${v}</li>`).join("")}</ul>`;
+  const html = `<h2>refwright report</h2><ul>${[...lines].map(([k, v]) => `<li data-kind="${k}">${v}</li>`).join("")}</ul>`;
   const n = note ?? new Zotero.Item("note");
   if (!note) {
     n.libraryID = item.libraryID;

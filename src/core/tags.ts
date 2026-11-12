@@ -1,4 +1,4 @@
-/** Tags carrel writes itself. Never suggested, cleaned, merged or renamed. */
+/** Tags refwright writes itself. Never suggested, cleaned, merged or renamed. */
 export const STATUS_TAGS = {
   pdfFound: "fulltext:pdf-found",
   pdfMissing: "fulltext:pdf-missing",
@@ -10,14 +10,14 @@ export const STATUS_TAGS = {
   citeIncomplete: "citation:incomplete",
   citeMismatch: "citation:mismatch",
   citeCheck: "citation:check-needed",
-  report: "carrel:report",
+  report: "refwright:report",
 } as const;
 
 export const RESERVED_PREFIXES = [
   "fulltext:",
   "retraction:",
   "citation:",
-  "carrel:",
+  "refwright:",
 ];
 /** prefixes other local programs may write through the write-back API */
 export const WRITEBACK_PREFIXES = [

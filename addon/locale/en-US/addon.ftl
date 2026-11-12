@@ -1,4 +1,4 @@
-progress-title = carrel
+progress-title = refwright
 progress-cancel = Cancel
 progress-close = Close
 progress-working = Working…
@@ -81,7 +81,7 @@ tm-merge-into = Merge into
 tm-estimate = { $tags } tags, { $requests } requests, about { $tokens } tokens. Only tag names and counts are sent.
 tm-run = Scan
 tm-forget = Forget checked tags
-tm-need-ai = Choose an AI provider and key in carrel settings.
+tm-need-ai = Choose an AI provider and key in refwright settings.
 tm-none = Nothing found
 tm-working = Working…
 tm-fix = Fix

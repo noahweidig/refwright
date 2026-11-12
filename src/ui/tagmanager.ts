@@ -81,7 +81,7 @@ function allPane(): HTMLElement[] {
   return [
     h(
       "div",
-      { class: "carrel-bar" },
+      { class: "refwright-bar" },
       h("input", {
         type: "search",
         placeholder: L.search,
@@ -122,11 +122,11 @@ function allPane(): HTMLElement[] {
     ),
     h(
       "div",
-      { class: "carrel-list" },
+      { class: "refwright-list" },
       ...list.slice(0, 800).map((t) =>
         h(
           "label",
-          { class: "carrel-tagrow" },
+          { class: "refwright-tagrow" },
           h("input", {
             type: "checkbox",
             checked: sel.has(t.name),
@@ -143,7 +143,7 @@ function allPane(): HTMLElement[] {
     ),
     h(
       "div",
-      { class: "carrel-actions" },
+      { class: "refwright-actions" },
       target,
       h(
         "button",
@@ -175,10 +175,10 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
     out.push(
       h(
         "div",
-        { class: "carrel-bar" },
+        { class: "refwright-bar" },
         h(
           "span",
-          { class: "carrel-muted" },
+          { class: "refwright-muted" },
           L.estimate
             .replace("{tags}", String(est.tags))
             .replace("{requests}", String(est.requests))
@@ -204,9 +204,9 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         ),
       ),
     );
-    if (!c.aiReady()) out.push(h("div", { class: "carrel-note" }, L.needAi));
+    if (!c.aiReady()) out.push(h("div", { class: "refwright-note" }, L.needAi));
   }
-  if (!gs.length) out.push(h("div", { class: "carrel-empty" }, L.none));
+  if (!gs.length) out.push(h("div", { class: "refwright-empty" }, L.none));
   gs.forEach((g, gi) => {
     const checks = new Map<string, HTMLInputElement>();
     const targetSel = h(
@@ -223,16 +223,16 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
     out.push(
       h(
         "div",
-        { class: "carrel-card" },
+        { class: "refwright-card" },
         h(
           "div",
-          { class: "carrel-head" },
-          h("span", { class: "carrel-badge" }, g.reason),
-          h("span", { class: "carrel-muted" }, `${g.tags.length}`),
+          { class: "refwright-head" },
+          h("span", { class: "refwright-badge" }, g.reason),
+          h("span", { class: "refwright-muted" }, `${g.tags.length}`),
         ),
         h(
           "div",
-          { class: "carrel-chips" },
+          { class: "refwright-chips" },
           ...g.tags.map((t) => {
             const cb = h("input", {
               type: "checkbox",
@@ -241,17 +241,17 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
             checks.set(t.name, cb);
             return h(
               "label",
-              { class: "carrel-chip on" },
+              { class: "refwright-chip on" },
               cb,
               h("span", { class: "label" }, `${t.name}`),
-              h("span", { class: "carrel-src" }, String(t.count)),
+              h("span", { class: "refwright-src" }, String(t.count)),
             );
           }),
         ),
         h(
           "div",
-          { class: "carrel-actions" },
-          h("span", { class: "carrel-k" }, L.mergeInto),
+          { class: "refwright-actions" },
+          h("span", { class: "refwright-k" }, L.mergeInto),
           targetSel,
           h(
             "button",
@@ -286,15 +286,15 @@ async function runSimilar() {
 }
 
 function fmtPane(): HTMLElement[] {
-  if (!fmt.length) return [h("div", { class: "carrel-empty" }, L.none)];
+  if (!fmt.length) return [h("div", { class: "refwright-empty" }, L.none)];
   return [
     h(
       "div",
-      { class: "carrel-list" },
+      { class: "refwright-list" },
       ...fmt.map((t) =>
         h(
           "div",
-          { class: "carrel-tagrow fix" },
+          { class: "refwright-tagrow fix" },
           h("span", { class: "n" }, t.name),
           h("span", { class: "arrow" }, "→"),
           h("span", { class: "n new" }, t.fixed || L.dropped),
@@ -309,7 +309,7 @@ function fmtPane(): HTMLElement[] {
     ),
     h(
       "div",
-      { class: "carrel-actions" },
+      { class: "refwright-actions" },
       h(
         "button",
         {
@@ -363,7 +363,7 @@ window.addEventListener("load", async () => {
         "button",
         {
           "data-view": v,
-          class: "carrel-nav",
+          class: "refwright-nav",
           onclick: async () => {
             view = v;
             sel.clear();

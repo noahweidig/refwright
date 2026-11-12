@@ -47,7 +47,7 @@ const fresh = (): State => ({
 
 let state: State = fresh();
 let timer: ReturnType<typeof setTimeout> | undefined;
-const file = () => PathUtils.join(PathUtils.profileDir, "carrel-state.json");
+const file = () => PathUtils.join(PathUtils.profileDir, "refwright-state.json");
 
 export const S = () => state;
 

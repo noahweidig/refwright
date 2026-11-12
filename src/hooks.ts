@@ -41,7 +41,7 @@ async function onStartup() {
       },
     },
     ["item", "collection", "collection-item", "item-tag", "tag"],
-    "carrel",
+    "refwright",
   );
   await Promise.all(
     Zotero.getMainWindows().map((win) => onMainWindowLoad(win)),

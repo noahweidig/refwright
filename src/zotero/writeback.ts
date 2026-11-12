@@ -22,7 +22,7 @@ function guard(r: Req): Res | null {
   const h =
     r.headers?.["authorization"] ??
     r.headers?.["Authorization"] ??
-    r.headers?.["x-carrel-token"];
+    r.headers?.["x-refwright-token"];
   if (!tokenOk(h, String(getPref("writeBackToken" as any) || "")))
     return J(401, { error: "bad token" });
   return null;
@@ -65,23 +65,23 @@ export function registerEndpoints() {
     };
     return C;
   };
-  E["/carrel/ping"] = make(["GET"], async () =>
+  E["/refwright/ping"] = make(["GET"], async () =>
     J(200, {
-      name: "carrel",
+      name: "refwright",
       version: addon.data.config
         ? ((Zotero as any).Plugins?.getVersion?.() ?? "")
         : "",
       endpoints: [
-        "/carrel/ping",
-        "/carrel/tag",
-        "/carrel/audit",
-        "/carrel/undo",
+        "/refwright/ping",
+        "/refwright/tag",
+        "/refwright/audit",
+        "/refwright/undo",
       ],
       tagPrefixes: WRITEBACK_PREFIXES,
       dryRun: true,
     }),
   );
-  E["/carrel/tag"] = make(["POST"], async (r) => {
+  E["/refwright/tag"] = make(["POST"], async (r) => {
     const req = parseWrite(r.data);
     const libraryID = req.libraryID ?? Zotero.Libraries.userLibraryID;
     const planned = plan(req);
@@ -152,10 +152,10 @@ export function registerEndpoints() {
     saveState();
     return J(200, { dryRun: !!req.dryRun, items: applied });
   });
-  E["/carrel/audit"] = make(["GET"], async () =>
+  E["/refwright/audit"] = make(["GET"], async () =>
     J(200, { entries: S().audit.slice(-500).reverse() }),
   );
-  E["/carrel/undo"] = make(["POST"], async (r) => {
+  E["/refwright/undo"] = make(["POST"], async (r) => {
     const id = String(r.data?.id ?? "");
     const e = S().audit.find((a) => a.id === id && a.id);
     if (!e) return J(404, { error: "no such write" });

@@ -15,9 +15,9 @@ export async function registerPrefsScripts(win: Window) {
   const bindProvider = () => {
     const id = String(g("ai.provider"));
     const { p, cfg } = cfgFor(id);
-    const model = $("carrel-ai-model"),
-      key = $("carrel-ai-key"),
-      base = $("carrel-ai-base");
+    const model = $("refwright-ai-model"),
+      key = $("refwright-ai-key"),
+      base = $("refwright-ai-base");
     if (!model || !key || !base) return;
     model.value = cfg.model;
     key.value = cfg.key;
@@ -26,12 +26,12 @@ export async function registerPrefsScripts(win: Window) {
     model.oninput = () => s(`ai.${id}.model`, model.value);
     key.oninput = () => s(`ai.${id}.key`, key.value);
     base.oninput = () => s(`ai.${id}.baseUrl`, base.value);
-    const res = $<HTMLElement>("carrel-ai-result");
+    const res = $<HTMLElement>("refwright-ai-result");
     if (res) res.setAttribute("value", "");
   };
   const bindEmbed = () => {
     const id = String(g("ai.embedProvider"));
-    const e = $("carrel-ai-embed");
+    const e = $("refwright-ai-embed");
     if (!e) return;
     e.value = g(`ai.${id}.embedModel`) || "";
     e.oninput = () => s(`ai.${id}.embedModel`, e.value);
@@ -48,8 +48,8 @@ export async function registerPrefsScripts(win: Window) {
     ),
   );
 
-  $("carrel-ai-test")?.addEventListener("click", async () => {
-    const out = $<HTMLElement>("carrel-ai-result")!;
+  $("refwright-ai-test")?.addEventListener("click", async () => {
+    const out = $<HTMLElement>("refwright-ai-result")!;
     out.setAttribute("value", "…");
     try {
       const models = await listModels(String(g("ai.provider")));
@@ -64,28 +64,30 @@ export async function registerPrefsScripts(win: Window) {
       );
     }
   });
-  $("carrel-forget-misses")?.addEventListener("click", () => {
+  $("refwright-forget-misses")?.addEventListener("click", () => {
     S().misses = {};
     saveState();
   });
-  $("carrel-clear-embed")?.addEventListener("click", () => clearEmbeddings());
+  $("refwright-clear-embed")?.addEventListener("click", () =>
+    clearEmbeddings(),
+  );
 
-  const token = $("carrel-wb-token");
+  const token = $("refwright-wb-token");
   if (token) token.value = String(g("writeBackToken") || "");
-  $("carrel-wb-gen")?.addEventListener("click", () => {
+  $("refwright-wb-gen")?.addEventListener("click", () => {
     if (token) token.value = generateToken();
   });
-  $("carrel-wb-copy")?.addEventListener("click", () => {
+  $("refwright-wb-copy")?.addEventListener("click", () => {
     new ztoolkit.Clipboard()
       .addText(String(g("writeBackToken") || ""), "text/unicode")
       .copy();
   });
-  $("carrel-wb-test")?.addEventListener("click", async () => {
-    const out = $<HTMLElement>("carrel-wb-result")!;
+  $("refwright-wb-test")?.addEventListener("click", async () => {
+    const out = $<HTMLElement>("refwright-wb-result")!;
     try {
       const port = Zotero.Prefs.get("httpServer.port") || 23119;
       const r = await zoteroHttp({
-        url: `http://127.0.0.1:${port}/carrel/ping`,
+        url: `http://127.0.0.1:${port}/refwright/ping`,
         headers: { Authorization: `Bearer ${g("writeBackToken")}` },
         timeout: 5000,
       });

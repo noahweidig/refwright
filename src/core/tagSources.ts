@@ -35,7 +35,7 @@ export async function openAlexTags(
 
 /** MeSH headings + author keywords (biomedical only) */
 export async function pubmedTags(doi: string, c: Ctx): Promise<Proposal[]> {
-  const tool = `tool=carrel&email=${enc(c.email)}`;
+  const tool = `tool=refwright&email=${enc(c.email)}`;
   const s = await json(
     c,
     `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${enc(doi + "[AID]")}&retmode=json&${tool}`,

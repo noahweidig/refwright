@@ -1,24 +1,24 @@
 {
-  "name": "carrel",
+  "name": "refwright",
   "type": "module",
   "version": "0.1.0",
   "description": "Find PDFs, check retractions and citations, tag, and file papers: one Zotero-native plugin.",
   "config": {
-    "addonName": "carrel",
-    "addonID": "carrel@noahweidig",
-    "addonRef": "carrel",
-    "addonInstance": "Carrel",
-    "prefsPrefix": "extensions.zotero.carrel"
+    "addonName": "refwright",
+    "addonID": "refwright@noahweidig",
+    "addonRef": "refwright",
+    "addonInstance": "Refwright",
+    "prefsPrefix": "extensions.zotero.refwright"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/noahweidig/carrel.git"
+    "url": "git+https://github.com/noahweidig/refwright.git"
   },
   "author": "noahweidig",
   "bugs": {
-    "url": "https://github.com/noahweidig/carrel/issues"
+    "url": "https://github.com/noahweidig/refwright/issues"
   },
-  "homepage": "https://github.com/noahweidig/carrel#readme",
+  "homepage": "https://github.com/noahweidig/refwright#readme",
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "zotero-plugin serve",

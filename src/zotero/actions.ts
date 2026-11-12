@@ -9,7 +9,7 @@ import {
   fieldsOf,
   regularItems,
 } from "./library";
-import { openCarrelWindow, reviewLabels } from "./windows";
+import { openRefwrightWindow, reviewLabels } from "./windows";
 import { getString } from "../utils/locale";
 import { aiReady } from "./ai";
 import { getPref } from "../utils/prefs";
@@ -53,8 +53,8 @@ export async function runTask(task: Task, items: Zotero.Item[]) {
     if (!ok) return;
   }
   const run = startRun(task, regular);
-  openCarrelWindow("report.xhtml", {
-    title: `carrel — ${task === "pdf" ? getString("menu-find-pdfs") : task === "preview" ? getString("menu-preview") : task === "retraction" ? getString("menu-retractions") : task === "citation" ? getString("menu-citations") : getString("menu-full-check")}`,
+  openRefwrightWindow("report.xhtml", {
+    title: `refwright — ${task === "pdf" ? getString("menu-find-pdfs") : task === "preview" ? getString("menu-preview") : task === "retraction" ? getString("menu-retractions") : task === "citation" ? getString("menu-citations") : getString("menu-full-check")}`,
     labels: reportLabels(),
     rows: run.rows,
     finished: () => run.finished,
@@ -67,7 +67,7 @@ export async function runTask(task: Task, items: Zotero.Item[]) {
 }
 
 export async function runTagged(task: Task) {
-  const tag = String(g("batchTag") || "carrel");
+  const tag = String(g("batchTag") || "refwright");
   const items = await itemsWithTag(tag, currentLibraryID());
   if (!items.length) return toast(getString("tagged-none", { args: { tag } }));
   return runTask(task, items);
@@ -200,7 +200,7 @@ export async function reviewAction(
       toast(parts.join(" · "), "success");
     },
   };
-  openCarrelWindow("review.xhtml", ctrl);
+  openRefwrightWindow("review.xhtml", ctrl);
 }
 
 export const suggestTagsAction = (items: Zotero.Item[], ai: boolean) =>
@@ -229,7 +229,7 @@ export async function collectionTagAction() {
 export function openTagManager() {
   const libraryID = currentLibraryID();
   const abort = new AbortController();
-  openCarrelWindow("tagmanager.xhtml", {
+  openRefwrightWindow("tagmanager.xhtml", {
     labels: {
       title: getString("tm-title"),
       allTags: getString("tm-all-tags"),
@@ -314,7 +314,7 @@ export async function exportMissing(items?: Zotero.Item[]) {
     getString("export-title"),
     "save",
     [["CSV", "*.csv"]],
-    "carrel-missing-pdfs.csv",
+    "refwright-missing-pdfs.csv",
   ).open();
   if (!path) return;
   await IOUtils.writeUTF8(path, csv);
@@ -331,7 +331,7 @@ export function showAudit() {
       text: `${new Date(a.at).toLocaleString()} · ${a.op}${a.dryRun ? " (dry run)" : ""}${a.undone ? " · undone" : ""}`,
       status: "ok",
     }));
-  openCarrelWindow("report.xhtml", {
+  openRefwrightWindow("report.xhtml", {
     title: getString("audit-title"),
     labels: {
       item: getString("audit-tag"),

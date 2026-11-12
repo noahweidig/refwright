@@ -43,18 +43,20 @@ function tagChip(it: RItem, t: TagChoice): HTMLElement {
   const chip = h(
     "span",
     {
-      class: "carrel-chip tag" + (t.on ? " on" : ""),
+      class: "refwright-chip tag" + (t.on ? " on" : ""),
       title: t.source ? `${L.source}: ${t.source}` : "",
       tabindex: 0,
       role: "checkbox",
       "aria-checked": String(t.on),
     },
     h("span", { class: "label" }, t.tag),
-    t.source && !c.single ? h("span", { class: "carrel-src" }, t.source) : null,
+    t.source && !c.single
+      ? h("span", { class: "refwright-src" }, t.source)
+      : null,
     h(
       "button",
       {
-        class: "carrel-x",
+        class: "refwright-x",
         title: L.remove,
         onclick: (e: Event) => {
           e.stopPropagation();
@@ -91,13 +93,13 @@ function collChip(ch: CollChoice): HTMLElement {
   const chip = h(
     "span",
     {
-      class: `carrel-chip coll${ch.on ? " on" : ""}${ch.already ? " already" : ""}`,
+      class: `refwright-chip coll${ch.on ? " on" : ""}${ch.already ? " already" : ""}`,
       title: tip,
       tabindex: 0,
       role: "checkbox",
       "aria-checked": String(ch.on),
     },
-    h("span", { class: `carrel-dot ${ch.confidence}` }),
+    h("span", { class: `refwright-dot ${ch.confidence}` }),
     h("span", { class: "label" }, ch.name),
   );
   const toggle = () => {
@@ -119,7 +121,7 @@ function card(it: RItem): HTMLElement {
   if (it.tags) {
     const input = h("input", {
       type: "text",
-      class: "carrel-add",
+      class: "refwright-add",
       placeholder: L.addTag,
       onkeydown: (e: KeyboardEvent) => {
         if (e.key !== "Enter") return;
@@ -134,14 +136,14 @@ function card(it: RItem): HTMLElement {
     body.push(
       h(
         "div",
-        { class: "carrel-line" },
-        h("span", { class: "carrel-k" }, L.tags),
+        { class: "refwright-line" },
+        h("span", { class: "refwright-k" }, L.tags),
         h(
           "div",
-          { class: "carrel-chips" },
+          { class: "refwright-chips" },
           ...(it.tags.length
             ? it.tags.map((t) => tagChip(it, t))
-            : [h("span", { class: "carrel-muted" }, L.noTags)]),
+            : [h("span", { class: "refwright-muted" }, L.noTags)]),
           input,
         ),
       ),
@@ -154,24 +156,24 @@ function card(it: RItem): HTMLElement {
     body.push(
       h(
         "div",
-        { class: "carrel-line" },
-        h("span", { class: "carrel-k" }, L.collections),
+        { class: "refwright-line" },
+        h("span", { class: "refwright-k" }, L.collections),
         h(
           "div",
-          { class: "carrel-chips" },
+          { class: "refwright-chips" },
           ...(shown.length
             ? shown.map(collChip)
-            : [h("span", { class: "carrel-muted" }, L.noCollections)]),
+            : [h("span", { class: "refwright-muted" }, L.noCollections)]),
         ),
       ),
     );
   }
   return h(
     "div",
-    { class: "carrel-card" + (it.on ? "" : " off") },
+    { class: "refwright-card" + (it.on ? "" : " off") },
     h(
       "label",
-      { class: "carrel-head" },
+      { class: "refwright-head" },
       h("input", {
         type: "checkbox",
         checked: it.on,
@@ -180,7 +182,7 @@ function card(it: RItem): HTMLElement {
           render();
         },
       }),
-      h("span", { class: "carrel-title" }, it.title),
+      h("span", { class: "refwright-title" }, it.title),
     ),
     ...body,
   );
@@ -191,7 +193,7 @@ function render() {
   list.replaceChildren(
     ...(items.length
       ? items.map(card)
-      : [h("div", { class: "carrel-empty" }, L.empty)]),
+      : [h("div", { class: "refwright-empty" }, L.empty)]),
   );
   const n = items.filter((i) => i.on).length;
   $("count").textContent = `${n} / ${items.length}`;

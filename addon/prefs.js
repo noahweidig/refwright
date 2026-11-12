@@ -1,5 +1,5 @@
 pref("contactEmail", "");
-pref("batchTag", "carrel");
+pref("batchTag", "refwright");
 pref("reportNote", false);
 pref("previewOnly", false);
 pref("rememberMisses", true);

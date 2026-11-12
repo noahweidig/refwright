@@ -7,7 +7,7 @@ import { S } from "./state";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
-const icon = (n = "carrel.svg") => `chrome://${ref()}/content/icons/${n}`;
+const icon = (n = "refwright.svg") => `chrome://${ref()}/content/icons/${n}`;
 const pluginID = () => addon.data.config.addonID;
 
 type Doc = Document;
@@ -43,8 +43,8 @@ export async function registerColumn() {
   if (!getPref("ui.column")) return;
   await Zotero.ItemTreeManager.registerColumns({
     pluginID: pluginID(),
-    dataKey: "carrel",
-    label: "carrel",
+    dataKey: "refwright",
+    label: "refwright",
     iconPath: icon(),
     flex: 0,
     width: "86",
@@ -68,7 +68,7 @@ export async function registerColumn() {
       span.className = `cell ${column.className}`;
       if (data) {
         const inner = doc.createElement("span");
-        inner.className = `carrel-cell ${f}`;
+        inner.className = `refwright-cell ${f}`;
         inner.textContent = data;
         span.append(inner);
       }
@@ -81,12 +81,12 @@ export async function registerColumn() {
 export function registerSection() {
   if (!getPref("ui.itemSection")) return;
   Zotero.ItemPaneManager.registerSection({
-    paneID: "carrel",
+    paneID: "refwright",
     pluginID: pluginID(),
     header: { l10nID: getLocaleID("section-header"), icon: icon() },
     sidenav: {
       l10nID: getLocaleID("section-sidenav"),
-      icon: icon("carrel-20.svg"),
+      icon: icon("refwright-20.svg"),
     },
     onItemChange: ({ item, setEnabled }) => {
       setEnabled(!!item?.isRegularItem());
@@ -100,7 +100,7 @@ export function registerSection() {
 
 function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
   const doc = body.ownerDocument!;
-  const wrap = el(doc, "div", "carrel-pane");
+  const wrap = el(doc, "div", "refwright-pane");
   const row = (
     label: string,
     state: "" | "bad" | "warn",
@@ -108,11 +108,11 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
     btn?: [string, () => void],
     icn?: string,
   ) => {
-    const r = el(doc, "div", "carrel-row");
+    const r = el(doc, "div", "refwright-row");
     r.append(el(doc, "span", "k", label));
     const v = el(doc, "span", `v ${state}`);
     if (icn) {
-      const i = el(doc, "span", "carrel-icon red");
+      const i = el(doc, "span", "refwright-icon red");
       i.style.backgroundImage = `url(${icn})`;
       v.append(i);
     }
@@ -183,7 +183,7 @@ function draw(body: HTMLElement, item: Zotero.Item, pdf: boolean | undefined) {
   const n = item
     .getTags()
     .filter(
-      (t) => !/^(fulltext|retraction|citation|carrel):/i.test(t.tag),
+      (t) => !/^(fulltext|retraction|citation|refwright):/i.test(t.tag),
     ).length;
   row(getString("section-row-tags"), "", String(n), [
     getString("section-suggest"),
@@ -337,7 +337,7 @@ export function registerPrefs() {
     label: getString("prefs-title"),
     image: icon(),
     helpURL: addon.data.config.addonRef
-      ? "https://github.com/noahweidig/carrel#readme"
+      ? "https://github.com/noahweidig/refwright#readme"
       : undefined,
   } as any);
 }
@@ -348,6 +348,6 @@ export function injectStyles(win: _ZoteroTypes.MainWindow) {
   const link = doc.createElement("link");
   link.id = `${ref()}-css`;
   link.rel = "stylesheet";
-  link.href = `chrome://${ref()}/content/carrel.css`;
+  link.href = `chrome://${ref()}/content/refwright.css`;
   doc.documentElement?.appendChild(link);
 }

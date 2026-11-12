@@ -110,7 +110,7 @@ export async function suggestTags(
   );
   const ctx: Ctx = {
     http,
-    email: contactEmail() || "carrel@users.noreply.github.com",
+    email: contactEmail() || "refwright@users.noreply.github.com",
     keys: {},
     signal,
   };
@@ -222,7 +222,7 @@ export async function suggestTags(
   }
 
   if (!aiReady())
-    throw new Error("Add an API key and model in carrel settings > AI");
+    throw new Error("Add an API key and model in refwright settings > AI");
   const batch = Math.max(1, Number(g("ai.batchSize")) || 5);
   const groups: Zotero.Item[][] = [];
   for (let i = 0; i < items.length; i += batch)

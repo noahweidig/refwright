@@ -52,7 +52,7 @@ export async function scanSimilar(
   signal: AbortSignal,
 ): Promise<DupGroup[]> {
   if (!aiReady())
-    throw new Error("Add an API key and model in carrel settings > AI");
+    throw new Error("Add an API key and model in refwright settings > AI");
   const usable = tags.filter(
     (t) => !isReserved(t.name) && !S().tmChecked[tagKey(t.name)],
   );

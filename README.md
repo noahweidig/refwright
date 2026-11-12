@@ -1,4 +1,4 @@
-# carrel
+# refwright
 
 One Zotero plugin for the chores around a paper: find the PDF, check it isn't retracted, check its citation data, tag it, file it. No accounts, no analytics, no server. AI is optional.
 
@@ -13,7 +13,7 @@ Zotero 8+. Built from [zotero-plugin-template](https://github.com/windingwind/zo
 - **Zotero-native UI**: right-click menu, Tools menu, sortable item column, item pane section, preferences pane. Windows use Zotero's own theme variables, so light/dark follow Zotero.
 - **Local write-back API** (off by default, token + tag-prefix allowlist, audit log, undo).
 
-Status tags written by carrel (`fulltext:`, `retraction:`, `citation:`, `carrel:`) are never suggested, cleaned or merged.
+Status tags written by refwright (`fulltext:`, `retraction:`, `citation:`, `refwright:`) are never suggested, cleaned or merged.
 
 ![review](docs/img/review-light.png)
 

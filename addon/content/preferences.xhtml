@@ -7,12 +7,12 @@
 >
   <groupbox>
     <label><html:h2>General</html:h2></label>
-    <description class="carrel-pref-desc"
+    <description class="refwright-pref-desc"
       >The contact email is sent to Unpaywall, NCBI, Europe PMC, Crossref and
       OpenAlex, as their polite-use rules ask. No accounts, no
       analytics.</description
     >
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Contact email" style="min-width: 150px" />
       <html:input
         type="text"
@@ -21,7 +21,7 @@
         placeholder="you@example.org"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Batch tag" style="min-width: 150px" />
       <html:input
         type="text"
@@ -42,17 +42,20 @@
       label="Skip items with no open-access copy for 1 day"
     />
     <hbox
-      ><button id="carrel-forget-misses" label="Forget remembered misses"
+      ><button id="refwright-forget-misses" label="Forget remembered misses"
     /></hbox>
-    <checkbox preference="ui.column" label="Show the carrel column (restart)" />
+    <checkbox
+      preference="ui.column"
+      label="Show the refwright column (restart)"
+    />
     <checkbox
       preference="ui.itemSection"
-      label="Show the carrel item pane section (restart)"
+      label="Show the refwright item pane section (restart)"
     />
   </groupbox>
   <groupbox>
     <label><html:h2>PDF sources</html:h2></label>
-    <description class="carrel-pref-desc"
+    <description class="refwright-pref-desc"
       >Unpaywall, PubMed Central and OpenAlex links are always on. Sources run
       in a fixed order and stop at the first valid PDF.</description
     >
@@ -89,7 +92,7 @@
       preference="recordOpenAlexId"
       label="Record the OpenAlex ID in Extra"
     />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="OpenAlex API key" style="min-width: 150px" />
       <html:input
         type="password"
@@ -105,7 +108,7 @@
       preference="preferHosted"
       label="Try hosted text before OpenAlex links"
     />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="CORE API key (optional)" style="min-width: 150px" />
       <html:input
         type="password"
@@ -113,7 +116,7 @@
         style="flex: 1"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Semantic Scholar key (optional)" style="min-width: 150px" />
       <html:input
         type="password"
@@ -124,12 +127,12 @@
   </groupbox>
   <groupbox>
     <label><html:h2>AI (optional)</html:h2></label>
-    <description class="carrel-pref-desc"
+    <description class="refwright-pref-desc"
       >Each provider keeps its own key, model and base URL. Keys live in Zotero
       prefs and go only to the provider you choose. Ollama and a local custom
       server stay on your machine.</description
     >
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Language model" style="min-width: 150px" />
       <menulist preference="ai.provider"
         ><menupopup
@@ -150,33 +153,33 @@
             label="Ollama (local)" /></menupopup
       ></menulist>
     </hbox>
-    <hbox align="center" class="carrel-pref-row"
+    <hbox align="center" class="refwright-pref-row"
       ><label value="Model" style="min-width: 150px" /><html:input
-        id="carrel-ai-model"
+        id="refwright-ai-model"
         type="text"
         style="flex: 1"
       ></html:input
     ></hbox>
-    <hbox align="center" class="carrel-pref-row"
+    <hbox align="center" class="refwright-pref-row"
       ><label value="API key" style="min-width: 150px" /><html:input
-        id="carrel-ai-key"
+        id="refwright-ai-key"
         type="password"
         style="flex: 1"
       ></html:input
     ></hbox>
-    <hbox align="center" class="carrel-pref-row"
+    <hbox align="center" class="refwright-pref-row"
       ><label value="Base URL" style="min-width: 150px" /><html:input
-        id="carrel-ai-base"
+        id="refwright-ai-base"
         type="text"
         style="flex: 1"
       ></html:input
     ></hbox>
     <hbox align="center"
-      ><button id="carrel-ai-test" label="Test connection" /><label
-        id="carrel-ai-result"
-        class="carrel-pref-desc"
+      ><button id="refwright-ai-test" label="Test connection" /><label
+        id="refwright-ai-result"
+        class="refwright-pref-desc"
     /></hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Embeddings" style="min-width: 150px" />
       <menulist preference="ai.embedProvider"
         ><menupopup
@@ -191,14 +194,14 @@
             label="Ollama (local)" /></menupopup
       ></menulist>
     </hbox>
-    <hbox align="center" class="carrel-pref-row"
+    <hbox align="center" class="refwright-pref-row"
       ><label value="Embedding model" style="min-width: 150px" /><html:input
-        id="carrel-ai-embed"
+        id="refwright-ai-embed"
         type="text"
         style="flex: 1"
       ></html:input
     ></hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Temperature" style="min-width: 150px" />
       <html:input
         type="text"
@@ -206,7 +209,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Max tokens (0 = default)" style="min-width: 150px" />
       <html:input
         type="number"
@@ -214,7 +217,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Timeout (seconds)" style="min-width: 150px" />
       <html:input
         type="number"
@@ -222,7 +225,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Items per request" style="min-width: 150px" />
       <html:input
         type="number"
@@ -234,11 +237,11 @@
   </groupbox>
   <groupbox>
     <label><html:h2>Tags</html:h2></label>
-    <description class="carrel-pref-desc"
-      >Status tags written by carrel (fulltext:, retraction:, citation:,
-      carrel:) are never suggested, cleaned or merged.</description
+    <description class="refwright-pref-desc"
+      >Status tags written by refwright (fulltext:, retraction:, citation:,
+      refwright:) are never suggested, cleaned or merged.</description
     >
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Tagging method" style="min-width: 150px" />
       <menulist preference="tag.method"
         ><menupopup
@@ -253,7 +256,7 @@
       preference="tag.src.library"
       label="Your library (needs enough tagged items)"
     />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Minimum tagged items" style="min-width: 150px" />
       <html:input
         type="number"
@@ -278,7 +281,7 @@
       label="Offline keyword extraction when lookups find nothing"
     />
     <checkbox preference="tag.review" label="Review before applying" />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Seed keywords (comma list)" style="min-width: 150px" />
       <html:input
         type="text"
@@ -287,7 +290,7 @@
       ></html:input>
     </hbox>
     <checkbox preference="tag.onlySeeds" label="Only allow seed keywords" />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Tag language" style="min-width: 150px" />
       <html:input
         type="text"
@@ -295,7 +298,7 @@
         style="width: 160px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Custom prompt (optional)" style="min-width: 150px" />
       <html:input
         type="text"
@@ -303,7 +306,7 @@
         style="flex: 1"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label
         value="Marker tag (added to every touched item)"
         style="min-width: 150px"
@@ -330,7 +333,7 @@
     <checkbox preference="send.tags" label="Existing tags" />
     <checkbox preference="send.doi" label="DOI" />
     <checkbox preference="send.pdfText" label="Extracted PDF text" />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="PDF text characters (0 = all)" style="min-width: 150px" />
       <html:input
         type="number"
@@ -342,7 +345,7 @@
       preference="send.libraryTags"
       label="Share top library tags so the model reuses them"
     />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Library tags to share" style="min-width: 150px" />
       <html:input
         type="number"
@@ -363,7 +366,7 @@
       preference="clean.reuse"
       label="Reuse the spelling of matching library tags"
     />
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Letter case" style="min-width: 150px" />
       <menulist preference="clean.case"
         ><menupopup
@@ -378,7 +381,7 @@
             label="Title Case" /></menupopup
       ></menulist>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Word separator" style="min-width: 150px" />
       <menulist preference="clean.separator"
         ><menupopup
@@ -391,7 +394,7 @@
             label="Hyphen" /></menupopup
       ></menulist>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Max tags per item" style="min-width: 150px" />
       <html:input
         type="number"
@@ -399,7 +402,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Max words per tag" style="min-width: 150px" />
       <html:input
         type="number"
@@ -407,7 +410,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Max length" style="min-width: 150px" />
       <html:input
         type="number"
@@ -415,7 +418,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Prefix" style="min-width: 150px" />
       <html:input
         type="text"
@@ -423,7 +426,7 @@
         style="width: 160px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Blacklist (comma list)" style="min-width: 150px" />
       <html:input
         type="text"
@@ -431,7 +434,7 @@
         style="flex: 1"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label
         value="Replacements (one per line: from -> to)"
         style="min-width: 150px"
@@ -445,11 +448,11 @@
   </groupbox>
   <groupbox>
     <label><html:h2>Collections</html:h2></label>
-    <description class="carrel-pref-desc"
+    <description class="refwright-pref-desc"
       >Offline ranking learns from the papers already in each
       collection.</description
     >
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Ranking" style="min-width: 150px" />
       <menulist preference="route.mode"
         ><menupopup
@@ -462,7 +465,7 @@
             label="LLM zero-shot" /></menupopup
       ></menulist>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label
         value="Ignore collections containing (comma list)"
         style="min-width: 150px"
@@ -473,7 +476,7 @@
         style="flex: 1"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Minimum confidence % (0 = auto)" style="min-width: 150px" />
       <html:input
         type="number"
@@ -481,7 +484,7 @@
         style="width: 80px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="Collections per paper" style="min-width: 150px" />
       <html:input
         type="number"
@@ -494,12 +497,12 @@
       label="Remove from the ignored collection (inbox) when filed"
     />
     <hbox
-      ><button id="carrel-clear-embed" label="Clear cached embeddings"
+      ><button id="refwright-clear-embed" label="Clear cached embeddings"
     /></hbox>
   </groupbox>
   <groupbox>
     <label><html:h2>Tag Manager</html:h2></label>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="AI scan: tags per request" style="min-width: 150px" />
       <html:input
         type="number"
@@ -507,7 +510,7 @@
         style="width: 90px"
       ></html:input>
     </hbox>
-    <hbox align="center" class="carrel-pref-row">
+    <hbox align="center" class="refwright-pref-row">
       <label value="AI scan: requests per scan" style="min-width: 150px" />
       <html:input
         type="number"
@@ -518,9 +521,9 @@
   </groupbox>
   <groupbox>
     <label><html:h2>Local write-back API</html:h2></label>
-    <description class="carrel-pref-desc"
+    <description class="refwright-pref-desc"
       >Needs Zotero > Settings > Advanced > “Allow other applications on this
-      computer to communicate with Zotero”. Only carrel:, fulltext:,
+      computer to communicate with Zotero”. Only refwright:, fulltext:,
       retraction:, citation:, GRADE:, RoB2:, ROBINS-I: and Quality: tags are
       accepted.</description
     >
@@ -528,20 +531,20 @@
       preference="writeBackEnabled"
       label="Let other programs on this computer add or remove tags"
     />
-    <hbox align="center" class="carrel-pref-row"
+    <hbox align="center" class="refwright-pref-row"
       ><label value="Token" style="min-width: 150px" /><html:input
-        id="carrel-wb-token"
+        id="refwright-wb-token"
         type="password"
         readonly="readonly"
         style="flex: 1"
       ></html:input
     ></hbox>
     <hbox
-      ><button id="carrel-wb-gen" label="Generate" /><button
-        id="carrel-wb-copy"
-        label="Copy" /><button id="carrel-wb-test" label="Test" /><label
-        id="carrel-wb-result"
-        class="carrel-pref-desc"
+      ><button id="refwright-wb-gen" label="Generate" /><button
+        id="refwright-wb-copy"
+        label="Copy" /><button id="refwright-wb-test" label="Test" /><label
+        id="refwright-wb-result"
+        class="refwright-pref-desc"
     /></hbox>
   </groupbox>
 </vbox>

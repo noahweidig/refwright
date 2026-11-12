@@ -27,7 +27,7 @@ export async function checkRetraction(
 ): Promise<RetractionResult> {
   let reached = false;
   let pmid = ids.pmid;
-  const tool = `tool=carrel&email=${enc(c.email)}`;
+  const tool = `tool=refwright&email=${enc(c.email)}`;
   try {
     if (!pmid && ids.doi) {
       const s = await getJson(

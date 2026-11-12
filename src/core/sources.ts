@@ -105,7 +105,7 @@ export const pmc: Source = {
       if (!key) return [];
       const d = await j(
         c,
-        `https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1.0/articles/?ids=${enc(key)}&format=json&tool=carrel&email=${enc(c.email)}`,
+        `https://pmc.ncbi.nlm.nih.gov/tools/idconv/api/v1.0/articles/?ids=${enc(key)}&format=json&tool=refwright&email=${enc(c.email)}`,
       );
       id = d?.records?.[0]?.pmcid;
     }
