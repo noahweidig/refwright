@@ -1,5 +1,5 @@
 /* preferences pane: spacing that matches Zotero's own panes */
-#zotero-prefpane-refwright groupbox {
+#zotero-prefpane-refwright .refwright-group {
   margin-block-end: 14px;
 }
 #zotero-prefpane-refwright h2 {
@@ -19,6 +19,6 @@
 #zotero-prefpane-refwright input[type="password"] {
   min-width: 120px;
 }
-#zotero-prefpane-refwright checkbox {
+#zotero-prefpane-refwright .refwright-check {
   margin-block: 1px;
 }
