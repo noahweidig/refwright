@@ -11,7 +11,7 @@ hide:
 
 # Find the <span class="rw-accent">PDF</span>.<br>Check, tag and <span class="rw-accent">file</span> it.
 
-<p class="rw-hero__lede">refwright is one Zotero plugin that finds open-access PDFs, flags retracted papers, suggests tags and collections, and looks and feels like part of Zotero. No accounts, no analytics, no server, and AI is optional.</p>
+<p class="rw-hero__lede">RefWright is one Zotero plugin that finds open-access PDFs, flags retracted papers, suggests tags and collections, and looks and feels like part of Zotero. No accounts, no analytics, no server, and AI is optional.</p>
 
 [:lucide-rocket: Get started](getting-started.md){ .md-button .md-button--primary }
 [:lucide-download: Download](https://github.com/noahweidig/refwright/releases/latest){ .md-button }
@@ -85,8 +85,8 @@ hide:
 
 Sections for PDFs, tags, collections and related items, using Zotero's own colors, so light and dark follow Zotero.
 
-![refwright sections in the item pane](img/sidebar-light.png#only-light){ width="320" }
-![refwright sections in the item pane](img/sidebar-dark.png#only-dark){ width="320" }
+![RefWright sections in the item pane](img/sidebar-light.png#only-light){ width="320" }
+![RefWright sections in the item pane](img/sidebar-dark.png#only-dark){ width="320" }
 
 ## Review in one window
 

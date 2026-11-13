@@ -17,4 +17,8 @@ describe("summary", () => {
     expect(isSummaryNote(h)).toBe(true);
     expect(isSummaryNote("<p>x</p>")).toBe(false);
   });
+  it("titles new notes AI summary and still finds the old title", () => {
+    expect(summaryNoteHtml("s", "src")).toContain("<h1>AI summary</h1>");
+    expect(isSummaryNote("<h1>refwright summary</h1><p>old</p>")).toBe(true);
+  });
 });

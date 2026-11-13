@@ -4,7 +4,7 @@ icon: lucide/folder-input
 
 # Collections
 
-Right-click > **refwright > File into Collections…** for one paper or many.
+Right-click > **RefWright > File into Collections…** for one paper or many.
 
 ## Ranking
 
@@ -20,7 +20,7 @@ Right-click > **refwright > File into Collections…** for one paper or many.
 
     One prompt with the paper's title and abstract plus all collection names.
 
-If a remote method fails, refwright falls back to offline ranking and says so.
+If a remote method fails, RefWright falls back to offline ranking and says so.
 
 ## Adjustments
 
@@ -35,11 +35,11 @@ Each paper shows its top 5 suggestions as chips, best pre-selected. Hover for th
 
 ## Undo
 
-**refwright > Undo Last Filing** reverses additions and inbox removals in one step. It survives restarts and covers the last filing only.
+**RefWright > Undo Last Filing** reverses additions and inbox removals in one step. It survives restarts and covers the last filing only.
 
 ## Suggest new collections
 
-**Tools > refwright > Suggest New Collections…** proposes collections for papers that no existing collection fits. It runs offline on title, abstract, tags and journal.
+**Tools > RefWright > Suggest New Collections…** proposes collections for papers that no existing collection fits. It runs offline on title, abstract, tags and journal.
 
 1. It starts from papers that are in no collection (or only in an ignored one such as an inbox).
 2. It drops every paper that an existing collection already fits, using the same offline ranking as **File into Collections…**. Those belong in that collection, not in a new one.
@@ -54,7 +54,7 @@ In the review window, tick the groups you want, rename them if you like, and cli
 
 ### With AI
 
-**Tools > refwright > Suggest New Collections with AI…** does the same grouping, then asks your [AI provider](providers.md) to name each group.
+**Tools > RefWright > Suggest New Collections with AI…** does the same grouping, then asks your [AI provider](providers.md) to name each group.
 
 - The grouping is still offline. The AI only names the groups, so the cost stays small: one request per 8 groups, with the titles of the first 6 papers in each group and the names of your existing collections.
 - A group the model calls incoherent is dropped.

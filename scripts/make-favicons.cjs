@@ -13,7 +13,7 @@ const { chromium } = require("playwright");
 
 const out = path.join(__dirname, "..", "docs");
 const BLUE = "#4072E5"; // Zotero's accent blue, same as the plugin's favicon
-const NAME = "refwright";
+const NAME = "RefWright";
 const DESC =
   "Find PDFs, check retractions and citations, tag, and file papers in Zotero.";
 

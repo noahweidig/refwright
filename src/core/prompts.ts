@@ -127,7 +127,9 @@ export function routeUserPrompt(
 /** rough token estimate shown before an AI tag scan */
 export const estimateTokens = (s: string) => Math.ceil(s.length / 4);
 
-export const SUMMARY_NOTE_TITLE = "refwright summary";
+export const SUMMARY_NOTE_TITLE = "AI summary";
+/** the title notes had before 0.4.5; still recognised so they are not summarised twice */
+const LEGACY_SUMMARY_TITLE = "refwright summary";
 
 export function summarySystem(language: string, sentences = 4): string {
   return `You summarize academic papers for a researcher's reference library. Write one plain-text paragraph of ${sentences} sentences or fewer in ${language || "English"}: the question, the method, the main result, and the main limitation if stated. Use only the supplied text. If the text does not support a point, leave it out. No headings, bullets, markdown, or preamble.`;
@@ -160,7 +162,9 @@ const esc = (t: string) =>
 export const summaryNoteHtml = (summary: string, source: string) =>
   `<h1>${SUMMARY_NOTE_TITLE}</h1><p>${esc(summary)}</p><p><i>${esc(source)}</i></p>`;
 export const isSummaryNote = (html: string) =>
-  html.includes(`<h1>${SUMMARY_NOTE_TITLE}</h1>`);
+  [SUMMARY_NOTE_TITLE, LEGACY_SUMMARY_TITLE].some((t) =>
+    html.includes(`<h1>${t}</h1>`),
+  );
 
 export const CLUSTER_NAME_SYSTEM =
   'You name groups of papers for a reference library. For each numbered group reply with one short collection name (2 to 4 words, Title case). Reply "" if the group is not one coherent topic. If a group clearly belongs in one of the existing collections, reply with that collection\'s exact name. Reply with JSON only: {"names":["...","..."]} in group order.';

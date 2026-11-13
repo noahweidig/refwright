@@ -6,27 +6,31 @@
 <window
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  id="refwright-review"
-  class="zotero-dialog refwright-window"
+  id="refwright-review-window"
+  class="zotero-dialog refwright-window refwright-flexwin"
   width="780"
   height="600"
   persist="screenX screenY width height"
 >
-  <dialog id="refwright-review-dialog" buttons="cancel,accept,extra2">
-    <html:div class="refwright-shell">
-      <html:div id="tools" class="refwright-bar" hidden="hidden">
-        <html:input id="search" type="search" placeholder="/" />
-        <html:label class="refwright-slider">
-          <html:input id="thresh" type="range" min="0" max="80" value="0" />
-        </html:label>
-      </html:div>
-      <html:div id="note" class="refwright-note" hidden="hidden"></html:div>
-      <html:div class="refwright-bar sub">
-        <html:button id="all">⌃</html:button>
-        <html:span id="count" class="refwright-muted"></html:span>
-      </html:div>
-      <html:div id="list" class="refwright-scroll"></html:div>
+  <html:div class="refwright-shell">
+    <html:div id="tools" class="refwright-bar" hidden="hidden">
+      <html:input id="search" type="search" placeholder="/" />
+      <html:label class="refwright-slider">
+        <html:input id="thresh" type="range" min="0" max="80" value="0" />
+      </html:label>
     </html:div>
-  </dialog>
+    <html:div id="note" class="refwright-note" hidden="hidden"></html:div>
+    <html:div class="refwright-bar sub">
+      <html:button id="all">⌃</html:button>
+      <html:span id="count" class="refwright-muted"></html:span>
+    </html:div>
+    <html:div id="list" class="refwright-scroll"></html:div>
+    <html:div class="refwright-footer">
+      <html:span class="refwright-grow"></html:span>
+      <html:button id="retry" hidden="hidden"></html:button>
+      <html:button id="cancel"></html:button>
+      <html:button id="apply"></html:button>
+    </html:div>
+  </html:div>
   <script src="chrome://__addonRef__/content/scripts/ui-review.js" />
 </window>

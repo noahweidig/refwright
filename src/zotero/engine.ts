@@ -153,7 +153,7 @@ export function startRun(task: Task, input: Zotero.Item[], win?: Window): Run {
     run.finished = true;
     notify();
     if (attached)
-      new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+      new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
         closeOnClick: true,
         closeTime: 4000,
       })
@@ -414,7 +414,7 @@ async function reportNote(
     if (note) await note.eraseTx();
     return;
   }
-  const html = `<h2>refwright report</h2><ul>${[...lines].map(([k, v]) => `<li data-kind="${k}">${v}</li>`).join("")}</ul>`;
+  const html = `<h2>RefWright report</h2><ul>${[...lines].map(([k, v]) => `<li data-kind="${k}">${v}</li>`).join("")}</ul>`;
   const n = note ?? new Zotero.Item("note");
   if (!note) {
     n.libraryID = item.libraryID;

@@ -1,6 +1,6 @@
 {
-  "name": "refwright",
-  "short_name": "refwright",
+  "name": "RefWright",
+  "short_name": "RefWright",
   "description": "Find PDFs, check retractions and citations, tag, and file papers in Zotero.",
   "start_url": "./",
   "display": "standalone",

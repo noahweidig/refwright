@@ -123,7 +123,7 @@ export async function scanSimilar(
   signal: AbortSignal,
 ): Promise<DupGroup[]> {
   if (!aiReady())
-    throw new Error("Add an API key and model in refwright settings > AI");
+    throw new Error("Add an API key and model in RefWright settings > AI");
   const { send, expand } = candidates(tags);
   const per = Math.max(20, Number(g("tm.perRequest")) || 150);
   const reqs = Math.max(1, Number(g("tm.requests")) || 3);

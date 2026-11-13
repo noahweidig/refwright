@@ -9,7 +9,7 @@ Lets another local program add or remove tags through Zotero's local server (`12
 ## Setup
 
 1. Zotero > Settings > Advanced: enable **Allow other applications on this computer to communicate with Zotero**.
-2. refwright settings: enable the API, **Generate** a token.
+2. RefWright settings: enable the API, **Generate** a token.
 3. Send `Authorization: Bearer <token>`.
 
 ## Endpoints
@@ -31,4 +31,4 @@ curl -X POST http://127.0.0.1:23119/refwright/tag \
 
 `fulltext:`, `retraction:`, `citation:`, `refwright:`, `GRADE:`, `RoB2:`, `ROBINS-I:`, `Quality:`. Anything else is refused, even with a valid token.
 
-View or clear the log under **Tools > refwright > Write-back Audit Log**. Clearing it changes no tags.
+View or clear the log under **Tools > RefWright > Write-back Audit Log**. Clearing it changes no tags.
