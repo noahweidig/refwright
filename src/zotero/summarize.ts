@@ -19,12 +19,51 @@ export interface SummaryResult {
   error?: string;
 }
 
-async function hasSummary(item: Zotero.Item): Promise<boolean> {
+function hasSummary(item: Zotero.Item): boolean {
   for (const id of item.getNotes()) {
     const n = Zotero.Items.get(id) as Zotero.Item;
     if (n && isSummaryNote(n.getNote())) return true;
   }
   return false;
+}
+
+/** Writes one note. Returns false when the item has nothing to summarize. */
+async function summarizeOne(
+  it: Zotero.Item,
+  signal: AbortSignal,
+): Promise<boolean> {
+  const fl = fieldsOf(it);
+  const abstract = fl.abstract?.trim();
+  const text = abstract ? undefined : await pdfText(it);
+  if (!abstract && !text) return false;
+  const reply = await chat(
+    summarySystem(g("tag.language") || "English"),
+    summaryUserPrompt({
+      title: fl.title,
+      authors: fl.authors,
+      date: fl.date,
+      abstract,
+      pdfText: text,
+    }),
+    signal,
+    {
+      jsonMode: false,
+      maxTokens: Math.max(Number(g("ai.maxTokens")) || 0, 1024),
+    },
+  );
+  const summary = cleanSummary(reply);
+  if (!summary) throw new Error("Empty reply");
+  const note = new Zotero.Item("note");
+  note.libraryID = it.libraryID;
+  note.parentID = it.id;
+  note.setNote(
+    summaryNoteHtml(
+      summary,
+      abstract ? "Summarized from the abstract" : "Summarized from PDF text",
+    ),
+  );
+  await note.saveTx();
+  return true;
 }
 
 /** One child note per item, from the abstract (PDF text when there is none). */
@@ -35,51 +74,18 @@ export async function summarizeItems(
 ): Promise<SummaryResult> {
   const items = regularItems(input);
   const res: SummaryResult = { made: 0, skipped: 0, failed: 0 };
-  const language = g("tag.language") || "English";
-  const maxTokens = Math.max(Number(g("ai.maxTokens")) || 0, 1024);
   let done = 0;
   for (const it of items) {
     if (signal.aborted) break;
     progress(done++, items.length);
-    if (await hasSummary(it)) {
-      res.skipped++;
-      continue;
-    }
-    const fl = fieldsOf(it);
-    const abstract = fl.abstract?.trim();
-    const text = abstract ? undefined : await pdfText(it);
-    if (!abstract && !text) {
+    if (hasSummary(it)) {
       res.skipped++;
       continue;
     }
     try {
-      const reply = await chat(
-        summarySystem(language),
-        summaryUserPrompt({
-          title: fl.title,
-          authors: fl.authors,
-          date: fl.date,
-          abstract,
-          pdfText: text,
-        }),
-        signal,
-        { jsonMode: false, maxTokens },
-      );
-      const summary = cleanSummary(reply);
-      if (!summary) throw new Error("Empty reply");
-      const note = new Zotero.Item("note");
-      note.libraryID = it.libraryID;
-      note.parentID = it.id;
-      note.setNote(
-        summaryNoteHtml(
-          summary,
-          abstract
-            ? "Summarized from the abstract"
-            : "Summarized from PDF text",
-        ),
-      );
-      await note.saveTx();
-      res.made++;
+      const ok = await summarizeOne(it, signal); // NOSONAR: sequential (rate limits)
+      if (ok) res.made++;
+      else res.skipped++;
     } catch (e: any) {
       if (signal.aborted) break;
       res.failed++;

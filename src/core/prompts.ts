@@ -155,7 +155,7 @@ export function cleanSummary(text: string): string {
     .trim();
 }
 const esc = (t: string) =>
-  t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  t.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 export const summaryNoteHtml = (summary: string, source: string) =>
   `<h1>${SUMMARY_NOTE_TITLE}</h1><p>${esc(summary)}</p><p><i>${esc(source)}</i></p>`;
 export const isSummaryNote = (html: string) =>

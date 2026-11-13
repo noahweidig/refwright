@@ -5,7 +5,7 @@ import { S, saveState } from "./state";
 import { getPref } from "../utils/prefs";
 
 const sigOf = (t: string) =>
-  `${t.length}:${[...t].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) | 0, 7)}`;
+  `${t.length}:${[...t].reduce((a, ch) => (a * 31 + (ch.codePointAt(0) ?? 0)) % 2147483647, 7)}`;
 
 export interface RelatedHit {
   item: Zotero.Item;
@@ -38,10 +38,8 @@ export async function relatedFor(
     if (signal.aborted) throw new Error("Cancelled");
     progress(i, need.length);
     const chunk = need.slice(i, i + 64);
-    const vecs = await embedTexts(
-      chunk.map((r) => r.text),
-      signal,
-    );
+    const texts = chunk.map((r) => r.text);
+    const vecs = await embedTexts(texts, signal); // NOSONAR: sequential (rate limits)
     chunk.forEach(
       (r, n) => (cache[r.k] = { sig: sigOf(r.text), vec: quantize(vecs[n]) }),
     );

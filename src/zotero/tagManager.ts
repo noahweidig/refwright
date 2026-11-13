@@ -57,10 +57,8 @@ async function askMerge(
   let last = "";
   for (const jsonMode of [true, false]) {
     try {
-      last = await chat(MERGE_SYSTEM, user, signal, {
-        jsonMode,
-        maxTokens: room * (jsonMode ? 1 : 2),
-      });
+      const opts = { jsonMode, maxTokens: room * (jsonMode ? 1 : 2) };
+      last = await chat(MERGE_SYSTEM, user, signal, opts); // NOSONAR: retry only after a failure
       return parseMergeReply(last);
     } catch (e: any) {
       if (signal.aborted) throw e;
@@ -97,7 +95,8 @@ export async function scanSimilar(
   for (let i = 0; i < reqs && i * per < usable.length; i++) {
     if (signal.aborted) throw new Error("Cancelled");
     const batch = usable.slice(i * per, (i + 1) * per);
-    for (const gr of await askMerge(batch, targets, signal)) {
+    const replies = await askMerge(batch, targets, signal); // NOSONAR: sequential (rate limits)
+    for (const gr of replies) {
       const members = [gr.target, ...gr.merge]
         .map((n) => byName.get(n))
         .filter(Boolean) as TagCount[];
@@ -146,7 +145,7 @@ export async function mergeTags(
   rec.hadTo = [...hadTo];
   await Zotero.DB.executeTransaction(async () => {
     for (const f of from.filter((x) => x !== to)) {
-      const items = await itemsOf(libraryID, f);
+      const items = await itemsOf(libraryID, f); // NOSONAR: inside one DB transaction
       rec.fromItems[f] = items.map((i) => i.id);
       for (const item of items) {
         const t = item.getTags().find((x) => x.tag === f);

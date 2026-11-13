@@ -366,36 +366,38 @@ function describe(res: { status: number; text(): string }, p: ProviderInfo) {
 }
 export { HttpError };
 
+const tryParse = (s: string): any => {
+  try {
+    return JSON.parse(s);
+  } catch {
+    return undefined;
+  }
+};
+
+/** Complete JSON between the outermost brackets of one shape. */
+function sliceShape(t: string, o: string, c: string): any {
+  const a = t.indexOf(o),
+    b = t.lastIndexOf(c);
+  return a >= 0 && b > a ? tryParse(t.slice(a, b + 1)) : undefined;
+}
+
+/** Truncated output: trim back to the last complete group and close the brackets. */
+function repairTruncated(t: string): any {
+  const open = t.indexOf("{");
+  if (open < 0) return undefined;
+  for (let e = t.lastIndexOf("}"); e > open; e = t.lastIndexOf("}", e - 1))
+    for (const tail of ["]}", "}", "]"]) {
+      const v = tryParse(t.slice(open, e + 1) + tail);
+      if (v !== undefined) return v;
+    }
+  return undefined;
+}
+
 /** Pull the first JSON value out of model output (handles fences and chatter). */
 export function extractJson(text: string): any {
   const t = text.replace(/```(?:json)?/gi, "").trim();
-  for (const [o, c] of [
-    ["{", "}"],
-    ["[", "]"],
-  ] as const) {
-    const a = t.indexOf(o),
-      b = t.lastIndexOf(c);
-    if (a >= 0 && b > a) {
-      try {
-        return JSON.parse(t.slice(a, b + 1));
-      } catch {
-        /* try next shape */
-      }
-    }
-  }
-  const open = t.indexOf("{");
-  if (open >= 0) {
-    // truncated output: close an unterminated array/object by trimming to the last complete group
-    const cut = t.lastIndexOf("}");
-    for (let e = cut; e > open; e = t.lastIndexOf("}", e - 1)) {
-      for (const tail of ["]}", "}", "]"]) {
-        try {
-          return JSON.parse(t.slice(open, e + 1) + tail);
-        } catch {
-          /* keep trimming */
-        }
-      }
-    }
-  }
-  throw new Error("Model did not return valid JSON");
+  const v =
+    sliceShape(t, "{", "}") ?? sliceShape(t, "[", "]") ?? repairTruncated(t);
+  if (v === undefined) throw new Error("Model did not return valid JSON");
+  return v;
 }

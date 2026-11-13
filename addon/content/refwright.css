@@ -295,7 +295,7 @@
 }
 .refwright-tm .refwright-side-foot #status {
   min-height: 1.3em;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 .refwright-tm .refwright-main {
   flex: 1;

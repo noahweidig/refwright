@@ -27,13 +27,7 @@ export interface CiteResult {
   noDoi: number;
 }
 
-export async function updateCitations(
-  input: Zotero.Item[],
-  progress: (done: number, total: number) => void,
-  signal: AbortSignal,
-): Promise<CiteResult> {
-  const items = regularItems(input);
-  const res: CiteResult = { updated: 0, notFound: 0, noDoi: 0 };
+function groupByDoi(items: Zotero.Item[], res: CiteResult) {
   const byDoi = new Map<string, Zotero.Item[]>();
   for (const it of items) {
     const doi = String(it.getField("DOI") || "");
@@ -44,34 +38,51 @@ export async function updateCitations(
     const k = normDoi(doi);
     byDoi.set(k, [...(byDoi.get(k) ?? []), it]);
   }
+  return byDoi;
+}
+
+function store(
+  batch: string[],
+  byDoi: Map<string, Zotero.Item[]>,
+  counts: Map<string, number>,
+  res: CiteResult,
+) {
+  for (const d of batch)
+    for (const it of byDoi.get(d) ?? []) {
+      const n = counts.get(d);
+      if (n == null) {
+        res.notFound++;
+        continue;
+      }
+      S().cites[citeKey(it)] = { n, at: Date.now() };
+      res.updated++;
+    }
+}
+
+export async function updateCitations(
+  input: Zotero.Item[],
+  progress: (done: number, total: number) => void,
+  signal: AbortSignal,
+): Promise<CiteResult> {
+  const res: CiteResult = { updated: 0, notFound: 0, noDoi: 0 };
+  const byDoi = groupByDoi(regularItems(input), res);
   const http = polite(zoteroHttp, {
     delayMs: Number(getPref("delayMs")) || 400,
     restMs: 60_000,
     retries: 1,
   });
   const key = (getPref("key.openalex") as string) || "";
+  const headers = key ? { Authorization: `Bearer ${key}` } : undefined;
   const email = contactEmail() || "refwright@users.noreply.github.com";
   const dois = [...byDoi.keys()];
   for (let i = 0; i < dois.length; i += CITE_BATCH) {
     if (signal.aborted) throw new Error("Cancelled");
     progress(i, dois.length);
     const batch = dois.slice(i, i + CITE_BATCH);
-    const r = await http({
-      url: citationUrl(batch, email),
-      headers: key ? { Authorization: `Bearer ${key}` } : undefined,
-      signal,
-    });
+    const req = { url: citationUrl(batch, email), headers, signal };
+    const r = await http(req); // NOSONAR: sequential on purpose (polite spacing)
     if (r.status >= 300) throw new Error(`OpenAlex: HTTP ${r.status}`);
-    const counts = parseCounts(r.json());
-    for (const d of batch)
-      for (const it of byDoi.get(d)!) {
-        const n = counts.get(d);
-        if (n == null) res.notFound++;
-        else {
-          S().cites[citeKey(it)] = { n, at: Date.now() };
-          res.updated++;
-        }
-      }
+    store(batch, byDoi, parseCounts(r.json()), res);
   }
   progress(dois.length, dois.length);
   saveState();

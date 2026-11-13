@@ -410,20 +410,18 @@ function fmtPane(): HTMLElement[] {
   ];
 }
 
+function paneFor(): HTMLElement[] {
+  if (view === "all") return allPane();
+  if (view === "fmt") return fmtPane();
+  if (view === "dup") return scanning ? loadingPane() : groupPane(groups);
+  return groupPane(groups, true);
+}
+
 function draw(keepFocus = false) {
   const pane = $("pane");
   const active = keepFocus ? document.activeElement : null;
   const pos = (active as HTMLInputElement | null)?.selectionStart;
-  const nodes =
-    view === "all"
-      ? allPane()
-      : view === "dup"
-        ? scanning
-          ? loadingPane()
-          : groupPane(groups)
-        : view === "fmt"
-          ? fmtPane()
-          : groupPane(groups, true);
+  const nodes = paneFor();
   pane.replaceChildren(...nodes);
   if (active && (active as HTMLInputElement).type === "search") {
     const s = pane.querySelector(
