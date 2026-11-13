@@ -309,6 +309,7 @@ function _openTagManager() {
       undo: getString("tm-undo"),
       undone: getString("tm-undone"),
       nothing: getString("tm-nothing"),
+      scanning: getString("tm-scanning"),
     },
     load: () => TM.loadCounts(libraryID),
     duplicates: (t: any) => TM.scanDuplicates(t),

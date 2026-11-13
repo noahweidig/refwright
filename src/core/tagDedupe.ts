@@ -31,6 +31,27 @@ const acronym = (t: string) =>
 
 /** Local duplicate scan. Reserved status tags are never touched. */
 export function findDuplicates(all: TagCount[]): DupGroup[] {
+  const it = scanDuplicates(all);
+  for (;;) {
+    const r = it.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** Same scan, but hands control back to the event loop so the UI stays live. */
+export async function findDuplicatesAsync(
+  all: TagCount[],
+  yieldNow: () => Promise<void>,
+): Promise<DupGroup[]> {
+  const it = scanDuplicates(all);
+  for (;;) {
+    const r = it.next();
+    if (r.done) return r.value;
+    await yieldNow();
+  }
+}
+
+function* scanDuplicates(all: TagCount[]): Generator<void, DupGroup[]> {
   const tags = all.filter((t) => !isReserved(t.name));
   const parent = new Map<string, string>();
   const reason = new Map<string, DupReason>();
@@ -61,16 +82,57 @@ export function findDuplicates(all: TagCount[]): DupGroup[] {
       union(t.name, byOrder.get(k)!, "word order");
     else byOrder.set(k, t.name);
   }
-  const keys = tags.map((t) => [t.name, tagKey(t.name)] as const);
-  for (let i = 0; i < keys.length; i++)
-    for (let j = i + 1; j < keys.length; j++) {
-      const [a, ka] = keys[i],
-        [b, kb] = keys[j];
-      if (ka === kb || Math.min(ka.length, kb.length) < 6) continue;
-      if (Math.abs(ka.length - kb.length) > 2) continue;
-      if (levenshtein(ka, kb) <= (Math.max(ka.length, kb.length) > 12 ? 2 : 1))
-        union(a, b, "typo");
+  const keys = tags
+    .map((t) => [t.name, tagKey(t.name)] as const)
+    .filter(([, k]) => k.length >= 6);
+  // deletion neighbourhoods: strings within edit distance k share a variant
+  // with at most k characters removed, so only bucket-mates need comparing
+  const buckets = new Map<string, number[]>();
+  const add = (v: string, i: number) => {
+    const b = buckets.get(v);
+    if (b) {
+      if (b[b.length - 1] !== i) b.push(i);
+    } else buckets.set(v, [i]);
+  };
+  let t0 = Date.now();
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i][1];
+    add(k, i);
+    for (let x = 0; x < k.length; x++) {
+      const d1 = k.slice(0, x) + k.slice(x + 1);
+      add(d1, i);
+      if (k.length > 10)
+        for (let y = x; y < d1.length; y++)
+          add(d1.slice(0, y) + d1.slice(y + 1), i);
     }
+    if (Date.now() - t0 > 12) {
+      yield;
+      t0 = Date.now();
+    }
+  }
+  const seen = new Set<number>();
+  for (const b of buckets.values()) {
+    if (b.length < 2 || b.length > 40) continue;
+    for (let x = 0; x < b.length; x++)
+      for (let y = x + 1; y < b.length; y++) {
+        const i = Math.min(b[x], b[y]),
+          j = Math.max(b[x], b[y]);
+        const id = i * keys.length + j;
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const [na, ka] = keys[i],
+          [nb, kb] = keys[j];
+        if (ka === kb || Math.abs(ka.length - kb.length) > 2) continue;
+        if (
+          levenshtein(ka, kb) <= (Math.max(ka.length, kb.length) > 12 ? 2 : 1)
+        )
+          union(na, nb, "typo");
+      }
+    if (Date.now() - t0 > 12) {
+      yield;
+      t0 = Date.now();
+    }
+  }
   const singles = new Map(
     tags
       .filter((t) => words(t.name).length === 1)

@@ -171,6 +171,7 @@ export type FluentMessageId =
   | 'tm-nothing'
   | 'tm-rename'
   | 'tm-run'
+  | 'tm-scanning'
   | 'tm-search'
   | 'tm-similar'
   | 'tm-target'

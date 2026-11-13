@@ -1,5 +1,5 @@
 import {
-  findDuplicates,
+  findDuplicatesAsync,
   findFormatting,
   TagCount,
   DupGroup,
@@ -22,8 +22,8 @@ import { getPref } from "../utils/prefs";
 const g = (k: string) => getPref(k as any) as any;
 
 export const loadCounts = (libraryID: number) => tagCounts(libraryID);
-export const scanDuplicates = (tags: TagCount[]): DupGroup[] =>
-  findDuplicates(tags);
+export const scanDuplicates = (tags: TagCount[]): Promise<DupGroup[]> =>
+  findDuplicatesAsync(tags, () => Zotero.Promise.delay(0) as Promise<void>);
 export const scanFormatting = (tags: TagCount[]) =>
   findFormatting(tags, cleanOptions());
 

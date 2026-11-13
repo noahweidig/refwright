@@ -83,6 +83,7 @@ tm-run = Scan
 tm-forget = Forget checked tags
 tm-need-ai = Choose an AI provider and key in refwright settings.
 tm-none = Nothing found
+tm-scanning = Scanning for duplicates…
 tm-working = Working…
 tm-fix = Fix
 tm-fix-all = Fix all

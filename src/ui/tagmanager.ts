@@ -12,7 +12,7 @@ interface Group {
 interface Ctrl {
   labels: Record<string, string>;
   load(): Promise<TC[]>;
-  duplicates(tags: TC[]): Group[];
+  duplicates(tags: TC[]): Promise<Group[]>;
   formatting(tags: TC[]): (TC & { fixed: string })[];
   estimate(tags: TC[]): { tags: number; requests: number; tokens: number };
   similar(tags: TC[]): Promise<Group[]>;
@@ -33,6 +33,26 @@ const sel = new Set<string>();
 let groups: Group[] = [];
 let fmt: (TC & { fixed: string })[] = [];
 let busy = "";
+let scanning = false;
+let scanSeq = 0;
+
+async function scanDup() {
+  const seq = ++scanSeq;
+  scanning = true;
+  groups = [];
+  draw();
+  try {
+    const r = await c.duplicates(tags);
+    if (seq !== scanSeq) return;
+    groups = r;
+  } catch (e: any) {
+    if (seq === scanSeq) status(String(e?.message ?? e));
+  }
+  if (seq === scanSeq) {
+    scanning = false;
+    draw();
+  }
+}
 
 const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
 const glyph = (n: string, cls = "") =>
@@ -47,10 +67,10 @@ const status = (s: string) => {
 
 async function reload() {
   tags = await c.load();
-  if (view === "dup") groups = c.duplicates(tags);
   if (view === "fmt") fmt = c.formatting(tags);
   sel.clear();
-  draw();
+  if (view === "dup") await scanDup();
+  else draw();
 }
 
 async function doMerge(from: string[], to: string) {
@@ -65,6 +85,17 @@ async function doMerge(from: string[], to: string) {
   }
   busy = "";
   await reload();
+}
+
+function loadingPane(): HTMLElement[] {
+  return [
+    h(
+      "div",
+      { class: "refwright-loading" },
+      h("progress", {}),
+      h("span", { class: "refwright-muted" }, L.scanning),
+    ),
+  ];
 }
 
 function allPane(): HTMLElement[] {
@@ -387,7 +418,9 @@ function draw(keepFocus = false) {
     view === "all"
       ? allPane()
       : view === "dup"
-        ? groupPane(groups)
+        ? scanning
+          ? loadingPane()
+          : groupPane(groups)
         : view === "fmt"
           ? fmtPane()
           : groupPane(groups, true);
@@ -422,10 +455,12 @@ window.addEventListener("load", async () => {
           onclick: async () => {
             view = v;
             sel.clear();
-            if (v === "dup") groups = c.duplicates(tags);
+            scanSeq++;
+            scanning = false;
             if (v === "fmt") fmt = c.formatting(tags);
             if (v === "sim") groups = [];
-            draw();
+            if (v === "dup") await scanDup();
+            else draw();
           },
         },
         t,
