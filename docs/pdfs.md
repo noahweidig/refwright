@@ -31,6 +31,7 @@ Open-access only. Sources run in this order and stop at the first valid PDF:
 3 items in parallel, 400 ms pause per host, one retry on network errors and 5xx, a 429 makes that source rest for a minute. Items with no open copy are skipped for a day. Runs over 60 items ask first. Cancel stops in-flight requests.
 
 !!! tip
-**Preview PDF Sources** shows which source would supply each PDF and changes nothing.
+
+    **Preview PDF Sources** shows which source would supply each PDF and changes nothing.
 
 Tags written: `fulltext:pdf-found`, `fulltext:pdf-missing`, `fulltext:check-needed`. **Tools > refwright > Export Missing PDFs** writes a CSV for interlibrary loan.

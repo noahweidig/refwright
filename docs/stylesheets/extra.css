@@ -1,0 +1,138 @@
+/* One brand blue (Zotero's accent, also the plugin icon) for header, links, hero and badge. */
+:root,
+[data-md-color-scheme="default"],
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #4072e5;
+  --md-primary-fg-color--light: #6a93ee;
+  --md-primary-fg-color--dark: #2f5ccb;
+  --md-primary-bg-color: #fff;
+  --md-accent-fg-color: #2f5ccb;
+  --rw-accent: #3563d4;
+}
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #8fb0ff;
+  --md-accent-fg-color: #a9c2ff;
+  --rw-accent: #8fb0ff;
+}
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #3563d4;
+}
+
+/* landing page hero */
+.rw-hero {
+  position: relative;
+  isolation: isolate;
+  text-align: center;
+  padding: 3.5rem 1rem 2.5rem;
+  margin: -0.5rem -0.8rem 2rem;
+  --rw-grid: rgb(20 25 40 / 6%);
+  --rw-glow: color-mix(in srgb, var(--md-primary-fg-color) 20%, transparent);
+}
+[data-md-color-scheme="slate"] .rw-hero {
+  --rw-grid: rgb(255 255 255 / 6%);
+  --rw-glow: color-mix(in srgb, var(--md-primary-fg-color) 42%, transparent);
+}
+.rw-hero::before,
+.rw-hero::after {
+  content: "";
+  position: absolute;
+  inset: -4rem 0 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.rw-hero::before {
+  background: radial-gradient(
+    60% 60% at 50% 4rem,
+    var(--rw-glow),
+    transparent 70%
+  );
+}
+.rw-hero::after {
+  background:
+    linear-gradient(var(--rw-grid) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, var(--rw-grid) 1px, transparent 1px) 0 0 / 64px 64px;
+  mask-image: radial-gradient(
+    ellipse 70% 80% at 50% 4rem,
+    black 10%,
+    transparent 75%
+  );
+}
+.rw-hero__badge {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  line-height: 0;
+  border-radius: 1.2rem;
+  box-shadow: 0 0.6rem 1.6rem rgb(64 114 229 / 38%);
+}
+.rw-hero__badge img {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 1.2rem;
+}
+.rw-hero h1 {
+  margin: 0.2rem 0 0.6rem;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--md-default-fg-color);
+}
+.rw-hero h1 .headerlink {
+  display: none;
+}
+.rw-accent {
+  color: var(--rw-accent);
+}
+.rw-hero p.rw-hero__lede {
+  max-width: 38rem;
+  margin: 0 auto 1.4rem;
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color--light);
+}
+.rw-hero .md-button {
+  margin: 0.25rem 0.2rem;
+}
+.rw-hero .md-button .twemoji {
+  margin-inline-end: 0.35rem;
+}
+.rw-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin: 1.8rem 0 0;
+}
+.rw-stats div {
+  min-width: 6rem;
+}
+.rw-stats strong {
+  display: block;
+  font-size: 1.7rem;
+  line-height: 1.1;
+  color: var(--rw-accent);
+}
+.rw-stats small {
+  color: var(--md-default-fg-color--light);
+}
+.rw-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin: 1.6rem auto 0;
+  max-width: 44rem;
+}
+.rw-chips span {
+  padding: 0.15rem 0.65rem;
+  font-size: 0.72rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 2rem;
+  color: var(--md-default-fg-color--light);
+  background: var(--md-default-bg-color);
+}
+
+/* screenshots: keep them inside the column and give them a Zotero-like edge */
+.md-typeset img[src*="img/"] {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+}
