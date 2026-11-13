@@ -95,10 +95,10 @@ function allPane(): HTMLElement[] {
     ren.textContent = sel.size > 1 ? L.merge : L.rename;
     if (sel.size === 1) target.value = [...sel][0];
   };
-  ren.onclick = () => doMerge([...sel], target.value);
+  ren.onclick = () => void doMerge([...sel], target.value);
   del.textContent = L.del;
   del.onclick = () => {
-    if (window.confirm(L.confirmDelete)) doMerge([...sel], "");
+    if (window.confirm(L.confirmDelete)) void doMerge([...sel], "");
   };
   const row = (t: TC) => {
     const r = h(
