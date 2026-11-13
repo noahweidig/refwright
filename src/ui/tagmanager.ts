@@ -12,7 +12,7 @@ interface Group {
 interface Ctrl {
   labels: Record<string, string>;
   load(): Promise<TC[]>;
-  duplicates(tags: TC[]): Group[];
+  duplicates(tags: TC[]): Promise<Group[]>;
   formatting(tags: TC[]): (TC & { fixed: string })[];
   estimate(tags: TC[]): { tags: number; requests: number; tokens: number };
   similar(tags: TC[]): Promise<Group[]>;
@@ -33,6 +33,33 @@ const sel = new Set<string>();
 let groups: Group[] = [];
 let fmt: (TC & { fixed: string })[] = [];
 let busy = "";
+let scanning = false;
+let scanSeq = 0;
+
+async function scanDup() {
+  const seq = ++scanSeq;
+  scanning = true;
+  groups = [];
+  draw();
+  try {
+    const r = await c.duplicates(tags);
+    if (seq !== scanSeq) return;
+    groups = r;
+  } catch (e: any) {
+    if (seq === scanSeq) status(String(e?.message ?? e));
+  }
+  if (seq === scanSeq) {
+    scanning = false;
+    draw();
+  }
+}
+
+const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
+const glyph = (n: string, cls = "") =>
+  h("span", {
+    class: `refwright-glyph ${cls}`,
+    style: { backgroundImage: `url(${Z(n)})` },
+  });
 
 const status = (s: string) => {
   $("status").textContent = s;
@@ -40,10 +67,10 @@ const status = (s: string) => {
 
 async function reload() {
   tags = await c.load();
-  if (view === "dup") groups = c.duplicates(tags);
   if (view === "fmt") fmt = c.formatting(tags);
   sel.clear();
-  draw();
+  if (view === "dup") await scanDup();
+  else draw();
 }
 
 async function doMerge(from: string[], to: string) {
@@ -60,6 +87,17 @@ async function doMerge(from: string[], to: string) {
   await reload();
 }
 
+function loadingPane(): HTMLElement[] {
+  return [
+    h(
+      "div",
+      { class: "refwright-loading" },
+      h("progress", {}),
+      h("span", { class: "refwright-muted" }, L.scanning),
+    ),
+  ];
+}
+
 function allPane(): HTMLElement[] {
   let list = tags.filter((t) => t.name.toLowerCase().includes(q));
   if (filt === "once") list = list.filter((t) => t.count === 1);
@@ -71,26 +109,95 @@ function allPane(): HTMLElement[] {
         ? a.count - b.count || a.name.localeCompare(b.name)
         : b.count - a.count || a.name.localeCompare(b.name),
   );
-  const chosen = [...sel];
   const target = h("input", {
     type: "text",
     placeholder: L.target,
-    value: chosen.length === 1 ? chosen[0] : "",
+    value: sel.size === 1 ? [...sel][0] : "",
     id: "target",
   }) as HTMLInputElement;
+  const count = h("span", { class: "refwright-muted refwright-selcount" });
+  const ren = h("button", { class: "primary" }) as HTMLButtonElement;
+  const del = h("button") as HTMLButtonElement;
+  const sync = () => {
+    count.textContent = sel.size
+      ? `${sel.size} / ${list.length}`
+      : `${list.length}`;
+    ren.disabled = del.disabled = !sel.size;
+    ren.textContent = sel.size > 1 ? L.merge : L.rename;
+    if (sel.size === 1) target.value = [...sel][0];
+  };
+  ren.onclick = () => void doMerge([...sel], target.value);
+  del.textContent = L.del;
+  del.onclick = () => {
+    if (window.confirm(L.confirmDelete)) void doMerge([...sel], "");
+  };
+  const row = (t: TC) => {
+    const r = h(
+      "div",
+      {
+        class: `refwright-tagrow${sel.has(t.name) ? " selected" : ""}`,
+        role: "option",
+        tabindex: "0",
+        "aria-selected": String(sel.has(t.name)),
+      },
+      glyph("tag"),
+      h("span", { class: "n" }, t.name),
+      h("span", { class: "c" }, String(t.count)),
+    );
+    const flip = () => {
+      if (sel.has(t.name)) sel.delete(t.name);
+      else sel.add(t.name);
+      r.classList.toggle("selected", sel.has(t.name));
+      r.setAttribute("aria-selected", String(sel.has(t.name)));
+      sync();
+    };
+    r.addEventListener("click", flip);
+    r.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault();
+        flip();
+      }
+    });
+    return r;
+  };
+  const listEl = h("div", {
+    class: "refwright-list",
+    role: "listbox",
+    "aria-multiselectable": "true",
+  });
+  let shown = 0;
+  const more = () => {
+    const next = list.slice(shown, shown + 120);
+    shown += next.length;
+    listEl.append(...next.map(row));
+  };
+  more();
+  listEl.addEventListener("scroll", () => {
+    if (
+      shown < list.length &&
+      listEl.scrollTop + listEl.clientHeight > listEl.scrollHeight - 300
+    )
+      more();
+  });
+  sync();
   return [
     h(
       "div",
       { class: "refwright-bar" },
-      h("input", {
-        type: "search",
-        placeholder: L.search,
-        value: q,
-        oninput: (e: Event) => {
-          q = (e.target as HTMLInputElement).value.toLowerCase();
-          draw(true);
-        },
-      }),
+      h(
+        "div",
+        { class: "refwright-search" },
+        glyph("search"),
+        h("input", {
+          type: "search",
+          placeholder: L.search,
+          value: q,
+          oninput: (e: Event) => {
+            q = (e.target as HTMLInputElement).value.toLowerCase();
+            draw(true);
+          },
+        }),
+      ),
       h(
         "select",
         {
@@ -122,49 +229,12 @@ function allPane(): HTMLElement[] {
     ),
     h(
       "div",
-      { class: "refwright-list" },
-      ...list.slice(0, 800).map((t) =>
-        h(
-          "label",
-          { class: "refwright-tagrow" },
-          h("input", {
-            type: "checkbox",
-            checked: sel.has(t.name),
-            onchange: (e: Event) => {
-              if ((e.target as HTMLInputElement).checked) sel.add(t.name);
-              else sel.delete(t.name);
-              draw(true);
-            },
-          }),
-          h("span", { class: "n" }, t.name),
-          h("span", { class: "c" }, String(t.count)),
-        ),
-      ),
+      { class: "refwright-colhead" },
+      h("span", { class: "n" }, L.allTags),
+      h("span", { class: "c" }, "#"),
     ),
-    h(
-      "div",
-      { class: "refwright-actions" },
-      target,
-      h(
-        "button",
-        {
-          disabled: !chosen.length,
-          onclick: () =>
-            doMerge(chosen, ($("target") as HTMLInputElement).value),
-        },
-        chosen.length > 1 ? L.merge : L.rename,
-      ),
-      h(
-        "button",
-        {
-          disabled: !chosen.length,
-          onclick: () => {
-            if (window.confirm(L.confirmDelete)) doMerge(chosen, "");
-          },
-        },
-        L.del,
-      ),
-    ),
+    listEl,
+    h("div", { class: "refwright-footer" }, count, target, ren, del),
   ];
 }
 
@@ -178,7 +248,7 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         { class: "refwright-bar" },
         h(
           "span",
-          { class: "refwright-muted" },
+          { class: "refwright-muted refwright-grow" },
           L.estimate
             .replace("{tags}", String(est.tags))
             .replace("{requests}", String(est.requests))
@@ -187,6 +257,7 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         h(
           "button",
           {
+            class: "primary",
             disabled: !!busy || !c.aiReady() || !est.tags,
             onclick: runSimilar,
           },
@@ -206,7 +277,9 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
     );
     if (!c.aiReady()) out.push(h("div", { class: "refwright-note" }, L.needAi));
   }
-  if (!gs.length) out.push(h("div", { class: "refwright-empty" }, L.none));
+  const body = h("div", { class: "refwright-body" });
+  out.push(body);
+  if (!gs.length) body.append(h("div", { class: "refwright-empty" }, L.none));
   gs.forEach((g, gi) => {
     const checks = new Map<string, HTMLInputElement>();
     const targetSel = h(
@@ -220,13 +293,15 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         ),
       ),
     ) as HTMLSelectElement;
-    out.push(
+    body.append(
       h(
         "div",
         { class: "refwright-card" },
         h(
           "div",
           { class: "refwright-head" },
+          glyph("tag"),
+          h("span", { class: "refwright-title" }, g.target),
           h("span", { class: "refwright-badge" }, g.reason),
           h("span", { class: "refwright-muted" }, `${g.tags.length}`),
         ),
@@ -256,6 +331,7 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
           h(
             "button",
             {
+              class: "primary",
               onclick: () =>
                 doMerge(
                   [...checks].filter(([, cb]) => cb.checked).map(([n]) => n),
@@ -290,11 +366,19 @@ function fmtPane(): HTMLElement[] {
   return [
     h(
       "div",
+      { class: "refwright-colhead" },
+      h("span", { class: "n" }, L.formatting),
+      h("span", { class: "c" }, "#"),
+      h("span", { class: "act" }),
+    ),
+    h(
+      "div",
       { class: "refwright-list" },
       ...fmt.map((t) =>
         h(
           "div",
           { class: "refwright-tagrow fix" },
+          glyph("tag"),
           h("span", { class: "n" }, t.name),
           h("span", { class: "arrow" }, "→"),
           h("span", { class: "n new" }, t.fixed || L.dropped),
@@ -309,10 +393,12 @@ function fmtPane(): HTMLElement[] {
     ),
     h(
       "div",
-      { class: "refwright-actions" },
+      { class: "refwright-footer" },
+      h("span", { class: "refwright-muted refwright-grow" }, `${fmt.length}`),
       h(
         "button",
         {
+          class: "primary",
           onclick: async () => {
             for (const t of fmt.filter((x) => x.fixed))
               await doMerge([t.name], t.fixed);
@@ -324,18 +410,18 @@ function fmtPane(): HTMLElement[] {
   ];
 }
 
+function paneFor(): HTMLElement[] {
+  if (view === "all") return allPane();
+  if (view === "fmt") return fmtPane();
+  if (view === "dup") return scanning ? loadingPane() : groupPane(groups);
+  return groupPane(groups, true);
+}
+
 function draw(keepFocus = false) {
   const pane = $("pane");
   const active = keepFocus ? document.activeElement : null;
   const pos = (active as HTMLInputElement | null)?.selectionStart;
-  const nodes =
-    view === "all"
-      ? allPane()
-      : view === "dup"
-        ? groupPane(groups)
-        : view === "fmt"
-          ? fmtPane()
-          : groupPane(groups, true);
+  const nodes = paneFor();
   pane.replaceChildren(...nodes);
   if (active && (active as HTMLInputElement).type === "search") {
     const s = pane.querySelector(
@@ -367,10 +453,12 @@ window.addEventListener("load", async () => {
           onclick: async () => {
             view = v;
             sel.clear();
-            if (v === "dup") groups = c.duplicates(tags);
+            scanSeq++;
+            scanning = false;
             if (v === "fmt") fmt = c.formatting(tags);
             if (v === "sim") groups = [];
-            draw();
+            if (v === "dup") await scanDup();
+            else draw();
           },
         },
         t,

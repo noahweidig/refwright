@@ -5,6 +5,7 @@ import { loadState, flushState } from "./zotero/state";
 import {
   injectStyles,
   registerColumn,
+  registerCitedColumn,
   registerMenus,
   registerPrefs,
 } from "./zotero/ui";
@@ -25,6 +26,7 @@ async function onStartup() {
   registerPrefs();
   registerEndpoints();
   await registerColumn();
+  await registerCitedColumn();
   registerSections();
   notifierID = Zotero.Notifier.registerObserver(
     {

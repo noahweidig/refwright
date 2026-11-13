@@ -83,6 +83,7 @@ tm-run = Scan
 tm-forget = Forget checked tags
 tm-need-ai = Choose an AI provider and key in refwright settings.
 tm-none = Nothing found
+tm-scanning = Scanning for duplicates…
 tm-working = Working…
 tm-fix = Fix
 tm-fix-all = Fix all
@@ -96,6 +97,8 @@ audit-op = Action
 audit-tag = Tag
 audit-item = Item
 export-title = Export missing PDFs
+summary-working = Writing summaries…
+summary-done = Summaries: { $made } added, { $skipped } skipped, { $failed } failed
 tags-suggesting = Looking for suggestions…
 tags-none-selected = Select items first
 tagged-none = No items carry the batch tag “{ $tag }”
@@ -141,3 +144,14 @@ task-preview = Preview PDF Sources
 task-retraction = Check for Retractions
 task-citation = Check Citation Metadata
 task-full = Full Check
+cites-working = Fetching citation counts…
+cites-done = Citation counts: { $updated } updated, { $missing } not found, { $nodoi } without a DOI
+related-hint = Ranks items in this library by similarity of title and abstract.
+related-looking = Embedding the library… { $done } / { $total }
+related-none = No similar items found
+related-find = Find related
+related-add-all = Link all
+related-count = { $count ->
+    [one] { $count } linked item
+   *[other] { $count } linked items
+}

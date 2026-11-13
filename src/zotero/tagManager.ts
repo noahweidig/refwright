@@ -1,5 +1,5 @@
 import {
-  findDuplicates,
+  findDuplicatesAsync,
   findFormatting,
   TagCount,
   DupGroup,
@@ -22,8 +22,8 @@ import { getPref } from "../utils/prefs";
 const g = (k: string) => getPref(k as any) as any;
 
 export const loadCounts = (libraryID: number) => tagCounts(libraryID);
-export const scanDuplicates = (tags: TagCount[]): DupGroup[] =>
-  findDuplicates(tags);
+export const scanDuplicates = (tags: TagCount[]): Promise<DupGroup[]> =>
+  findDuplicatesAsync(tags, () => Zotero.Promise.delay(0) as Promise<void>);
 export const scanFormatting = (tags: TagCount[]) =>
   findFormatting(tags, cleanOptions());
 
@@ -44,6 +44,34 @@ export function estimateScan(tags: TagCount[]) {
       estimateTokens(JSON.stringify(batch.map((t) => [t.name, t.count]))) +
       300 * reqs,
   };
+}
+
+/** JSON mode first; if the reply is unusable, retry once in plain mode with more room. */
+async function askMerge(
+  batch: TagCount[],
+  targets: string[],
+  signal: AbortSignal,
+) {
+  const user = mergeUserPrompt(batch, targets);
+  const room = Math.max(Number(g("ai.maxTokens")) || 0, 4096);
+  let last = "";
+  for (const jsonMode of [true, false]) {
+    try {
+      const opts = { jsonMode, maxTokens: room * (jsonMode ? 1 : 2) };
+      last = await chat(MERGE_SYSTEM, user, signal, opts); // NOSONAR: retry only after a failure
+      return parseMergeReply(last);
+    } catch (e: any) {
+      if (signal.aborted) throw e;
+      if (!jsonMode)
+        throw new Error(
+          last.trim()
+            ? `${e.message}. Reply began: ${last.trim().slice(0, 120)}`
+            : `${e.message}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
+          { cause: e },
+        );
+    }
+  }
+  return [];
 }
 
 /** Similar meaning (AI): sends tag names and counts only. */
@@ -67,12 +95,8 @@ export async function scanSimilar(
   for (let i = 0; i < reqs && i * per < usable.length; i++) {
     if (signal.aborted) throw new Error("Cancelled");
     const batch = usable.slice(i * per, (i + 1) * per);
-    const reply = await chat(
-      MERGE_SYSTEM,
-      mergeUserPrompt(batch, targets),
-      signal,
-    );
-    for (const gr of parseMergeReply(reply)) {
+    const replies = await askMerge(batch, targets, signal); // NOSONAR: sequential (rate limits)
+    for (const gr of replies) {
       const members = [gr.target, ...gr.merge]
         .map((n) => byName.get(n))
         .filter(Boolean) as TagCount[];
@@ -121,7 +145,7 @@ export async function mergeTags(
   rec.hadTo = [...hadTo];
   await Zotero.DB.executeTransaction(async () => {
     for (const f of from.filter((x) => x !== to)) {
-      const items = await itemsOf(libraryID, f);
+      const items = await itemsOf(libraryID, f); // NOSONAR: inside one DB transaction
       rec.fromItems[f] = items.map((i) => i.id);
       for (const item of items) {
         const t = item.getTags().find((x) => x.tag === f);

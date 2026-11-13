@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- New: "Cited" column with OpenAlex citation counts (sortable). Fill it from the item menu (Update Citation Counts) or Tools (whole library). Counts are cached locally and need a DOI.
+- New: "Related (AI)" item pane section. Embeds the library once (cached, resumable) and suggests similar items; click a suggestion to link both items in Zotero's Related field. Uses the embedding provider from settings.
+- Tag Manager: the duplicate scan no longer freezes the window. It runs in slices with a loading bar, and typo matching no longer compares every pair of tags.
+- New: Summarize with AI (item context menu). Adds a one-paragraph child note titled "refwright summary" from the abstract, or PDF text when there is no abstract. Items that already have one are skipped.
+- Tag Manager: Similar Meaning scan asks for JSON mode, retries once in plain mode with more output room, salvages truncated replies, and shows what the model returned when parsing fails.
+- Tag Manager: All Tags scrolls (list height is bounded) and renders 120 rows at a time, so selecting and searching stay fast on large libraries.
+- Tag Manager: layout follows Zotero's collection pane, toolbar and item tree (selectable table rows with tag icons, bottom action bar).
+
 ## 0.1.4
 
 - Icons now come from Zotero's own icon set (`attachment`, `tag`, `folder`, `new-collection`), so they match the rest of Zotero and follow light and dark themes with no extra files.

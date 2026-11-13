@@ -8,6 +8,7 @@ import { hasUsablePdf } from "./library";
 import { invalidateRouter, routeItems, ItemRoute } from "./routing";
 import { S, saveState } from "./state";
 import { suggestTags, TagChoice } from "./tagging";
+import { linkRelated, relatedFor, RelatedHit } from "./related";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
@@ -307,6 +308,89 @@ function drawTags(body: HTMLElement, item: Zotero.Item) {
   body.replaceChildren(el(doc, "div", "refwright-pane", ...kids));
 }
 
+/* ========================= Related ========================= */
+const relState = new WeakMap<
+  HTMLElement,
+  { busy: string; list: RelatedHit[] | null; err?: string }
+>();
+
+function drawRelated(body: HTMLElement, item: Zotero.Item) {
+  const doc = body.ownerDocument!;
+  const st = relState.get(body) ?? { busy: "", list: null };
+  relState.set(body, st);
+  const redraw = () => drawRelated(body, item);
+  const head = row(
+    doc,
+    "summary",
+    glyph(doc, "search", "big"),
+    el(
+      doc,
+      "div",
+      "text",
+      el(
+        doc,
+        "div",
+        "title",
+        getString("related-count", {
+          args: { count: item.relatedItems.length },
+        }),
+      ),
+      el(
+        doc,
+        "div",
+        "sub",
+        st.err ?? (st.busy || (st.list ? "" : getString("related-hint"))),
+      ),
+    ),
+  );
+  const run = async () => {
+    st.busy = getString("related-looking", { args: { done: 0, total: 0 } });
+    st.err = undefined;
+    redraw();
+    try {
+      st.list = await relatedFor(item, new AbortController().signal, (d, t) => {
+        st.busy = getString("related-looking", { args: { done: d, total: t } });
+        redraw();
+      });
+    } catch (e: any) {
+      st.err = String(e?.message ?? e);
+    } finally {
+      st.busy = "";
+      redraw();
+    }
+  };
+  const kids: Kids = [
+    head,
+    row(
+      doc,
+      "actions",
+      button(doc, getString("related-find"), run, { glyph: "search" }),
+    ),
+  ];
+  if (st.list) {
+    const area = row(doc, "chips");
+    if (!st.list.length)
+      area.append(
+        el(doc, "span", "refwright-muted", getString("related-none")),
+      );
+    for (const h of st.list) {
+      area.append(
+        chip(doc, (h.item.getField("title") as string) || "(untitled)", {
+          plus: true,
+          title: `${Math.round(h.score * 100)}%`,
+          onClick: async () => {
+            await linkRelated(item, h.item);
+            st.list = st.list!.filter((x) => x !== h);
+            redraw();
+          },
+        }),
+      );
+    }
+    kids.push(area);
+  }
+  body.replaceChildren(el(doc, "div", "refwright-pane", ...kids));
+}
+
 /* ========================= Collections ========================= */
 const collState = new WeakMap<
   HTMLElement,
@@ -484,6 +568,10 @@ export function registerSections() {
   Zotero.ItemPaneManager.registerSection({
     ...common("tags", "tags", "tag"),
     onRender: ({ body, item }: any) => drawTags(body, item),
+  } as any);
+  Zotero.ItemPaneManager.registerSection({
+    ...common("related", "related", "search"),
+    onRender: ({ body, item }: any) => drawRelated(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({
     ...common("collections", "coll", "folder"),

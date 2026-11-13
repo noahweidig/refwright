@@ -2,6 +2,8 @@ import { startRun, Task } from "./engine";
 import { suggestTags, applyTags, ItemSuggestion } from "./tagging";
 import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
+import { summarizeItems } from "./summarize";
+import { updateCitations } from "./citations";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -212,6 +214,90 @@ export const suggestTagsAction = (items: Zotero.Item[], ai: boolean) =>
 export const fileAction = (items: Zotero.Item[]) =>
   reviewAction(items, { tags: false, collections: true });
 
+async function _summarizeAction(input: Zotero.Item[]) {
+  const items = regularItems(input);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  if (!aiReady()) return toast(getString("tm-need-ai"), "error");
+  if (items.length > 20) {
+    const ok = Services.prompt.confirm(
+      Zotero.getMainWindow() as any,
+      getString("progress-title"),
+      getString("progress-confirm-many", { args: { count: items.length } }),
+    );
+    if (!ok) return;
+  }
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("summary-working"),
+      type: "default",
+      progress: 5,
+    })
+    .show();
+  try {
+    const r = await summarizeItems(
+      items,
+      (d, t) => pw.changeLine({ progress: 5 + (90 * d) / t }),
+      abort.signal,
+    );
+    pw.close();
+    const text = getString("summary-done", {
+      args: { made: r.made, skipped: r.skipped, failed: r.failed },
+    });
+    toast(
+      r.error ? `${text}: ${r.error}` : text,
+      r.failed ? "error" : "success",
+    );
+  } catch (e: any) {
+    pw.close();
+    toast(String(e?.message ?? e), "error");
+  }
+}
+
+async function _citationsAction(input: Zotero.Item[]) {
+  const items = regularItems(input);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("cites-working"),
+      type: "default",
+      progress: 5,
+    })
+    .show();
+  try {
+    const r = await updateCitations(
+      items,
+      (d, t) => pw.changeLine({ progress: 5 + (90 * d) / Math.max(1, t) }),
+      abort.signal,
+    );
+    pw.close();
+    toast(
+      getString("cites-done", {
+        args: { updated: r.updated, missing: r.notFound, nodoi: r.noDoi },
+      }),
+      "success",
+    );
+  } catch (e: any) {
+    pw.close();
+    toast(String(e?.message ?? e), "error");
+  }
+}
+
+async function _citationsAllAction() {
+  const all = (await Zotero.Items.getAll(
+    currentLibraryID(),
+    true,
+  )) as Zotero.Item[];
+  return citationsAction(all.filter((i) => i.isRegularItem() && !i.deleted));
+}
+
 async function _undoFilingAction() {
   toast(
     (await undoFiling())
@@ -265,6 +351,7 @@ function _openTagManager() {
       undo: getString("tm-undo"),
       undone: getString("tm-undone"),
       nothing: getString("tm-nothing"),
+      scanning: getString("tm-scanning"),
     },
     load: () => TM.loadCounts(libraryID),
     duplicates: (t: any) => TM.scanDuplicates(t),
@@ -358,6 +445,9 @@ function _showAudit() {
 export const runTask = guard(_runTask);
 export const runTagged = guard(_runTagged);
 export const reviewAction = guard(_reviewAction);
+export const citationsAction = guard(_citationsAction);
+export const citationsAllAction = guard(_citationsAllAction);
+export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
 export const collectionTagAction = guard(_collectionTagAction);
 export const exportMissing = guard(_exportMissing);

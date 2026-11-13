@@ -33,6 +33,7 @@ export interface State {
   tmChecked: Record<string, number>;
   tmUndo: TagUndo[];
   embeddings: Record<string, { sig: string; vec: number[] }>;
+  cites: Record<string, { n: number; at: number }>; // libraryID/itemKey
 }
 const fresh = (): State => ({
   misses: {},
@@ -43,6 +44,7 @@ const fresh = (): State => ({
   tmChecked: {},
   tmUndo: [],
   embeddings: {},
+  cites: {},
 });
 
 let state: State = fresh();

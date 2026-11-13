@@ -228,87 +228,307 @@
   height: 3px;
 }
 
-/* tag manager */
-.refwright-side {
-  width: 188px;
-  background: var(--color-sidepane);
+/* tag manager: follows Zotero's collection pane (sidebar), toolbar and item tree (table) */
+.refwright-tm {
+  --tm-row: 24px;
+  background: var(--material-background, var(--color-background));
+}
+.refwright-tm #refwright-tagmanager-dialog {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.refwright-tm .refwright-split {
+  flex: 1 1 0;
+  min-height: 0;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+.refwright-tm .refwright-side {
+  width: 180px;
+  flex: none;
+  box-sizing: border-box;
+  background: var(--material-sidepane, var(--color-sidepane));
   border-inline-end: 1px solid var(--color-panedivider);
   display: flex;
   flex-direction: column;
-  padding: 8px;
-  gap: 2px;
+  padding: 6px;
+  gap: 1px;
 }
-.refwright-nav {
+.refwright-tm #nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.refwright-tm .refwright-nav {
   all: unset;
-  padding: 4px 10px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 8px;
   border-radius: var(--refwright-radius);
   cursor: default;
 }
-.refwright-nav:hover {
+.refwright-tm .refwright-nav:hover {
   background: var(--fill-quinary);
 }
-.refwright-nav.active {
+.refwright-tm .refwright-nav:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
+}
+.refwright-tm .refwright-nav.active {
   background: var(--accent-blue);
   color: var(--accent-white);
 }
-.refwright-side-foot {
+.refwright-tm .refwright-side-foot {
   margin-top: auto;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 6px;
+  padding: 6px 2px 0;
+  border-top: 1px solid var(--color-panedivider);
 }
-.refwright-main {
+.refwright-tm .refwright-side-foot button {
+  margin: 0;
+}
+.refwright-tm .refwright-side-foot #status {
+  min-height: 1.3em;
+  overflow-wrap: anywhere;
+}
+.refwright-tm .refwright-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 0;
 }
-.refwright-main > .refwright-bar {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+
+/* toolbar */
+.refwright-tm .refwright-bar {
+  flex: none;
+  background: var(--material-toolbar, var(--color-toolbar));
+  border-bottom: 1px solid var(--color-panedivider);
+  min-height: 36px;
+  box-sizing: border-box;
 }
-.refwright-main > .refwright-card {
-  margin: 8px 12px;
+.refwright-tm .refwright-bar select {
+  margin: 0;
 }
-.refwright-list {
-  padding: 4px 0;
+.refwright-tm .refwright-grow {
+  flex: 1;
+  min-width: 0;
 }
-.refwright-tagrow {
+.refwright-search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.refwright-search .refwright-glyph {
+  position: absolute;
+  inset-inline-start: 6px;
+  width: 14px;
+  height: 14px;
+  color: var(--fill-secondary);
+  pointer-events: none;
+}
+.refwright-search input[type="search"] {
+  width: 100%;
+  margin: 0;
+  padding-inline-start: 26px;
+}
+
+/* table, like the item tree */
+.refwright-colhead {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 2px 12px;
+  height: var(--tm-row);
+  padding: 0 12px;
+  color: var(--fill-secondary);
+  background: var(--material-background, var(--color-background));
+  border-bottom: 1px solid var(--color-border);
 }
-.refwright-tagrow:hover {
+.refwright-colhead .n {
+  flex: 1;
+}
+.refwright-colhead .c,
+.refwright-tm .refwright-tagrow .c {
+  min-width: 36px;
+  text-align: end;
+}
+.refwright-colhead .act {
+  width: 48px;
+}
+.refwright-tm .refwright-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0;
+}
+.refwright-tm .refwright-tagrow {
+  display: flex;
+  align-items: center;
+  height: var(--tm-row);
+  box-sizing: border-box;
+  padding: 0 12px;
+  gap: 8px;
+  cursor: default;
+  user-select: none;
+}
+.refwright-tm .refwright-tagrow:nth-child(even) {
+  background: var(--color-stripe, var(--fill-senary));
+}
+.refwright-tm .refwright-tagrow:hover {
   background: var(--fill-quinary);
 }
-.refwright-tagrow .n {
+.refwright-tm .refwright-tagrow .refwright-glyph {
+  width: 14px;
+  height: 14px;
+  color: var(--fill-secondary);
+}
+.refwright-tm .refwright-tagrow.selected {
+  background: var(--accent-blue);
+  color: var(--accent-white);
+}
+.refwright-tm .refwright-tagrow.selected .refwright-glyph,
+.refwright-tm .refwright-tagrow.selected .c {
+  color: var(--accent-white);
+}
+.refwright-tm .refwright-tagrow:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -2px;
+}
+.refwright-tm .refwright-tagrow.fix {
+  padding-inline-end: 8px;
+}
+.refwright-tm .refwright-tagrow.fix button {
+  margin: 0;
+  min-height: 20px;
+  width: 48px;
+}
+.refwright-tm .refwright-tagrow .n {
   flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.refwright-tagrow .n.new {
-  color: var(--accent-green);
-}
-.refwright-tagrow .c {
-  color: var(--fill-secondary);
-  font-variant-numeric: tabular-nums;
-  min-width: 28px;
-  text-align: end;
-}
-.refwright-tagrow.fix .n {
+.refwright-tm .refwright-tagrow.fix .n {
   flex: 0 1 40%;
 }
-.refwright-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 8px 12px;
+.refwright-tm .refwright-tagrow .n.new {
+  color: var(--accent-green);
 }
-.refwright-actions input {
+.refwright-tm .refwright-tagrow .c {
+  color: var(--fill-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.refwright-tm .refwright-tagrow .arrow {
+  color: var(--fill-tertiary);
+}
+
+/* grouped suggestions */
+.refwright-tm .refwright-body {
   flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 12px;
 }
-.refwright-card .refwright-actions {
+.refwright-tm .refwright-card {
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  background: var(--material-background, var(--color-background));
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.refwright-tm .refwright-head .refwright-glyph {
+  width: 14px;
+  height: 14px;
+  color: var(--fill-secondary);
+}
+.refwright-tm .refwright-head .refwright-title {
+  flex: 1;
+  min-width: 0;
+}
+.refwright-tm .refwright-head .refwright-badge {
+  font-weight: normal;
+}
+.refwright-tm .refwright-chips {
+  margin-top: 8px;
+}
+.refwright-tm .refwright-card .refwright-actions {
   padding: 8px 0 0;
+  margin-top: 8px;
+  border-top: 1px solid var(--fill-senary);
+}
+.refwright-tm .refwright-card .refwright-actions select {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.refwright-tm .refwright-card .refwright-actions button {
+  margin: 0;
+}
+.refwright-tm .refwright-note {
+  flex: none;
+  margin: 8px 12px 0;
+}
+.refwright-tm .refwright-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.refwright-loading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.refwright-loading progress {
+  width: 220px;
+}
+
+/* bottom bar */
+.refwright-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  background: var(--material-toolbar, var(--color-toolbar));
+  border-top: 1px solid var(--color-panedivider);
+}
+.refwright-footer input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.refwright-footer button {
+  margin: 0;
+}
+.refwright-selcount {
+  min-width: 52px;
+  font-variant-numeric: tabular-nums;
+}
+.refwright-tm button.primary:not([disabled]) {
+  background-color: var(--accent-blue);
+  color: var(--accent-white);
+  border-color: transparent;
+}
+.refwright-tm button.primary:not([disabled]):hover {
+  background-color: color-mix(in srgb, var(--accent-blue) 85%, black);
 }
 
 /* item pane sections */
@@ -456,8 +676,8 @@
 .refwright-cell.ok {
   color: var(--fill-secondary);
 }
-#nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+
+.refwright-cited {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
 }
