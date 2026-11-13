@@ -4,6 +4,11 @@ icon: lucide/history
 
 # Changelog
 
+## 0.2.1
+
+- Related (AI) now defaults to offline similarity (title, abstract, tags and venue compared locally), so it works with no key and with providers that have no embeddings endpoint, such as Groq. Switch to embeddings under Settings > Related items; if the provider fails, refwright falls back to offline matches and says why.
+- Item pane sections now use Zotero's own section icons (Related, Attachments, Tags, Libraries and Collections), in both the section header and the side nav. The Tag Manager search box uses Zotero's magnifier. The previous Related icon name did not exist, which left it blank.
+
 ## 0.2.0
 
 - New: "Cited" column with OpenAlex citation counts (sortable). Fill it from the item menu (Update Citation Counts) or Tools (whole library). Counts are cached locally and need a DOI.

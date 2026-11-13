@@ -115,6 +115,7 @@ declare namespace _ZoteroTypes {
       "route.minConfidence": number;
       "route.perPaper": number;
       "route.removeInbox": boolean;
+      "related.mode": string;
       "tm.perRequest": number;
       "tm.requests": number;
       "ui.column": boolean;

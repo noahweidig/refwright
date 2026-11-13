@@ -54,7 +54,8 @@ async function scanDup() {
   }
 }
 
-const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
+const Z = (n: string) =>
+  n.startsWith("chrome://") ? n : `chrome://zotero/skin/16/universal/${n}.svg`;
 const glyph = (n: string, cls = "") =>
   h("span", {
     class: `refwright-glyph ${cls}`,
@@ -187,7 +188,7 @@ function allPane(): HTMLElement[] {
       h(
         "div",
         { class: "refwright-search" },
-        glyph("search"),
+        glyph("magnifier"),
         h("input", {
           type: "search",
           placeholder: L.search,

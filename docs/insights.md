@@ -34,7 +34,16 @@ Counts are looked up by DOI, 50 at a time, and cached on your computer. Items wi
 The **Related (AI)** section of the item pane suggests other items in the same library that cover similar ground.
 
 1. Select an item and click **Find related**.
-2. The first run embeds the title and the start of the abstract of every item in the library with your embedding provider. This takes a while on large libraries and can hit free-tier rate limits. Progress is saved, so a stopped run resumes.
-3. Click a suggestion to link both items in Zotero's own **Related** field. Items that are already linked are not suggested.
+2. Click a suggestion to link both items in Zotero's own **Related** field. Items that are already linked are not suggested. Hovering a suggestion shows its similarity score.
 
-Embeddings are cached in the plugin's state file in your profile. Hovering a suggestion shows its similarity score. Choose the embedding provider under [AI providers](providers.md); not every provider offers embeddings.
+Choose how similarity is measured under **Settings > Related items**:
+
+=== "Offline (default)"
+
+    Compares the title (weighted double), abstract, tags and journal of every item in the library on your computer. No key, nothing leaves your machine, and it works with any provider setup, including ones with no embeddings endpoint such as Groq.
+
+=== "Embeddings"
+
+    Embeds the title and the start of the abstract of every item with your embedding provider. The first run takes a while on large libraries and can hit free-tier rate limits; progress is saved, so a stopped run resumes. If the provider fails, refwright shows offline matches and says why. Embeddings are cached in the plugin's state file in your profile.
+
+Choose the embedding provider under [AI providers](providers.md); not every provider offers embeddings.
