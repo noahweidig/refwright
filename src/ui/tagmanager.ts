@@ -10,7 +10,6 @@ interface Group {
   target: string;
 }
 interface Ctrl {
-  searchIcon: string;
   labels: Record<string, string>;
   load(): Promise<TC[]>;
   duplicates(tags: TC[]): Promise<Group[]>;
@@ -189,7 +188,7 @@ function allPane(): HTMLElement[] {
       h(
         "div",
         { class: "refwright-search" },
-        c.searchIcon ? glyph(c.searchIcon) : null,
+        glyph("magnifier"),
         h("input", {
           type: "search",
           placeholder: L.search,

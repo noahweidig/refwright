@@ -8,7 +8,6 @@ import { hasUsablePdf } from "./library";
 import { invalidateRouter, routeItems, ItemRoute } from "./routing";
 import { S, saveState } from "./state";
 import { suggestTags, TagChoice } from "./tagging";
-import { icons } from "./icons";
 import { linkRelated, relatedFor, RelatedHit } from "./related";
 
 const NS = "http://www.w3.org/1999/xhtml";
@@ -324,7 +323,7 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, icons.related, "big"),
+    glyph(doc, "related", "big"),
     el(
       doc,
       "div",
@@ -369,7 +368,7 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
     row(
       doc,
       "actions",
-      button(doc, getString("related-find"), run, { glyph: icons.related }),
+      button(doc, getString("related-find"), run, { glyph: "related" }),
     ),
   ];
   if (st.list) {
@@ -553,11 +552,11 @@ export function registerSections() {
     pluginID,
     header: {
       l10nID: getLocaleID(`section-${key}-header` as any),
-      icon: Z(glyphName),
+      icon: `chrome://zotero/skin/itempane/16/${glyphName}.svg`,
     },
     sidenav: {
       l10nID: getLocaleID(`section-${key}-sidenav` as any),
-      icon: Z(glyphName),
+      icon: `chrome://zotero/skin/itempane/20/${glyphName}.svg`,
     },
     onItemChange: ({ item, setEnabled }: any) => {
       setEnabled(!!item?.isRegularItem());
@@ -565,21 +564,21 @@ export function registerSections() {
     },
   });
   Zotero.ItemPaneManager.registerSection({
-    ...common("pdf", "pdf", "attachment"),
+    ...common("pdf", "pdf", "attachments"),
     onRender: ({ body, item }: any) => void drawPdf(body, item),
     onAsyncRender: async ({ body, item }: any) =>
       drawPdf(body, item, await hasUsablePdf(item)),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("tags", "tags", "tag"),
+    ...common("tags", "tags", "tags"),
     onRender: ({ body, item }: any) => drawTags(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("related", "related", icons.related),
+    ...common("related", "related", "related"),
     onRender: ({ body, item }: any) => drawRelated(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("collections", "coll", "folder"),
+    ...common("collections", "coll", "libraries-collections"),
     onRender: ({ body, item }: any) => drawColl(body, item),
   } as any);
 }

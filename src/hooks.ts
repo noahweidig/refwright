@@ -10,7 +10,6 @@ import {
   registerPrefs,
 } from "./zotero/ui";
 import { registerSections } from "./zotero/sections";
-import { resolveIcons } from "./zotero/icons";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 
@@ -28,7 +27,6 @@ async function onStartup() {
   registerEndpoints();
   await registerColumn();
   await registerCitedColumn();
-  await resolveIcons();
   registerSections();
   notifierID = Zotero.Notifier.registerObserver(
     {
