@@ -22,3 +22,10 @@
 #zotero-prefpane-refwright .refwright-check {
   margin-block: 1px;
 }
+#zotero-prefpane-refwright #refwright-ai-result,
+#zotero-prefpane-refwright #refwright-wb-result {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  flex: 1;
+}

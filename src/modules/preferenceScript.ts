@@ -10,6 +10,11 @@ export async function registerPrefsScripts(win: Window) {
   const $ = <T extends HTMLElement = HTMLInputElement>(id: string) =>
     win.document.getElementById(id) as T | null;
   const g = (k: string) => getPref(k as any) as any;
+  /** text content wraps; a value attribute does not and stretches the whole pane sideways */
+  const show = (el: HTMLElement, text: string) => {
+    el.removeAttribute("value");
+    el.textContent = text;
+  };
   const s = (k: string, v: any) => setPref(k as any, v);
 
   const bindProvider = () => {
@@ -50,16 +55,13 @@ export async function registerPrefsScripts(win: Window) {
 
   $("refwright-ai-test")?.addEventListener("click", async () => {
     const out = $<HTMLElement>("refwright-ai-result")!;
-    out.setAttribute("value", "…");
+    show(out, "…");
     try {
       const models = await listModels(String(g("ai.provider")));
-      out.setAttribute(
-        "value",
-        getString("ai-ok", { args: { count: models.length } }),
-      );
+      show(out, getString("ai-ok", { args: { count: models.length } }));
     } catch (e: any) {
-      out.setAttribute(
-        "value",
+      show(
+        out,
         getString("ai-fail", { args: { message: String(e?.message ?? e) } }),
       );
     }
@@ -91,9 +93,9 @@ export async function registerPrefsScripts(win: Window) {
         headers: { Authorization: `Bearer ${g("writeBackToken")}` },
         timeout: 5000,
       });
-      out.setAttribute("value", r.status === 200 ? "OK" : `HTTP ${r.status}`);
+      show(out, r.status === 200 ? "OK" : `HTTP ${r.status}`);
     } catch (e: any) {
-      out.setAttribute("value", String(e?.message ?? e));
+      show(out, String(e?.message ?? e));
     }
   });
 }

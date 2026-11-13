@@ -4,6 +4,11 @@ icon: lucide/history
 
 # Changelog
 
+## 0.4.4
+
+- Fix refwright on Windows and Linux: web APIs such as `AbortController`, `URL` and timers came from Zotero's hidden window, which only exists on macOS, so Test connection and every network call failed there with `NS_ERROR_FAILURE [nsIAppShellService.hiddenDOMWindow]`. They now come from the hidden window when it exists, else Zotero's main window.
+- Settings: result text next to Test connection (AI and write-back) wraps instead of stretching the pane sideways, which cut off labels on the left.
+
 ## 0.4.3
 
 - New: **Suggest New Collections with AI…** (Tools). The same offline grouping, then your AI provider names each group. It sends only the titles of up to 6 papers per group and your collection names, in one request per 8 groups. Groups the model calls incoherent are dropped, and a group that belongs in an existing collection can be pointed at it. If the AI step fails, the offline names are shown with the reason.
