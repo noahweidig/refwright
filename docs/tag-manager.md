@@ -35,6 +35,21 @@ A group disappears from the list as soon as you merge it, and groups drop out wh
 
     Status tags such as `fulltext:pdf-missing` are never listed, merged or deleted.
 
+## Keyboard shortcuts
+
+Use **Cmd** on macOS and **Ctrl** on Windows and Linux. In All Tags:
+
+| Keys                | Does                                                                  |
+| ------------------- | --------------------------------------------------------------------- |
+| Cmd/Ctrl + A        | selects every tag in the list, after search and filter                |
+| Cmd/Ctrl + Z        | undoes the last change (the same as **Undo last change**)             |
+| Cmd/Ctrl + F        | focuses the search box                                                |
+| Delete or Backspace | deletes the selected tags, after a confirmation                       |
+| Enter               | in the name box, renames one selected tag or merges several into it   |
+| Esc                 | closes the window                                                     |
+
+Inside a text box, Cmd/Ctrl + A and Cmd/Ctrl + Z keep their normal text behavior.
+
 ## Scans
 
 **Duplicates** opens at once and shows a progress bar while it scans, so Zotero stays responsive even on libraries with thousands of tags.
