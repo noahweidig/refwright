@@ -52,8 +52,8 @@ export async function findDuplicatesAsync(
 }
 
 class Groups {
-  private parent = new Map<string, string>();
-  private reason = new Map<string, DupReason>();
+  private readonly parent = new Map<string, string>();
+  private readonly reason = new Map<string, DupReason>();
   constructor(names: string[]) {
     for (const n of names) this.parent.set(n, n);
   }
