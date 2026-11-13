@@ -6,12 +6,14 @@ import {
   injectStyles,
   registerColumn,
   registerCitedColumn,
+  registerOaColumn,
   registerMenus,
   registerPrefs,
 } from "./zotero/ui";
 import { registerSections } from "./zotero/sections";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
+import { onItemsAdded } from "./zotero/inbox";
 
 let notifierID: string | undefined;
 
@@ -27,10 +29,11 @@ async function onStartup() {
   registerEndpoints();
   await registerColumn();
   await registerCitedColumn();
+  await registerOaColumn();
   registerSections();
   notifierID = Zotero.Notifier.registerObserver(
     {
-      notify: async (event: string, type: string) => {
+      notify: async (event: string, type: string, ids: (string | number)[]) => {
         if (!addon?.data.alive) return;
         if (
           ["item", "collection", "collection-item", "item-tag"].includes(
@@ -39,7 +42,7 @@ async function onStartup() {
           type === "tag"
         )
           invalidateRouter();
-        void event;
+        if (event === "add" && type === "item") onItemsAdded(ids.map(Number));
       },
     },
     ["item", "collection", "collection-item", "item-tag", "tag"],

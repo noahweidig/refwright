@@ -20,14 +20,14 @@ Right-click items, then **refwright > Summarize with AI…**.
 
     Summaries are written by a language model from the text it is given. Read the abstract before you rely on one.
 
-## Cited column
+## Cited and OA columns
 
-The **Cited** column shows how many works cite each item, from [OpenAlex](https://openalex.org). It sorts numerically.
+The **Cited** column shows how many works cite each item, and the **OA** column shows its open-access status (gold, green, hybrid, bronze, diamond or closed), both from [OpenAlex](https://openalex.org). Both sort.
 
-1. Show the column: right-click the item list header and tick **Cited** (restart Zotero once after installing).
-2. Fill it: right-click items and choose **refwright > Update Citation Counts**, or use **Tools > refwright > Update Citation Counts for Library**.
+1. Show the columns: right-click the item list header and tick **Cited** and **OA** (restart Zotero once after installing).
+2. Fill them: right-click items and choose **refwright > Update Citations and Open Access**, or use **Tools > refwright > Update Citations and Open Access for Library**.
 
-Counts are looked up by DOI, 50 at a time, and cached on your computer. Items without a DOI stay blank, and the result message tells you how many were not found. Counts do not change until you update them again.
+Both come from the same request, looked up by DOI, 50 at a time, and cached on your computer. Items without a DOI stay blank, and the result message tells you how many were not found. Values do not change until you update them again.
 
 ## Related (AI)
 

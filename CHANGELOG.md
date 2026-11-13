@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0
+
+- New: **OA** column with each paper's open-access status from OpenAlex (gold, green, hybrid, bronze, diamond, closed). It is filled by the same update as the Cited column, which is now **Update Citations and Open Access** in the item menu and the Tools menu.
+- New: **Find Near-Duplicate Items…** (Tools). Finds what Zotero's duplicate finder misses, such as a preprint and its published version, using offline title, abstract, author and year similarity. A review window lets you choose the item to keep in each group and merge the groups you tick with Zotero's own merge. Nothing merges until you confirm.
+- New: **Suggest New Collections…** (Tools). Groups papers that are in no collection by topic and proposes named collections, which you can rename, tick and create.
+- New: **New items** queue (off by default, in settings). Items you add are queued, their PDFs are looked up, and **Review New Items…** (Tools) shows tag and collection suggestions for all of them in one window.
+
 ## 0.3.5
 
 - Find Related Items window: scrolling now works. The window no longer uses the native dialog wrapper; it is a plain window with its own **Cancel** and **Link selected** buttons in a footer that always stays visible. Esc closes it.

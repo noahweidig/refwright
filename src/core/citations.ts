@@ -14,15 +14,26 @@ export const usableDoi = (d: string) => {
 
 export function citationUrl(dois: string[], email: string): string {
   const f = dois.map((d) => encodeURIComponent(normDoi(d))).join("|");
-  return `https://api.openalex.org/works?filter=doi:${f}&select=doi,cited_by_count&per-page=${dois.length}&mailto=${encodeURIComponent(email)}`;
+  return `https://api.openalex.org/works?filter=doi:${f}&select=doi,cited_by_count,open_access&per-page=${dois.length}&mailto=${encodeURIComponent(email)}`;
 }
 
-/** doi (lowercase, bare) -> cited_by_count */
-export function parseCounts(j: any): Map<string, number> {
-  const out = new Map<string, number>();
+export interface WorkInfo {
+  n: number;
+  /** OpenAlex oa_status: gold, green, hybrid, bronze, diamond or closed */
+  oa?: string;
+}
+
+/** doi (lowercase, bare) -> citation count and open-access status */
+export function parseWorks(j: any): Map<string, WorkInfo> {
+  const out = new Map<string, WorkInfo>();
   for (const w of j?.results ?? [])
     if (w?.doi && Number.isFinite(w.cited_by_count))
-      out.set(normDoi(String(w.doi)), Number(w.cited_by_count));
+      out.set(normDoi(String(w.doi)), {
+        n: Number(w.cited_by_count),
+        oa: w.open_access?.oa_status
+          ? String(w.open_access.oa_status)
+          : undefined,
+      });
   return out;
 }
 

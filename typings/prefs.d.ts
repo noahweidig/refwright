@@ -116,6 +116,8 @@ declare namespace _ZoteroTypes {
       "route.perPaper": number;
       "route.removeInbox": boolean;
       "related.mode": string;
+      "auto.enabled": boolean;
+      "auto.pdf": boolean;
       "tm.minUses": number;
       "tm.perRequest": number;
       "tm.requests": number;
