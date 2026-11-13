@@ -40,3 +40,17 @@ describe("related", () => {
     expect(quantize([0.12345])).toEqual([0.123]);
   });
 });
+
+describe("related offline", () => {
+  it("ranks shared vocabulary and skips linked items", async () => {
+    const { rankOffline } = await import("../src/core/related");
+    const docs = [
+      { id: 1, text: "wildfire smoke exposure and respiratory health" },
+      { id: 2, text: "respiratory health effects of wildfire smoke" },
+      { id: 3, text: "timber trade flows between nations" },
+      { id: 4, text: "wildfire smoke respiratory outcomes in children" },
+    ];
+    const r = rankOffline(docs, 1, new Set([1, 4]));
+    expect(r.map((x) => x.id)).toEqual([2]);
+  });
+});

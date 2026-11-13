@@ -4,6 +4,7 @@ import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
 import { summarizeItems } from "./summarize";
 import { updateCitations } from "./citations";
+import { icons, resolveIcons } from "./icons";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -313,10 +314,12 @@ async function _collectionTagAction() {
   return suggestTagsAction(items, g("tag.method") === "ai");
 }
 
-function _openTagManager() {
+async function _openTagManager() {
+  await resolveIcons();
   const libraryID = currentLibraryID();
   const abort = new AbortController();
   openRefwrightWindow("tagmanager.xhtml", {
+    searchIcon: icons.search,
     labels: {
       title: getString("tm-title"),
       allTags: getString("tm-all-tags"),

@@ -8,12 +8,14 @@ import { hasUsablePdf } from "./library";
 import { invalidateRouter, routeItems, ItemRoute } from "./routing";
 import { S, saveState } from "./state";
 import { suggestTags, TagChoice } from "./tagging";
+import { icons } from "./icons";
 import { linkRelated, relatedFor, RelatedHit } from "./related";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
 /** Zotero's own icons: themed by Zotero itself, identical to the rest of the UI */
-const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
+const Z = (n: string) =>
+  n.startsWith("chrome://") ? n : `chrome://zotero/skin/16/universal/${n}.svg`;
 
 type Kids = (Node | string | null | false | undefined)[];
 function el(doc: Document, tag: string, cls = "", ...kids: Kids): HTMLElement {
@@ -311,7 +313,7 @@ function drawTags(body: HTMLElement, item: Zotero.Item) {
 /* ========================= Related ========================= */
 const relState = new WeakMap<
   HTMLElement,
-  { busy: string; list: RelatedHit[] | null; err?: string }
+  { busy: string; list: RelatedHit[] | null; err?: string; note?: string }
 >();
 
 function drawRelated(body: HTMLElement, item: Zotero.Item) {
@@ -322,7 +324,7 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "search", "big"),
+    glyph(doc, icons.related, "big"),
     el(
       doc,
       "div",
@@ -339,7 +341,8 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
         doc,
         "div",
         "sub",
-        st.err ?? (st.busy || (st.list ? "" : getString("related-hint"))),
+        st.err ??
+          (st.busy || st.note || (st.list ? "" : getString("related-hint"))),
       ),
     ),
   );
@@ -348,10 +351,12 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
     st.err = undefined;
     redraw();
     try {
-      st.list = await relatedFor(item, new AbortController().signal, (d, t) => {
+      const r = await relatedFor(item, new AbortController().signal, (d, t) => {
         st.busy = getString("related-looking", { args: { done: d, total: t } });
         redraw();
       });
+      st.list = r.hits;
+      st.note = r.note;
     } catch (e: any) {
       st.err = String(e?.message ?? e);
     } finally {
@@ -364,7 +369,7 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
     row(
       doc,
       "actions",
-      button(doc, getString("related-find"), run, { glyph: "search" }),
+      button(doc, getString("related-find"), run, { glyph: icons.related }),
     ),
   ];
   if (st.list) {
@@ -570,7 +575,7 @@ export function registerSections() {
     onRender: ({ body, item }: any) => drawTags(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({
-    ...common("related", "related", "search"),
+    ...common("related", "related", icons.related),
     onRender: ({ body, item }: any) => drawRelated(body, item),
   } as any);
   Zotero.ItemPaneManager.registerSection({

@@ -1,4 +1,4 @@
-import { embedText, quantize, rankRelated } from "../core/related";
+import { embedText, quantize, rankOffline, rankRelated } from "../core/related";
 import { embedTexts } from "./ai";
 import { fieldsOf } from "./library";
 import { S, saveState } from "./state";
@@ -11,17 +11,74 @@ export interface RelatedHit {
   item: Zotero.Item;
   score: number;
 }
+export interface RelatedResult {
+  hits: RelatedHit[];
+  note?: string;
+}
 
-/** Embeds the library once (cached, resumable), then ranks by cosine similarity. */
+async function libraryItems(item: Zotero.Item) {
+  return (
+    (await Zotero.Items.getAll(item.libraryID, true)) as Zotero.Item[]
+  ).filter((i) => i.isRegularItem() && !i.deleted);
+}
+
+function linkedIds(item: Zotero.Item): Set<number> {
+  const out = new Set<number>([item.id]);
+  for (const key of item.relatedItems) {
+    const r = Zotero.Items.getByLibraryAndKey(item.libraryID, key);
+    if (r) out.add((r as Zotero.Item).id);
+  }
+  return out;
+}
+
+/** Title (weighted), abstract, tags and venue, compared locally. */
+function relatedOffline(item: Zotero.Item, all: Zotero.Item[]): RelatedHit[] {
+  const byId = new Map(all.map((i) => [i.id, i]));
+  const docs = all.map((i) => {
+    const f = fieldsOf(i);
+    const tags = i
+      .getTags()
+      .map((t) => t.tag)
+      .join(" ");
+    return {
+      id: i.id,
+      text: `${f.title} ${f.title} ${f.abstract} ${tags} ${f.journal}`,
+    };
+  });
+  return rankOffline(docs, item.id, linkedIds(item)).map((s) => ({
+    item: byId.get(s.id)!,
+    score: s.score,
+  }));
+}
+
+/** Offline by default; embeddings when chosen, with an offline fallback if the provider fails. */
 export async function relatedFor(
   item: Zotero.Item,
   signal: AbortSignal,
   progress: (done: number, total: number) => void,
+): Promise<RelatedResult> {
+  const all = await libraryItems(item);
+  if (getPref("related.mode" as any) !== "embedding")
+    return { hits: relatedOffline(item, all) };
+  try {
+    return { hits: await relatedEmbedded(item, all, signal, progress) };
+  } catch (e: any) {
+    if (signal.aborted) throw e;
+    return {
+      hits: relatedOffline(item, all),
+      note: `${String(e?.message ?? e)}. Showing offline matches.`,
+    };
+  }
+}
+
+/** Embeds the library once (cached, resumable), then ranks by cosine similarity. */
+async function relatedEmbedded(
+  item: Zotero.Item,
+  all: Zotero.Item[],
+  signal: AbortSignal,
+  progress: (done: number, total: number) => void,
 ): Promise<RelatedHit[]> {
   const prov = String(getPref("ai.embedProvider" as any));
-  const all = (
-    (await Zotero.Items.getAll(item.libraryID, true)) as Zotero.Item[]
-  ).filter((i) => i.isRegularItem() && !i.deleted);
   const rows = all
     .map((i) => {
       const f = fieldsOf(i);
@@ -48,11 +105,7 @@ export async function relatedFor(
   progress(need.length, need.length);
   const me = rows.find((r) => r.item.id === item.id);
   if (!me || !cache[me.k]) return [];
-  const exclude = new Set<number>([item.id]);
-  for (const key of item.relatedItems) {
-    const r = Zotero.Items.getByLibraryAndKey(item.libraryID, key);
-    if (r) exclude.add((r as Zotero.Item).id);
-  }
+  const exclude = linkedIds(item);
   const byId = new Map(rows.map((r) => [r.item.id, r.item]));
   return rankRelated(
     cache[me.k].vec,

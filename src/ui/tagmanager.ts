@@ -10,6 +10,7 @@ interface Group {
   target: string;
 }
 interface Ctrl {
+  searchIcon: string;
   labels: Record<string, string>;
   load(): Promise<TC[]>;
   duplicates(tags: TC[]): Promise<Group[]>;
@@ -54,7 +55,8 @@ async function scanDup() {
   }
 }
 
-const Z = (n: string) => `chrome://zotero/skin/16/universal/${n}.svg`;
+const Z = (n: string) =>
+  n.startsWith("chrome://") ? n : `chrome://zotero/skin/16/universal/${n}.svg`;
 const glyph = (n: string, cls = "") =>
   h("span", {
     class: `refwright-glyph ${cls}`,
@@ -187,7 +189,7 @@ function allPane(): HTMLElement[] {
       h(
         "div",
         { class: "refwright-search" },
-        glyph("search"),
+        c.searchIcon ? glyph(c.searchIcon) : null,
         h("input", {
           type: "search",
           placeholder: L.search,
