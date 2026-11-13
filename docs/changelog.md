@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.4.2
+
+- Fix Suggest New Collections still proposing groups for papers that an existing collection fits. The check added in 0.4.1 was not connected, so it never ran. It now drops those papers before grouping.
+
 ## 0.4.1
 
 - Suggest New Collections: no longer proposes collections for papers an existing collection already fits (it uses the same offline matching as File into Collections). Groups are named after the phrase their titles share, for example "Wildland urban interface", instead of their three strongest words.
