@@ -12,18 +12,17 @@
   height="720"
   persist="screenX screenY width height"
 >
-  <dialog id="refwright-tagmanager-dialog" buttons="accept">
-    <html:div class="refwright-split">
-      <html:div class="refwright-side">
-        <html:div id="nav"></html:div>
-        <html:div class="refwright-side-foot">
-          <html:button id="undo"></html:button>
-          <html:span id="total" class="refwright-muted"></html:span>
-          <html:span id="status" class="refwright-muted"></html:span>
-        </html:div>
+  <html:div class="refwright-split">
+    <html:div class="refwright-side">
+      <html:div id="nav"></html:div>
+      <html:div class="refwright-side-foot">
+        <html:button id="undo"></html:button>
+        <html:span id="total" class="refwright-muted"></html:span>
+        <html:span id="status" class="refwright-muted"></html:span>
+        <html:button id="close"></html:button>
       </html:div>
-      <html:div id="pane" class="refwright-main"></html:div>
     </html:div>
-  </dialog>
+    <html:div id="pane" class="refwright-main"></html:div>
+  </html:div>
   <script src="chrome://__addonRef__/content/scripts/ui-tagmanager.js" />
 </window>

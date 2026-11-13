@@ -513,7 +513,7 @@ function draw(keepFocus = false) {
   }
   for (const b of document.querySelectorAll("#nav button"))
     b.classList.toggle("active", (b as HTMLElement).dataset.view === view);
-  $("total").textContent = `${tags.length}`;
+  $("total").textContent = `${tags.length} ${L.total}`;
 }
 
 window.addEventListener("load", async () => {
@@ -546,6 +546,11 @@ window.addEventListener("load", async () => {
       ),
     ),
   );
+  $("close").textContent = L.close;
+  $("close").addEventListener("click", () => window.close());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") window.close();
+  });
   $("undo").textContent = L.undo;
   $("undo").addEventListener("click", async () => {
     status((await c.undo()) ? L.undone : L.nothing);

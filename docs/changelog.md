@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.3.3
+
+- Tag Manager: the counts, status and a **Close** button now sit at the bottom of the sidebar and always stay visible, however small the window is. The native OK row, which was pushed off screen when the window was not fully expanded, is gone.
+
 ## 0.3.2
 
 - Tag Manager: **Merge all** button in Duplicates and Similar Meaning (AI). It merges every group with the ticks and targets shown, after a confirmation, and one **Undo last change** reverses all of them.

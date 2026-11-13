@@ -244,16 +244,16 @@
   --tm-row: 24px;
   background: var(--material-background, var(--color-background));
 }
-.refwright-tm #refwright-tagmanager-dialog {
+/* No native dialog button row: the window is one flex column, so the sidebar footer
+   (undo, count, status, Close) is always at the bottom and always visible. */
+.refwright-tm {
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 .refwright-tm .refwright-split {
   flex: 1 1 0;
-  min-width: 880px;
-  min-height: 560px;
-  height: calc(100vh - 64px);
+  min-width: 760px;
+  min-height: 420px;
   overflow: hidden;
 }
 .refwright-tm .refwright-side {

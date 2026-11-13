@@ -422,6 +422,8 @@ function _openTagManager() {
       fixAll: getString("tm-fix-all"),
       dropped: getString("tm-dropped"),
       undo: getString("tm-undo"),
+      total: getString("tm-total"),
+      close: getString("progress-close"),
       undone: getString("tm-undone"),
       nothing: getString("tm-nothing"),
       scanning: getString("tm-scanning"),

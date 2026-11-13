@@ -1,7 +1,7 @@
 {
   "name": "refwright",
   "type": "module",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Find PDFs, check retractions and citations, tag, and file papers: one Zotero-native plugin.",
   "config": {
     "addonName": "refwright",
