@@ -5,7 +5,7 @@ export function guard<A extends unknown[]>(fn: (...a: A) => unknown) {
       return await fn(...a);
     } catch (e: any) {
       Zotero.logError(e);
-      new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+      new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
         closeOnClick: true,
         closeTime: 9000,
       })

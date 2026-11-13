@@ -44,7 +44,7 @@ export async function registerColumn() {
   await Zotero.ItemTreeManager.registerColumns({
     pluginID: pluginID(),
     dataKey: "refwright",
-    label: "refwright",
+    label: "RefWright",
     iconPath: icon(),
     flex: 0,
     width: "86",

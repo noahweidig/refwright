@@ -1,5 +1,5 @@
 [project]
-site_name = "refwright"
+site_name = "RefWright"
 site_description = "Find PDFs, check retractions and citations, tag, and file papers in Zotero."
 site_author = "Noah Weidig"
 site_url = "https://noahweidig.github.io/refwright/"
@@ -7,7 +7,7 @@ repo_url = "https://github.com/noahweidig/refwright"
 repo_name = "noahweidig/refwright"
 docs_dir = "docs"
 site_dir = "site"
-copyright = "refwright is free and open source. AGPL-3.0-or-later."
+copyright = "RefWright is free and open source. AGPL-3.0-or-later."
 extra_css = ["stylesheets/extra.css"]
 
 nav = [

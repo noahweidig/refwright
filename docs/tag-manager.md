@@ -4,7 +4,7 @@ icon: lucide/merge
 
 # Tag Manager
 
-**Tools > refwright > Tag Manager.** Nothing changes until you merge, rename or delete, and **Undo last change** reverses the last one.
+**Tools > RefWright > Tag Manager.** Nothing changes until you merge, rename or delete, and **Undo last change** reverses the last one.
 
 The window follows Zotero's own layout: views in the left pane, a searchable table on the right, and the action bar at the bottom.
 
@@ -46,4 +46,4 @@ A group disappears from the list as soon as you merge it, and groups drop out wh
 - A rate-limit error (HTTP 429 or 413) stops the scan instead of retrying, so a limit never doubles the usage.
 - Tags it has already checked are skipped next time; **Forget checked tags** clears that memory.
 
-To cut tokens further, lower **AI scan: tags per request** or raise **AI scan: only tags used at least** (for example 2 skips tags used once) under [Settings](settings.md). If the model's reply is not valid JSON, refwright retries once in plain mode and shows the start of the reply if that fails too.
+To cut tokens further, lower **AI scan: tags per request** or raise **AI scan: only tags used at least** (for example 2 skips tags used once) under [Settings](settings.md). If the model's reply is not valid JSON, RefWright retries once in plain mode and shows the start of the reply if that fails too.

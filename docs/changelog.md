@@ -4,6 +4,12 @@ icon: lucide/history
 
 # Changelog
 
+## 0.4.5
+
+- Summary notes are now titled **AI summary** (they were "refwright summary"). Existing "refwright summary" notes still count, so nothing is summarized twice.
+- Review window (tags, File into Collections, and both together): the list now scrolls, and **Cancel**, **Retry** and **Apply** stay pinned to the bottom of the window. It is a plain window with its own footer instead of the native dialog, like the batch Find Related Items window. Esc closes it.
+- The plugin's display name is **RefWright** everywhere you see it: the Plugins list, the settings pane and its sidebar entry, the menus, the item list column, the item pane, window titles, messages, the README and the docs site. Internal names (add-on ID, preference names, tags such as `refwright:report`, API paths) are unchanged, so nothing you have set up moves.
+
 ## 0.4.4
 
 - Fix refwright on Windows and Linux: web APIs such as `AbortController`, `URL` and timers came from Zotero's hidden window, which only exists on macOS, so Test connection and every network call failed there with `NS_ERROR_FAILURE [nsIAppShellService.hiddenDOMWindow]`. They now come from the hidden window when it exists, else Zotero's main window.

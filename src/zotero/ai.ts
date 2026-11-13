@@ -45,7 +45,7 @@ export function chat(
 ) {
   const { p, cfg } = cfgFor(g("ai.provider"));
   if (p.needsKey && !cfg.key)
-    throw new Error(`${p.label}: add an API key in refwright settings`);
+    throw new Error(`${p.label}: add an API key in RefWright settings`);
   return complete(
     zoteroHttp,
     p,
@@ -63,7 +63,7 @@ export function embedTexts(texts: string[], signal?: AbortSignal) {
   const model = g(`ai.${p.id}.embedModel`) || p.embedModel || "";
   if (!model) throw new Error(`${p.label}: set an embedding model`);
   if (p.needsKey && !cfg.key)
-    throw new Error(`${p.label}: add an API key in refwright settings`);
+    throw new Error(`${p.label}: add an API key in RefWright settings`);
   return embed(zoteroHttp, p, { ...cfg, model }, texts, signal);
 }
 

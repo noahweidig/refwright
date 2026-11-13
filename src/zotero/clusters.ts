@@ -120,7 +120,7 @@ export async function suggestClusters(
   const groups = await offlineClusters(libraryID);
   if (!ai || !groups.length) return { items: groups };
   if (!aiReady())
-    throw new Error("Add an API key and model in refwright settings > AI");
+    throw new Error("Add an API key and model in RefWright settings > AI");
   try {
     return { items: await nameWithAi(groups, libraryID, signal) };
   } catch (e: any) {

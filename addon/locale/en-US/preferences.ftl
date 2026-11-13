@@ -1,1 +1,1 @@
-pref-title = refwright
+pref-title = RefWright

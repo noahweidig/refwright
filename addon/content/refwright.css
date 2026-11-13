@@ -666,16 +666,19 @@
 }
 
 /* batch related window: a plain window, one flex column, footer always visible */
-.refwright-rel {
+.refwright-rel,
+.refwright-flexwin {
   display: flex;
   flex-direction: column;
 }
-.refwright-rel .refwright-shell {
+.refwright-rel .refwright-shell,
+.refwright-flexwin .refwright-shell {
   flex: 1 1 0;
   height: auto;
   min-height: 360px;
 }
-.refwright-rel .refwright-grow {
+.refwright-rel .refwright-grow,
+.refwright-flexwin .refwright-grow {
   flex: 1;
   min-width: 0;
 }

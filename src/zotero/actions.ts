@@ -33,7 +33,7 @@ function toast(
   text: string,
   type: "success" | "default" | "error" = "default",
 ) {
-  new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: 3500,
   })
@@ -61,7 +61,7 @@ async function _runTask(task: Task, items: Zotero.Item[]) {
   }
   const run = startRun(task, regular);
   openRefwrightWindow("report.xhtml", {
-    title: `refwright — ${task === "pdf" ? getString("task-pdf") : task === "preview" ? getString("task-preview") : task === "retraction" ? getString("task-retraction") : task === "citation" ? getString("task-citation") : getString("task-full")}`,
+    title: `RefWright — ${task === "pdf" ? getString("task-pdf") : task === "preview" ? getString("task-preview") : task === "retraction" ? getString("task-retraction") : task === "citation" ? getString("task-citation") : getString("task-full")}`,
     labels: reportLabels(),
     rows: run.rows,
     finished: () => run.finished,
@@ -92,7 +92,7 @@ async function _reviewAction(
   const items = regularItems(input);
   if (!items.length) return toast(getString("tags-none-selected"));
   const abort = new AbortController();
-  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: false,
     closeTime: -1,
   })
@@ -236,7 +236,7 @@ async function _summarizeAction(input: Zotero.Item[]) {
     if (!ok) return;
   }
   const abort = new AbortController();
-  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: -1,
   })
@@ -270,7 +270,7 @@ async function _citationsAction(input: Zotero.Item[]) {
   const items = regularItems(input);
   if (!items.length) return toast(getString("tags-none-selected"));
   const abort = new AbortController();
-  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: -1,
   })
@@ -311,7 +311,7 @@ async function _relatedBatchAction(input: Zotero.Item[]) {
   const items = regularItems(input);
   if (!items.length) return toast(getString("tags-none-selected"));
   const abort = new AbortController();
-  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: -1,
   })
@@ -376,7 +376,7 @@ async function _relatedBatchAction(input: Zotero.Item[]) {
 }
 
 function progressLine(text: string) {
-  return new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  return new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: -1,
   })

@@ -236,27 +236,28 @@ window.addEventListener("load", () => {
     items.forEach((i) => (i.on = on));
     render();
   });
-  const dlg = document.querySelector("dialog") as any;
-  dlg.getButton("accept").label = L.apply;
-  dlg.getButton("cancel").label = L.cancel;
-  const rb = dlg.getButton("extra2");
-  rb.label = L.retry;
-  rb.hidden = !c.retry;
+  $("apply").textContent = L.apply;
+  $("cancel").textContent = L.cancel;
   $("all").textContent = L.toggleAll;
-  document.addEventListener("dialogaccept", async (e) => {
-    e.preventDefault();
-    dlg.getButton("accept").disabled = true;
+  $("cancel").addEventListener("click", () => window.close());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") window.close();
+  });
+  $("apply").addEventListener("click", async () => {
+    ($("apply") as HTMLButtonElement).disabled = true;
     try {
       await c.apply(results());
       window.close();
     } catch (err: any) {
       $("note").textContent = String(err?.message ?? err);
       $("note").hidden = false;
-      dlg.getButton("accept").disabled = false;
+      ($("apply") as HTMLButtonElement).disabled = false;
     }
   });
   if (c.retry) {
-    document.addEventListener("dialogextra2", async () => {
+    $("retry").textContent = L.retry;
+    $("retry").hidden = false;
+    $("retry").addEventListener("click", async () => {
       items = await c.retry!();
       render();
     });

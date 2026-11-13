@@ -22,4 +22,4 @@ Off by default. When on, items with problems get one child note tagged `refwrigh
 
 ## Full check
 
-**refwright > Full Check** runs PDF, retraction and citation checks together.
+**RefWright > Full Check** runs PDF, retraction and citation checks together.

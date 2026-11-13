@@ -16,7 +16,7 @@ let busy = false;
 const burst = new Set<number>();
 
 function toast(text: string) {
-  new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+  new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
     closeOnClick: true,
     closeTime: 9000,
   })

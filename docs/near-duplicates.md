@@ -4,7 +4,7 @@ icon: lucide/copy
 
 # Near-duplicate items
 
-Zotero's own duplicate finder matches items with the same DOI or the same title. **Tools > refwright > Find Near-Duplicate Items…** finds the ones it misses, for example a preprint and its published version or a paper whose title changed between versions. It runs offline on title, abstract, first author and year.
+Zotero's own duplicate finder matches items with the same DOI or the same title. **Tools > RefWright > Find Near-Duplicate Items…** finds the ones it misses, for example a preprint and its published version or a paper whose title changed between versions. It runs offline on title, abstract, first author and year.
 
 ## What counts as a near-duplicate
 
@@ -19,7 +19,7 @@ Pairs that chain together (A with B, B with C) become one group. Each group show
 
 Each group lists its items with authors, year, venue, DOI, number of attachments and a **Preprint** label.
 
-1. Choose which item to **keep** in each group. refwright pre-selects the published version with the most attachments and the most complete record.
+1. Choose which item to **keep** in each group. RefWright pre-selects the published version with the most attachments and the most complete record.
 2. Tick **Merge** on the groups you want, or use **Select all**. Nothing is ticked at the start.
 3. Click **Merge selected** and confirm.
 
