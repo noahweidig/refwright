@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.4.7
+
+- Fix Backspace and Delete in the Tag Manager search and name boxes. They tried to delete the selected tags instead of editing the text, and the same check in the review window swallowed `/` typed into a text field. Shortcuts now stand aside whenever you are typing in a text box or dropdown, and only act when the list itself has focus. The check compared an uppercase `INPUT`, but these windows report lowercase `input`, so it never matched.
+
 ## 0.4.6
 
 - Fix deleting tags in the Tag Manager. The Delete button did nothing, because the code stopped when the new name was empty and a delete has no new name.

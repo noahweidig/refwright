@@ -1,4 +1,4 @@
-import { $, arg, h } from "./dom";
+import { $, arg, h, isTyping } from "./dom";
 
 interface TagChoice {
   tag: string;
@@ -225,7 +225,7 @@ window.addEventListener("load", () => {
       render();
     });
     document.addEventListener("keydown", (e) => {
-      if (e.key === "/" && (e.target as HTMLElement).tagName !== "INPUT") {
+      if (e.key === "/" && !isTyping(e)) {
         e.preventDefault();
         $("search").focus();
       }

@@ -1,4 +1,4 @@
-import { $, arg, h } from "./dom";
+import { $, arg, h, isTyping } from "./dom";
 
 interface TC {
   name: string;
@@ -123,11 +123,6 @@ async function doUndo() {
   await reload();
 }
 
-const typing = (e: Event) =>
-  ["INPUT", "TEXTAREA", "SELECT"].includes(
-    (e.target as HTMLElement | null)?.tagName ?? "",
-  );
-
 function selectVisible() {
   for (const t of visible) sel.add(t.name);
   draw(true);
@@ -145,7 +140,7 @@ function shortcut(e: KeyboardEvent): (() => void) | undefined {
   const key = e.key.toLowerCase();
   const all = view === "all";
   if (mod && key === "f" && all) return focusSearch;
-  if (typing(e)) return undefined;
+  if (isTyping(e)) return undefined;
   if (mod && key === "a" && all) return selectVisible;
   if (mod && key === "z") return () => void doUndo();
   if ((e.key === "Delete" || e.key === "Backspace") && all)

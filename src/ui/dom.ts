@@ -35,3 +35,16 @@ export function icon(path: string): HTMLElement {
     style: { backgroundImage: `url(${path})` },
   });
 }
+
+/**
+ * True when the key press is going into a text field or dropdown, so shortcuts must stand aside.
+ * Compares the lowercase local name: in these XHTML windows an element's tagName is lowercase
+ * ("input"), not "INPUT".
+ */
+export function isTyping(e: Event): boolean {
+  const el = e.target as HTMLElement | null;
+  const name = (el?.localName ?? "").toLowerCase();
+  return (
+    ["input", "textarea", "select"].includes(name) || !!el?.isContentEditable
+  );
+}
