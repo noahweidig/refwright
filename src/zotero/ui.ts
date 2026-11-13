@@ -154,6 +154,11 @@ export function registerMenus() {
           },
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-related"),
+            onCommand: () => A.relatedBatchAction(items()),
+          },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-summarize"),
             onCommand: () => A.summarizeAction(items()),
           },

@@ -47,3 +47,13 @@ Choose how similarity is measured under **Settings > Related items**:
     Embeds the title and the start of the abstract of every item with your embedding provider. The first run takes a while on large libraries and can hit free-tier rate limits; progress is saved, so a stopped run resumes. If the provider fails, refwright shows offline matches and says why. Embeddings are cached in the plugin's state file in your profile.
 
 Choose the embedding provider under [AI providers](providers.md); not every provider offers embeddings.
+
+### Many items at once
+
+Select several items, right-click, then **refwright > Find Related Items…**.
+
+1. A review window lists each selected item with up to 5 suggestions as chips. Each chip shows its similarity score.
+2. Drag **Select suggestions at or above** to tick every suggestion at or above that score, or tick chips one by one. **Select none** clears everything.
+3. Click **Link selected**. Nothing is linked until you do.
+
+Scores depend on the similarity method, so offline scores run lower than embedding scores. Look at a few suggestions before choosing a threshold.

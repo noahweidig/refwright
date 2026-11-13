@@ -155,3 +155,10 @@ related-count = { $count ->
     [one] { $count } linked item
    *[other] { $count } linked items
 }
+related-batch-title = Related items
+related-batch-apply = Link selected
+related-batch-threshold = Select suggestions at or above
+related-batch-none = Select none
+related-batch-selected = { $count } selected
+related-batch-working = Finding related items…
+related-batch-linked = Linked { $count } pairs

@@ -4,6 +4,7 @@ import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
 import { summarizeItems } from "./summarize";
 import { updateCitations } from "./citations";
+import { linkMany, relatedForMany } from "./related";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -298,6 +299,74 @@ async function _citationsAllAction() {
   return citationsAction(all.filter((i) => i.isRegularItem() && !i.deleted));
 }
 
+async function _relatedBatchAction(input: Zotero.Item[]) {
+  const items = regularItems(input);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("related-batch-working"),
+      type: "default",
+      progress: 10,
+    })
+    .show();
+  let batch;
+  try {
+    batch = await relatedForMany(
+      items,
+      abort.signal,
+      (d, t) => pw.changeLine({ progress: 10 + (80 * d) / Math.max(1, t) }),
+      5,
+    );
+  } catch (e: any) {
+    pw.close();
+    return toast(String(e?.message ?? e), "error");
+  }
+  pw.close();
+  const title = (i: Zotero.Item) =>
+    (i.getField("title") as string) || "(untitled)";
+  openRefwrightWindow("related.xhtml", {
+    note: batch.note,
+    labels: {
+      title: getString("related-batch-title"),
+      apply: getString("related-batch-apply"),
+      cancel: getString("review-cancel"),
+      threshold: getString("related-batch-threshold"),
+      selectNone: getString("related-batch-none"),
+      selected: getString("related-batch-selected", {
+        args: { count: "{count}" },
+      }),
+      none: getString("related-none"),
+      empty: getString("review-no-items"),
+    },
+    items: items.map((it) => ({
+      itemID: it.id,
+      title: title(it),
+      hits: (batch.results.get(it.id) ?? []).map((h) => ({
+        itemID: h.item.id,
+        title: title(h.item),
+        score: h.score,
+        on: false,
+      })),
+    })),
+    apply: async (links: { itemID: number; others: number[] }[]) => {
+      const n = await linkMany(
+        links.map((l) => ({
+          item: Zotero.Items.get(l.itemID) as Zotero.Item,
+          others: l.others.map((id) => Zotero.Items.get(id) as Zotero.Item),
+        })),
+      );
+      toast(
+        getString("related-batch-linked", { args: { count: n } }),
+        "success",
+      );
+    },
+  });
+}
+
 async function _undoFilingAction() {
   toast(
     (await undoFiling())
@@ -447,6 +516,7 @@ export const runTagged = guard(_runTagged);
 export const reviewAction = guard(_reviewAction);
 export const citationsAction = guard(_citationsAction);
 export const citationsAllAction = guard(_citationsAllAction);
+export const relatedBatchAction = guard(_relatedBatchAction);
 export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
 export const collectionTagAction = guard(_collectionTagAction);
