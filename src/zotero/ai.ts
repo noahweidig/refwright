@@ -37,11 +37,24 @@ export function aiReady(): boolean {
   return !!cfg.model && (!p.needsKey || !!cfg.key);
 }
 
-export function chat(system: string, user: string, signal?: AbortSignal) {
+export function chat(
+  system: string,
+  user: string,
+  signal?: AbortSignal,
+  over: Partial<ChatOptions> = {},
+) {
   const { p, cfg } = cfgFor(g("ai.provider"));
   if (p.needsKey && !cfg.key)
     throw new Error(`${p.label}: add an API key in refwright settings`);
-  return complete(zoteroHttp, p, cfg, system, user, chatOptions(), signal);
+  return complete(
+    zoteroHttp,
+    p,
+    cfg,
+    system,
+    user,
+    { ...chatOptions(), ...over },
+    signal,
+  );
 }
 
 export function embedTexts(texts: string[], signal?: AbortSignal) {

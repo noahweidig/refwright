@@ -46,6 +46,36 @@ export function estimateScan(tags: TagCount[]) {
   };
 }
 
+/** JSON mode first; if the reply is unusable, retry once in plain mode with more room. */
+async function askMerge(
+  batch: TagCount[],
+  targets: string[],
+  signal: AbortSignal,
+) {
+  const user = mergeUserPrompt(batch, targets);
+  const room = Math.max(Number(g("ai.maxTokens")) || 0, 4096);
+  let last = "";
+  for (const jsonMode of [true, false]) {
+    try {
+      last = await chat(MERGE_SYSTEM, user, signal, {
+        jsonMode,
+        maxTokens: room * (jsonMode ? 1 : 2),
+      });
+      return parseMergeReply(last);
+    } catch (e: any) {
+      if (signal.aborted) throw e;
+      if (!jsonMode)
+        throw new Error(
+          last.trim()
+            ? `${e.message}. Reply began: ${last.trim().slice(0, 120)}`
+            : `${e.message}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
+          { cause: e },
+        );
+    }
+  }
+  return [];
+}
+
 /** Similar meaning (AI): sends tag names and counts only. */
 export async function scanSimilar(
   tags: TagCount[],
@@ -67,12 +97,7 @@ export async function scanSimilar(
   for (let i = 0; i < reqs && i * per < usable.length; i++) {
     if (signal.aborted) throw new Error("Cancelled");
     const batch = usable.slice(i * per, (i + 1) * per);
-    const reply = await chat(
-      MERGE_SYSTEM,
-      mergeUserPrompt(batch, targets),
-      signal,
-    );
-    for (const gr of parseMergeReply(reply)) {
+    for (const gr of await askMerge(batch, targets, signal)) {
       const members = [gr.target, ...gr.merge]
         .map((n) => byName.get(n))
         .filter(Boolean) as TagCount[];

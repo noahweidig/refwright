@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Tag Manager: Similar Meaning scan asks for JSON mode, retries once in plain mode with more output room, salvages truncated replies, and shows what the model returned when parsing fails.
+- Tag Manager: All Tags scrolls (list height is bounded) and renders 120 rows at a time, so selecting and searching stay fast on large libraries.
+- Tag Manager: layout follows Zotero's collection pane, toolbar and item tree (selectable table rows with tag icons, bottom action bar).
+
 ## 0.1.4
 
 - Icons now come from Zotero's own icon set (`attachment`, `tag`, `folder`, `new-collection`), so they match the rest of Zotero and follow light and dark themes with no extra files.

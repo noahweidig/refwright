@@ -383,5 +383,19 @@ export function extractJson(text: string): any {
       }
     }
   }
+  const open = t.indexOf("{");
+  if (open >= 0) {
+    // truncated output: close an unterminated array/object by trimming to the last complete group
+    const cut = t.lastIndexOf("}");
+    for (let e = cut; e > open; e = t.lastIndexOf("}", e - 1)) {
+      for (const tail of ["]}", "}", "]"]) {
+        try {
+          return JSON.parse(t.slice(open, e + 1) + tail);
+        } catch {
+          /* keep trimming */
+        }
+      }
+    }
+  }
   throw new Error("Model did not return valid JSON");
 }
