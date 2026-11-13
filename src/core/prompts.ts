@@ -94,24 +94,25 @@ export function parseTagReply(text: string): Map<number, string[]> {
 }
 
 export const MERGE_SYSTEM =
-  'You merge synonymous tags in a reference library. Given tags (name, uses) and candidate merge targets, return only groups of tags that mean the same thing. Output JSON: {"groups":[{"target":"<one of the tags>","merge":["<tag>", ...]}]}. Never merge tags that differ in meaning. Omit tags with no synonym.';
+  'Group tags that mean the same thing (synonyms, abbreviations, spelling variants). Reply with JSON only: {"groups":[["tag","tag"],...]}. Groups of 2 or more. Copy tags exactly as given. Omit tags with no synonym.';
 
-export function mergeUserPrompt(
-  tags: { name: string; count: number }[],
-  targets: string[],
-) {
-  return JSON.stringify({ tags: tags.map((t) => [t.name, t.count]), targets });
+/** tag names only, one per line: the cheapest form the model can read */
+export function mergeUserPrompt(names: string[]) {
+  return names.join("\n");
 }
-export function parseMergeReply(
-  text: string,
-): { target: string; merge: string[] }[] {
+
+/** Accepts {"groups":[["a","b"]]} and the older [{target, merge}] shape. */
+export function parseMergeReply(text: string): string[][] {
   const j = extractJson(text);
-  return (j.groups ?? [])
-    .filter((g: any) => g?.target && Array.isArray(g.merge) && g.merge.length)
-    .map((g: any) => ({
-      target: String(g.target),
-      merge: g.merge.map(String),
-    }));
+  const groups: any[] = Array.isArray(j) ? j : (j.groups ?? []);
+  return groups.map(asGroup).filter((g) => g.length > 1);
+}
+
+function asGroup(g: any): string[] {
+  if (Array.isArray(g)) return g.map(String);
+  if (g?.target && Array.isArray(g.merge))
+    return [String(g.target), ...g.merge.map(String)];
+  return [];
 }
 
 export const ROUTE_SYSTEM =

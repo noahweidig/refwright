@@ -33,4 +33,11 @@ In **Duplicates** and **Similar Meaning**, untick the tags you want to leave out
 
 **Duplicates** opens at once and shows a progress bar while it scans, so Zotero stays responsive even on libraries with thousands of tags.
 
-**Similar Meaning (AI)** shows a token estimate before it runs and sends tag names and counts only, in batches. Tags it has already checked are skipped next time; **Forget checked tags** clears that memory. If the model's reply is not valid JSON, refwright retries once in plain mode and shows the start of the reply if that fails too. Batch size and the number of requests per scan are under [Settings](settings.md).
+**Similar Meaning (AI)** shows a token estimate before it runs and sends tag names only, one per line, in batches. It is built to use few tokens:
+
+- Tags the local scan already groups (case, plurals, typos, word order, abbreviations) are sent as a single representative, and the merged group includes all of them.
+- The reply is just a list of groups, capped at a few hundred tokens, and reasoning models such as `gpt-oss` are asked for low effort.
+- A rate-limit error (HTTP 429 or 413) stops the scan instead of retrying, so a limit never doubles the usage.
+- Tags it has already checked are skipped next time; **Forget checked tags** clears that memory.
+
+To cut tokens further, lower **AI scan: tags per request** or raise **AI scan: only tags used at least** (for example 2 skips tags used once) under [Settings](settings.md). If the model's reply is not valid JSON, refwright retries once in plain mode and shows the start of the reply if that fails too.
