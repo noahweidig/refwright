@@ -92,6 +92,17 @@ export async function warmRouter() {
   }
 }
 
+/** Items that an existing collection already fits well. Always offline, never a remote call. */
+export async function itemsThatFit(items: Zotero.Item[]): Promise<Set<number>> {
+  const fit = new Set<number>();
+  if (!items.length) return fit;
+  const c = await getIndex(items[0].libraryID);
+  if (!c.colls.length) return fit;
+  for (const item of items)
+    if (c.index.picks(c.index.rank(toRItem(item))).length) fit.add(item.id);
+  return fit;
+}
+
 export async function routeItems(
   items: Zotero.Item[],
   signal?: AbortSignal,

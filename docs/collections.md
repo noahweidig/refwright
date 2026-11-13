@@ -39,11 +39,15 @@ Each paper shows its top 5 suggestions as chips, best pre-selected. Hover for th
 
 ## Suggest new collections
 
-**Tools > refwright > Suggest New Collections…** looks at papers that are in no collection (or only in an ignored one such as an inbox) and groups them by topic. It runs offline on title, abstract, tags and journal.
+**Tools > refwright > Suggest New Collections…** proposes collections for papers that no existing collection fits. It runs offline on title, abstract, tags and journal.
 
-- Each suggested group has a name taken from its strongest words, which you can edit, and a list of its papers.
+1. It starts from papers that are in no collection (or only in an ignored one such as an inbox).
+2. It drops every paper that an existing collection already fits, using the same offline ranking as **File into Collections…**. Those belong in that collection, not in a new one.
+3. It groups the rest by topic and names each group after the phrase its titles share (for example "Wildland urban interface"), or its strongest words when no phrase is shared.
+
+In the review window, tick the groups you want, rename them if you like, and click **Create selected**. Nothing is created until then.
+
 - Only groups of 4 or more papers are shown, largest first, up to 30.
-- Tick the groups you want, or use **Select all**, then **Create selected**. Nothing is created until then.
 - If a top-level collection with the same name already exists, the papers go into it instead of making a second one.
 - **Undo Last Filing** takes the papers back out of the collections. The collections themselves stay.
-
+- If nothing is suggested, every loose paper either fits a collection you already have or does not form a group of 4. Use **File into Collections…** for the first kind.
