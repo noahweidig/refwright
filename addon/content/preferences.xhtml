@@ -566,15 +566,19 @@
     /></hbox>
   </groupbox>
   <groupbox class="refwright-group">
-    <label><html:h2>Related items</html:h2></label>
+    <html:h2>Related items</html:h2>
     <description class="refwright-pref-desc"
       >Offline compares title, abstract and tags and needs no key. Embeddings
       use the embedding provider chosen under AI and fall back to offline if the
       provider fails.</description
     >
     <hbox align="center" class="refwright-pref-row">
-      <label value="Similarity" style="min-width: 150px" />
-      <menulist preference="related.mode"
+      <label
+        value="Similarity"
+        control="refwright-related-mode"
+        style="min-width: 150px"
+      />
+      <menulist id="refwright-related-mode" preference="related.mode"
         ><menupopup
           ><menuitem
             value="offline"
