@@ -59,7 +59,7 @@ function runs(title: string): string[][] {
   const out: string[][] = [[]];
   for (const w of words(title)) {
     if (w.length < 3 || STOPWORDS.has(w) || /^\d+$/.test(w)) out.push([]);
-    else out[out.length - 1].push(w);
+    else out.at(-1)!.push(w);
   }
   return out.filter((r) => r.length >= 2);
 }

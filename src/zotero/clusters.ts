@@ -30,10 +30,17 @@ const textOf = (i: Zotero.Item) => {
   return `${f.title} ${f.title} ${f.abstract} ${tags} ${f.journal}`;
 };
 
+/** Papers no existing collection fits: unfiled, and not a good match for any collection already there. */
+async function strays(libraryID: number): Promise<Zotero.Item[]> {
+  const loose = unfiled(await allRegularItems(libraryID));
+  const fit = await itemsThatFit(loose);
+  return loose.filter((i) => !fit.has(i.id));
+}
+
 export async function suggestClusters(
   libraryID: number,
 ): Promise<Suggestion[]> {
-  const items = unfiled(await allRegularItems(libraryID));
+  const items = await strays(libraryID);
   const byId = new Map(items.map((i) => [i.id, i]));
   const gen = clusterDocs(
     items.map((i) => ({ id: i.id, text: textOf(i), title: fieldsOf(i).title })),
