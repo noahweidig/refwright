@@ -406,6 +406,10 @@ function _openTagManager() {
       confirmDelete: getString("tm-confirm-delete"),
       merged: getString("tm-merged"),
       mergeInto: getString("tm-merge-into"),
+      mergeAll: getString("tm-merge-all"),
+      confirmMergeAll: getString("tm-confirm-merge-all", {
+        args: { count: "{count}" },
+      }),
       estimate: getString("tm-estimate", {
         args: { tags: "{tags}", requests: "{requests}", tokens: "{tokens}" },
       }),
@@ -428,7 +432,8 @@ function _openTagManager() {
     estimate: (t: any) => TM.estimateScan(t),
     similar: (t: any) => TM.scanSimilar(t, abort.signal),
     forget: () => TM.forgetChecked(),
-    merge: (from: string[], to: string) => TM.mergeTags(libraryID, from, to),
+    merge: (from: string[], to: string, batch?: number) =>
+      TM.mergeTags(libraryID, from, to, batch),
     undo: () => TM.undoLast(),
     aiReady: () => aiReady(),
     cancel: () => abort.abort(),
