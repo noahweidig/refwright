@@ -240,7 +240,8 @@
 }
 .refwright-tm .refwright-split {
   flex: 1 1 0;
-  min-height: 0;
+  min-width: 880px;
+  min-height: 560px;
   height: calc(100vh - 64px);
   overflow: hidden;
 }
@@ -675,4 +676,33 @@
 .refwright-cited {
   text-align: end;
   font-variant-numeric: tabular-nums;
+}
+
+/* batch related window */
+.refwright-rel .refwright-grow {
+  flex: 1;
+  min-width: 0;
+}
+.refwright-rel .refwright-slider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.refwright-rel .refwright-slider input {
+  width: 180px;
+}
+.refwright-rel .refwright-scroll .refwright-card {
+  margin-bottom: 8px;
+}
+.refwright-rel .refwright-head .refwright-glyph {
+  width: 14px;
+  height: 14px;
+  color: var(--fill-secondary);
+}
+.refwright-rel .refwright-head .refwright-title {
+  flex: 1;
+  min-width: 0;
+}
+.refwright-rel .refwright-chips {
+  margin-top: 8px;
 }

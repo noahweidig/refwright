@@ -26,24 +26,28 @@ export function rankRelated(
     .slice(0, top);
 }
 
-/** Offline ranking: TF-IDF cosine over each item's own words, no key needed. */
+/** Offline ranking: TF-IDF cosine over each item's own words. Build once, rank many. */
+export function offlineRanker(docs: { id: number; text: string }[]) {
+  const toks = new Map(docs.map((d) => [d.id, tokenize(d.text)]));
+  const model = new TfIdf([...toks.values()]);
+  const vecs = new Map(docs.map((d) => [d.id, model.vector(toks.get(d.id)!)]));
+  return (targetId: number, exclude: Set<number>, top = 8): Scored[] => {
+    const target = vecs.get(targetId);
+    if (!target?.size) return [];
+    return docs
+      .filter((d) => !exclude.has(d.id))
+      .map((d) => ({ id: d.id, score: cosine(target, vecs.get(d.id)!) }))
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, top);
+  };
+}
+
 export function rankOffline(
   docs: { id: number; text: string }[],
   targetId: number,
   exclude: Set<number>,
   top = 8,
 ): Scored[] {
-  const toks = new Map(docs.map((d) => [d.id, tokenize(d.text)]));
-  const model = new TfIdf([...toks.values()]);
-  const target = model.vector(toks.get(targetId) ?? []);
-  if (!target.size) return [];
-  return docs
-    .filter((d) => !exclude.has(d.id))
-    .map((d) => ({
-      id: d.id,
-      score: cosine(target, model.vector(toks.get(d.id)!)),
-    }))
-    .filter((s) => s.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, top);
+  return offlineRanker(docs)(targetId, exclude, top);
 }

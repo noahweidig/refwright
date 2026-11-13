@@ -4,6 +4,11 @@ icon: lucide/history
 
 # Changelog
 
+## 0.3.0
+
+- New: **Find Related Items…** (item right-click menu) for many selected items at once. A review window lists each item's suggestions as toggle chips with similarity scores; drag the slider to select every suggestion at or above a score, adjust individual chips, then **Link selected**. Nothing is linked until you apply. The library is indexed once per run, so batches stay fast.
+- Tag Manager: opens larger (1040 by 720) and can no longer collapse to just its OK button. The window now ignores a previously saved tiny size.
+
 ## 0.2.3
 
 - Item pane: removed the large icon from the body of the PDFs, Tags, Related and Collections sections. It crowded the text; the section header icons stay.

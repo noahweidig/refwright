@@ -1,4 +1,9 @@
-import { embedText, quantize, rankOffline, rankRelated } from "../core/related";
+import {
+  embedText,
+  offlineRanker,
+  quantize,
+  rankRelated,
+} from "../core/related";
 import { embedTexts } from "./ai";
 import { fieldsOf } from "./library";
 import { S, saveState } from "./state";
@@ -16,10 +21,10 @@ export interface RelatedResult {
   note?: string;
 }
 
-async function libraryItems(item: Zotero.Item) {
-  return (
-    (await Zotero.Items.getAll(item.libraryID, true)) as Zotero.Item[]
-  ).filter((i) => i.isRegularItem() && !i.deleted);
+async function libraryItems(libraryID: number) {
+  return ((await Zotero.Items.getAll(libraryID, true)) as Zotero.Item[]).filter(
+    (i) => i.isRegularItem() && !i.deleted,
+  );
 }
 
 function linkedIds(item: Zotero.Item): Set<number> {
@@ -31,53 +36,38 @@ function linkedIds(item: Zotero.Item): Set<number> {
   return out;
 }
 
+type Ranker = (item: Zotero.Item) => RelatedHit[];
+
 /** Title (weighted), abstract, tags and venue, compared locally. */
-function relatedOffline(item: Zotero.Item, all: Zotero.Item[]): RelatedHit[] {
+function offlineFor(all: Zotero.Item[], top: number): Ranker {
   const byId = new Map(all.map((i) => [i.id, i]));
-  const docs = all.map((i) => {
-    const f = fieldsOf(i);
-    const tags = i
-      .getTags()
-      .map((t) => t.tag)
-      .join(" ");
-    return {
-      id: i.id,
-      text: `${f.title} ${f.title} ${f.abstract} ${tags} ${f.journal}`,
-    };
-  });
-  return rankOffline(docs, item.id, linkedIds(item)).map((s) => ({
-    item: byId.get(s.id)!,
-    score: s.score,
-  }));
+  const rank = offlineRanker(
+    all.map((i) => {
+      const f = fieldsOf(i);
+      const tags = i
+        .getTags()
+        .map((t) => t.tag)
+        .join(" ");
+      return {
+        id: i.id,
+        text: `${f.title} ${f.title} ${f.abstract} ${tags} ${f.journal}`,
+      };
+    }),
+  );
+  return (item) =>
+    rank(item.id, linkedIds(item), top).map((s) => ({
+      item: byId.get(s.id)!,
+      score: s.score,
+    }));
 }
 
-/** Offline by default; embeddings when chosen, with an offline fallback if the provider fails. */
-export async function relatedFor(
-  item: Zotero.Item,
-  signal: AbortSignal,
-  progress: (done: number, total: number) => void,
-): Promise<RelatedResult> {
-  const all = await libraryItems(item);
-  if (getPref("related.mode" as any) !== "embedding")
-    return { hits: relatedOffline(item, all) };
-  try {
-    return { hits: await relatedEmbedded(item, all, signal, progress) };
-  } catch (e: any) {
-    if (signal.aborted) throw e;
-    return {
-      hits: relatedOffline(item, all),
-      note: `${String(e?.message ?? e)}. Showing offline matches.`,
-    };
-  }
-}
-
-/** Embeds the library once (cached, resumable), then ranks by cosine similarity. */
-async function relatedEmbedded(
-  item: Zotero.Item,
+/** Embeds the library once (cached, resumable); the returned ranker is then instant. */
+async function embeddedFor(
   all: Zotero.Item[],
+  top: number,
   signal: AbortSignal,
   progress: (done: number, total: number) => void,
-): Promise<RelatedHit[]> {
+): Promise<Ranker> {
   const prov = String(getPref("ai.embedProvider" as any));
   const rows = all
     .map((i) => {
@@ -103,17 +93,58 @@ async function relatedEmbedded(
     saveState();
   }
   progress(need.length, need.length);
-  const me = rows.find((r) => r.item.id === item.id);
-  if (!me || !cache[me.k]) return [];
-  const exclude = linkedIds(item);
   const byId = new Map(rows.map((r) => [r.item.id, r.item]));
-  return rankRelated(
-    cache[me.k].vec,
-    rows
-      .filter((r) => cache[r.k])
-      .map((r) => ({ id: r.item.id, vec: cache[r.k].vec })),
-    exclude,
-  ).map((s) => ({ item: byId.get(s.id)!, score: s.score }));
+  const pool = rows
+    .filter((r) => cache[r.k])
+    .map((r) => ({ id: r.item.id, vec: cache[r.k].vec }));
+  return (item) => {
+    const mine = cache[`rel:${prov}:${item.libraryID}/${item.key}`];
+    if (!mine) return [];
+    return rankRelated(mine.vec, pool, linkedIds(item), top).map((s) => ({
+      item: byId.get(s.id)!,
+      score: s.score,
+    }));
+  };
+}
+
+export interface RelatedBatch {
+  results: Map<number, RelatedHit[]>;
+  note?: string;
+}
+
+/**
+ * Suggestions for several items at once. The library is indexed a single time.
+ * Offline by default; embeddings when chosen, with an offline fallback if the provider fails.
+ */
+export async function relatedForMany(
+  items: Zotero.Item[],
+  signal: AbortSignal,
+  progress: (done: number, total: number) => void,
+  top = 8,
+): Promise<RelatedBatch> {
+  if (!items.length) return { results: new Map() };
+  const all = await libraryItems(items[0].libraryID);
+  let rank: Ranker;
+  let note: string | undefined;
+  if (getPref("related.mode" as any) === "embedding") {
+    try {
+      rank = await embeddedFor(all, top, signal, progress);
+    } catch (e: any) {
+      if (signal.aborted) throw e;
+      note = `${String(e?.message ?? e)}. Showing offline matches.`;
+      rank = offlineFor(all, top);
+    }
+  } else rank = offlineFor(all, top);
+  return { results: new Map(items.map((i) => [i.id, rank(i)])), note };
+}
+
+export async function relatedFor(
+  item: Zotero.Item,
+  signal: AbortSignal,
+  progress: (done: number, total: number) => void,
+): Promise<RelatedResult> {
+  const b = await relatedForMany([item], signal, progress);
+  return { hits: b.results.get(item.id) ?? [], note: b.note };
 }
 
 export async function linkRelated(a: Zotero.Item, b: Zotero.Item) {
@@ -130,4 +161,20 @@ export async function linkAllRelated(a: Zotero.Item, others: Zotero.Item[]) {
     b.addRelatedItem(a);
   }
   await Promise.all([a, ...others].map((i) => i.saveTx()));
+}
+
+/** Links many pairs at once: all relations first, then one save per touched item. */
+export async function linkMany(
+  links: { item: Zotero.Item; others: Zotero.Item[] }[],
+) {
+  const touched = new Map<number, Zotero.Item>();
+  for (const { item, others } of links)
+    for (const b of others) {
+      item.addRelatedItem(b);
+      b.addRelatedItem(item);
+      touched.set(item.id, item);
+      touched.set(b.id, b);
+    }
+  await Promise.all([...touched.values()].map((i) => i.saveTx()));
+  return links.reduce((n, l) => n + l.others.length, 0);
 }
