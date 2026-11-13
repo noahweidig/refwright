@@ -59,3 +59,24 @@ describe("clusters", () => {
     ).toBeUndefined();
   });
 });
+
+describe("AI naming prompt", () => {
+  it("lists existing collections, then a few titles per group", async () => {
+    const { clusterNameUserPrompt } = await import("../src/core/prompts");
+    const p = clusterNameUserPrompt(
+      [["One", "Two", "Three"], ["Four"]],
+      ["WUI", "Fuels"],
+      2,
+    );
+    expect(p).toBe(
+      "Existing collections: WUI; Fuels\n\nGroup 1:\n- One\n- Two\nGroup 2:\n- Four",
+    );
+  });
+  it("parses names, keeps rejections, marks missing ones", async () => {
+    const { parseClusterNames } = await import("../src/core/prompts");
+    expect(
+      parseClusterNames('{"names":["**Prescribed burning**",""]}', 3),
+    ).toEqual(["Prescribed burning", "", null]);
+    expect(parseClusterNames('["A"]', 1)).toEqual(["A"]);
+  });
+});

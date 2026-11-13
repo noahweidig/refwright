@@ -255,6 +255,11 @@ export function registerMenus() {
           },
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-new-collections-ai"),
+            onCommand: () => A.newCollectionsAiAction(),
+          },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-near-dup"),
             onCommand: () => A.nearDupAction(),
           },

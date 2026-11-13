@@ -1,4 +1,10 @@
 import { Cluster, clusterDocs } from "../core/cluster";
+import { aiReady, chatParsed } from "./ai";
+import {
+  CLUSTER_NAME_SYSTEM,
+  clusterNameUserPrompt,
+  parseClusterNames,
+} from "../core/prompts";
 import { allRegularItems, fieldsOf } from "./library";
 import { itemsThatFit, routeOptions } from "./routing";
 import { S, saveState } from "./state";
@@ -37,9 +43,7 @@ async function strays(libraryID: number): Promise<Zotero.Item[]> {
   return loose.filter((i) => !fit.has(i.id));
 }
 
-export async function suggestClusters(
-  libraryID: number,
-): Promise<Suggestion[]> {
+async function offlineClusters(libraryID: number): Promise<Suggestion[]> {
   const items = await strays(libraryID);
   const byId = new Map(items.map((i) => [i.id, i]));
   const gen = clusterDocs(
@@ -59,6 +63,73 @@ export async function suggestClusters(
     ids: c.ids,
     titles: c.ids.map((id) => fieldsOf(byId.get(id)!).title || "(untitled)"),
   }));
+}
+
+const AI_BATCH = 8;
+
+/** Names for one batch of groups; null keeps the offline name, "" rejects the group. */
+async function aiNames(
+  batch: Suggestion[],
+  existing: string[],
+  signal: AbortSignal,
+): Promise<(string | null)[]> {
+  return chatParsed(
+    CLUSTER_NAME_SYSTEM,
+    clusterNameUserPrompt(
+      batch.map((s) => s.titles),
+      existing,
+    ),
+    signal,
+    Math.min(1024, 200 + 30 * batch.length),
+    (reply) => parseClusterNames(reply, batch.length),
+  );
+}
+
+/** Applies AI names to the offline groups. Groups the model calls incoherent are dropped. */
+async function nameWithAi(
+  groups: Suggestion[],
+  libraryID: number,
+  signal: AbortSignal,
+): Promise<Suggestion[]> {
+  const existing = Zotero.Collections.getByLibrary(libraryID).map(
+    (c: any) => c.name as string,
+  );
+  const out: Suggestion[] = [];
+  for (let i = 0; i < groups.length; i += AI_BATCH) {
+    const batch = groups.slice(i, i + AI_BATCH);
+    const names = await aiNames(batch, existing, signal); // NOSONAR: one request at a time (rate limits)
+    batch.forEach((g, k) => {
+      if (names[k] !== "") out.push({ ...g, name: names[k] ?? g.name });
+    });
+  }
+  return out;
+}
+
+export interface Suggested {
+  items: Suggestion[];
+  /** set when the AI step failed and offline names are shown */
+  note?: string;
+}
+
+/** Offline grouping; with ai, a provider then names the groups (titles of a few papers per group are sent). */
+export async function suggestClusters(
+  libraryID: number,
+  ai: boolean,
+  signal: AbortSignal,
+): Promise<Suggested> {
+  const groups = await offlineClusters(libraryID);
+  if (!ai || !groups.length) return { items: groups };
+  if (!aiReady())
+    throw new Error("Add an API key and model in refwright settings > AI");
+  try {
+    return { items: await nameWithAi(groups, libraryID, signal) };
+  } catch (e: any) {
+    if (signal.aborted) throw e;
+    return {
+      items: groups,
+      note: `${String(e?.message ?? e)}. Showing the offline names.`,
+    };
+  }
 }
 
 /** Reuses a top-level collection with the same name, else creates one. */

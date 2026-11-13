@@ -85,6 +85,7 @@ export type FluentMessageId =
   | 'menu-tools-find-tagged'
   | 'menu-tools-near-dup'
   | 'menu-tools-new-collections'
+  | 'menu-tools-new-collections-ai'
   | 'menu-tools-retract-tagged'
   | 'menu-tools-review-new'
   | 'menu-tools-settings'

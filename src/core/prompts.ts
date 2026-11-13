@@ -161,3 +161,39 @@ export const summaryNoteHtml = (summary: string, source: string) =>
   `<h1>${SUMMARY_NOTE_TITLE}</h1><p>${esc(summary)}</p><p><i>${esc(source)}</i></p>`;
 export const isSummaryNote = (html: string) =>
   html.includes(`<h1>${SUMMARY_NOTE_TITLE}</h1>`);
+
+export const CLUSTER_NAME_SYSTEM =
+  'You name groups of papers for a reference library. For each numbered group reply with one short collection name (2 to 4 words, Title case). Reply "" if the group is not one coherent topic. If a group clearly belongs in one of the existing collections, reply with that collection\'s exact name. Reply with JSON only: {"names":["...","..."]} in group order.';
+
+const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n)}…` : s);
+
+/** existing collection names, then each group's first few titles; the cheapest form the model can read */
+export function clusterNameUserPrompt(
+  groups: string[][],
+  existing: string[],
+  perGroup = 6,
+): string {
+  const have = existing.slice(0, 60).map((n) => clip(n, 40));
+  const lines = [`Existing collections: ${have.join("; ") || "none"}`, ""];
+  groups.forEach((titles, i) => {
+    lines.push(`Group ${i + 1}:`);
+    for (const t of titles.slice(0, perGroup)) lines.push(`- ${clip(t, 110)}`);
+  });
+  return lines.join("\n");
+}
+
+/** one entry per group: the name, "" for a rejected group, null when the reply had none */
+export function parseClusterNames(text: string, n: number): (string | null)[] {
+  const j = extractJson(text);
+  const names: unknown[] = Array.isArray(j) ? j : (j.names ?? []);
+  return Array.from({ length: n }, (_, i) =>
+    typeof names[i] === "string" ? cleanName(names[i] as string) : null,
+  );
+}
+
+const cleanName = (s: string) =>
+  s
+    .replace(/["*_`#]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 60);

@@ -51,3 +51,15 @@ In the review window, tick the groups you want, rename them if you like, and cli
 - If a top-level collection with the same name already exists, the papers go into it instead of making a second one.
 - **Undo Last Filing** takes the papers back out of the collections. The collections themselves stay.
 - If nothing is suggested, every loose paper either fits a collection you already have or does not form a group of 4. Use **File into Collections…** for the first kind.
+
+### With AI
+
+**Tools > refwright > Suggest New Collections with AI…** does the same grouping, then asks your [AI provider](providers.md) to name each group.
+
+- The grouping is still offline. The AI only names the groups, so the cost stays small: one request per 8 groups, with the titles of the first 6 papers in each group and the names of your existing collections.
+- A group the model calls incoherent is dropped.
+- If a group clearly belongs in a collection you already have, the model can answer with that collection's name, and the papers go into it.
+- If the request fails, for example on a rate limit, the window opens with the offline names and says why.
+
+Only titles and collection names are sent, never abstracts or PDF text. See [Privacy](privacy.md).
+

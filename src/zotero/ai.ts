@@ -74,3 +74,36 @@ export async function listModels(id: string): Promise<string[]> {
   if (res.status >= 300) throw new Error(`HTTP ${res.status}`);
   return parseModels(p, res.json());
 }
+
+const RATE_LIMITED = /HTTP (413|429|5\d\d)/;
+
+/**
+ * JSON mode first, then one plain-mode retry for a bad reply. A rate limit stops at once with advice,
+ * so a limit never doubles the usage.
+ */
+export async function chatParsed<T>(
+  system: string,
+  user: string,
+  signal: AbortSignal,
+  maxTokens: number,
+  parse: (reply: string) => T,
+): Promise<T> {
+  let lastError = "";
+  for (const jsonMode of [true, false]) {
+    try {
+      const opts = { jsonMode, maxTokens, lowEffort: true };
+      return parse(await chat(system, user, signal, opts)); // NOSONAR: retry only after a failure
+    } catch (e: any) {
+      if (signal.aborted) throw e;
+      lastError = String(e?.message ?? e);
+      if (RATE_LIMITED.test(lastError))
+        throw new Error(
+          `${lastError}. Try again in a minute or use a smaller library.`,
+          {
+            cause: e,
+          },
+        );
+    }
+  }
+  throw new Error(lastError);
+}
