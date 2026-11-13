@@ -1,10 +1,14 @@
 # Changelog
 
+## 0.4.1
+
+- Suggest New Collections: no longer proposes collections for papers an existing collection already fits (it uses the same offline matching as File into Collections). Groups are named after the phrase their titles share, for example "Wildland urban interface", instead of their three strongest words.
+
 ## 0.4.0
 
 - New: **OA** column with each paper's open-access status from OpenAlex (gold, green, hybrid, bronze, diamond, closed). It is filled by the same update as the Cited column, which is now **Update Citations and Open Access** in the item menu and the Tools menu.
 - New: **Find Near-Duplicate Items…** (Tools). Finds what Zotero's duplicate finder misses, such as a preprint and its published version, using offline title, abstract, author and year similarity. A review window lets you choose the item to keep in each group and merge the groups you tick with Zotero's own merge. Nothing merges until you confirm.
-- New: **Suggest New Collections…** (Tools). Groups papers that are in no collection by topic and proposes named collections, which you can rename, tick and create.
+- New: **Suggest New Collections…** (Tools). Takes papers that are in no collection and that no existing collection fits, groups them by topic, and proposes collections named after the phrase their titles share. You can rename, tick and create them.
 - New: **New items** queue (off by default, in settings). Items you add are queued, their PDFs are looked up, and **Review New Items…** (Tools) shows tag and collection suggestions for all of them in one window.
 
 ## 0.3.5

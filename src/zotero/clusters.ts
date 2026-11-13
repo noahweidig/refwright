@@ -1,6 +1,6 @@
 import { Cluster, clusterDocs } from "../core/cluster";
 import { allRegularItems, fieldsOf } from "./library";
-import { routeOptions } from "./routing";
+import { itemsThatFit, routeOptions } from "./routing";
 import { S, saveState } from "./state";
 
 export interface Suggestion {
@@ -35,7 +35,9 @@ export async function suggestClusters(
 ): Promise<Suggestion[]> {
   const items = unfiled(await allRegularItems(libraryID));
   const byId = new Map(items.map((i) => [i.id, i]));
-  const gen = clusterDocs(items.map((i) => ({ id: i.id, text: textOf(i) })));
+  const gen = clusterDocs(
+    items.map((i) => ({ id: i.id, text: textOf(i), title: fieldsOf(i).title })),
+  );
   let clusters: Cluster[];
   for (;;) {
     const r = gen.next();
