@@ -19,6 +19,17 @@
 .refwright-split {
   flex-direction: row;
 }
+/* The dialog does not give its content a bounded height, so size it from the window.
+   Without this the list grows past the window and cannot scroll. */
+.refwright-window dialog {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.refwright-shell {
+  height: calc(100vh - 64px);
+  min-height: 360px;
+}
 .refwright-scroll {
   overflow: auto;
   flex: 1;

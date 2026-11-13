@@ -4,6 +4,15 @@ icon: lucide/history
 
 # Changelog
 
+## 0.3.2
+
+- Tag Manager: **Merge all** button in Duplicates and Similar Meaning (AI). It merges every group with the ticks and targets shown, after a confirmation, and one **Undo last change** reverses all of them.
+- Tag Manager: a group now disappears from Duplicates and Similar Meaning as soon as it is merged. Before, merged groups stayed on screen in the AI view, and Duplicates rescanned the whole library after every merge.
+
+## 0.3.1
+
+- Fix the Find Related Items window, and the review and report windows, not scrolling when the list is longer than the window. Their content is now sized from the window height.
+
 ## 0.3.0
 
 - New: **Find Related Items…** (item right-click menu) for many selected items at once. A review window lists each item's suggestions as toggle chips with similarity scores; drag the slider to select every suggestion at or above a score, adjust individual chips, then **Link selected**. Nothing is linked until you apply. The library is indexed once per run, so batches stay fast.
