@@ -5,11 +5,30 @@ import { config } from "../package.json";
 const basicTool = new BasicTool();
 
 /**
- * The plugin sandbox has no web APIs of its own. Borrow them from the hidden
- * DOM window, which always exists, so every module can use them normally.
+ * The plugin sandbox has no web APIs of its own, so borrow them from a window. The hidden DOM
+ * window only exists on macOS (asking for it throws on Windows and Linux), so fall back to
+ * Zotero's main window.
  */
+let borrowed: any;
+function webWindow(): any {
+  if (borrowed && !borrowed.closed) return borrowed;
+  const finders: (() => any)[] = [
+    () => (Services as any).appShell.hiddenDOMWindow,
+    () => Zotero.getMainWindow(),
+    () => (Services as any).wm.getMostRecentWindow("navigator:browser"),
+  ];
+  for (const find of finders) {
+    try {
+      const w = find();
+      if (w && !w.closed) return (borrowed = w);
+    } catch {
+      /* this platform has no such window; try the next */
+    }
+  }
+  throw new Error("No window is available yet for web APIs");
+}
+
 function shimWebGlobals() {
-  const win = () => (Services as any).appShell.hiddenDOMWindow as any;
   for (const name of [
     "AbortController",
     "AbortSignal",
@@ -22,8 +41,9 @@ function shimWebGlobals() {
     Object.defineProperty(_globalThis, name, {
       configurable: true,
       get() {
-        const v = win()[name];
-        return name.endsWith("Timeout") ? v.bind(win()) : v;
+        const w = webWindow();
+        const v = w[name];
+        return name.endsWith("Timeout") ? v.bind(w) : v;
       },
     });
   }
