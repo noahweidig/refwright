@@ -4,6 +4,11 @@ icon: lucide/history
 
 # Changelog
 
+## 0.4.6
+
+- Fix deleting tags in the Tag Manager. The Delete button did nothing, because the code stopped when the new name was empty and a delete has no new name.
+- Tag Manager keyboard shortcuts in All Tags: Cmd/Ctrl+A selects every tag in the list, Cmd/Ctrl+Z undoes the last change, Cmd/Ctrl+F focuses search, Delete or Backspace deletes the selection after a confirmation, and Enter in the name box renames the selected tag (or merges several). Text boxes keep their own select-all and undo.
+
 ## 0.4.5
 
 - Summary notes are now titled **AI summary** (they were "refwright summary"). Existing "refwright summary" notes still count, so nothing is summarized twice.

@@ -33,6 +33,8 @@ const sel = new Set<string>();
 let groups: Group[] = [];
 let fmt: (TC & { fixed: string })[] = [];
 let busy = "";
+/** the tags the All Tags list shows right now (after search and filter) */
+let visible: TC[] = [];
 let scanning = false;
 let scanSeq = 0;
 
@@ -89,12 +91,17 @@ function prune() {
     .filter((g) => g.tags.length > 1);
 }
 
-async function doMerge(from: string[], to: string, done?: Group) {
-  if (!to.trim() || !from.length) return;
+async function doMerge(
+  from: string[],
+  to: string,
+  done?: Group,
+  remove = false,
+) {
+  if (!from.length || (!remove && !to.trim())) return;
   busy = "…";
   draw();
   try {
-    const n = await c.merge(from, to.trim());
+    const n = await c.merge(from, remove ? "" : to.trim());
     if (done) groups = groups.filter((g) => g !== done);
     status(`${L.merged}: ${n}`);
   } catch (e: any) {
@@ -102,6 +109,57 @@ async function doMerge(from: string[], to: string, done?: Group) {
   }
   busy = "";
   await reload();
+}
+
+function deleteSelected() {
+  if (!sel.size || busy) return;
+  if (window.confirm(L.confirmDelete))
+    void doMerge([...sel], "", undefined, true);
+}
+
+async function doUndo() {
+  if (busy) return;
+  status((await c.undo()) ? L.undone : L.nothing);
+  await reload();
+}
+
+const typing = (e: Event) =>
+  ["INPUT", "TEXTAREA", "SELECT"].includes(
+    (e.target as HTMLElement | null)?.tagName ?? "",
+  );
+
+function selectVisible() {
+  for (const t of visible) sel.add(t.name);
+  draw(true);
+}
+
+function focusSearch() {
+  (
+    $("pane").querySelector("input[type=search]") as HTMLElement | null
+  )?.focus();
+}
+
+/** The action for a key press, or nothing. Text fields keep their own select-all and undo. */
+function shortcut(e: KeyboardEvent): (() => void) | undefined {
+  const mod = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey;
+  const key = e.key.toLowerCase();
+  const all = view === "all";
+  if (mod && key === "f" && all) return focusSearch;
+  if (typing(e)) return undefined;
+  if (mod && key === "a" && all) return selectVisible;
+  if (mod && key === "z") return () => void doUndo();
+  if ((e.key === "Delete" || e.key === "Backspace") && all)
+    return deleteSelected;
+  return undefined;
+}
+
+function onKey(e: KeyboardEvent) {
+  if (e.isComposing) return;
+  if (e.key === "Escape") return window.close();
+  const act = shortcut(e);
+  if (!act) return;
+  e.preventDefault();
+  act();
 }
 
 function loadingPane(): HTMLElement[] {
@@ -126,6 +184,7 @@ function allPane(): HTMLElement[] {
         ? a.count - b.count || a.name.localeCompare(b.name)
         : b.count - a.count || a.name.localeCompare(b.name),
   );
+  visible = list;
   const target = h("input", {
     type: "text",
     placeholder: L.target,
@@ -145,9 +204,12 @@ function allPane(): HTMLElement[] {
   };
   ren.onclick = () => void doMerge([...sel], target.value);
   del.textContent = L.del;
-  del.onclick = () => {
-    if (window.confirm(L.confirmDelete)) void doMerge([...sel], "");
-  };
+  del.onclick = deleteSelected;
+  target.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key !== "Enter" || e.isComposing) return;
+    e.preventDefault();
+    if (sel.size && target.value.trim()) ren.click();
+  });
   const row = (t: TC) => {
     const r = h(
       "div",
@@ -544,14 +606,9 @@ window.addEventListener("load", async () => {
   );
   $("close").textContent = L.close;
   $("close").addEventListener("click", () => window.close());
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") window.close();
-  });
+  document.addEventListener("keydown", onKey);
   $("undo").textContent = L.undo;
-  $("undo").addEventListener("click", async () => {
-    status((await c.undo()) ? L.undone : L.nothing);
-    await reload();
-  });
+  $("undo").addEventListener("click", () => void doUndo());
   window.addEventListener("unload", () => c.cancel());
   status(L.working);
   await reload();
