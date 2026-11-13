@@ -16,7 +16,8 @@ No accounts, no analytics, no server of ours.
 | Tag Manager (local scans)       | nothing                                                                                                                                                           |
 | Summaries                       | title, authors, date and abstract (or PDF text if there is no abstract) to your chosen provider                                                                   |
 | Cited column                    | DOIs to OpenAlex, plus your contact email and key if set                                                                                                          |
-| Related (AI)                    | title and the first 1,000 characters of the abstract of each item, to your embedding provider                                                                     |
+| Related (AI), offline           | nothing                                                                                                                                                           |
+| Related (AI), embeddings        | title and the first 1,000 characters of the abstract of each item, to your embedding provider                                                                     |
 | Collections, offline            | nothing                                                                                                                                                           |
 | Collections, embeddings or LLM  | see [Collections](collections.md)                                                                                                                                 |
 | Ollama or a local custom server | nothing leaves your machine                                                                                                                                       |

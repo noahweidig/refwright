@@ -14,6 +14,7 @@ icon: lucide/sliders-horizontal
 | Tags                | method, free sources, review, seeds, language, prompt, marker tag, automatic tags, skip tagged                                                               |
 | What the model sees | title, abstract, authors, journal, date, existing tags, DOI, PDF text and length, share library tags                                                         |
 | Tag cleanup         | every rule listed in [Tags](tags.md)                                                                                                                         |
+| Related items       | similarity method: offline (default) or embeddings                                                                                                           |
 | Collections         | ranking mode, ignore words, minimum confidence, collections per paper, remove from inbox                                                                     |
 | Tag Manager         | AI scan tags per request and requests per scan                                                                                                               |
 | Write-back API      | enable, token (generate, copy, test)                                                                                                                         |
