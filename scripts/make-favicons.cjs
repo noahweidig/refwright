@@ -5,10 +5,10 @@
  * Writes favicon.svg (also the site logo), favicon.ico, PNGs, apple-touch-icon.png, android-chrome and
  * maskable icons, mstile, safari-pinned-tab.svg, og.png, site.webmanifest and browserconfig.xml to docs/.
  */
-/* global __dirname */
-const fs = require("fs");
-const { Buffer } = require("buffer");
-const path = require("path");
+/* global __dirname, console, process */
+const fs = require("node:fs");
+const { Buffer } = require("node:buffer");
+const path = require("node:path");
 const { chromium } = require("playwright");
 
 const out = path.join(__dirname, "..", "docs");
@@ -41,7 +41,7 @@ const tile = ({ radius, scale, size = 24 }) => {
 };
 const write = (name, data) => fs.writeFileSync(path.join(out, name), data);
 
-(async () => {
+const main = async () => {
   write("favicon.svg", tile({ radius: 5, scale: 0.68 }));
   // single colour mask for Safari pinned tabs
   write(
@@ -61,18 +61,24 @@ const write = (name, data) => fs.writeFileSync(path.join(out, name), data);
     ["mstile-150x150.png", 150, { radius: 0, scale: 0.6 }, false],
   ];
   const browser = await chromium.launch();
+  await Promise.all(
+    pngs.map(async ([name, size, opts, transparent]) => {
+      const page = await browser.newPage({
+        viewport: { width: size, height: size },
+        deviceScaleFactor: 1,
+      });
+      await page.setContent(
+        `<body style="margin:0;background:transparent">${tile({ ...opts, size })}</body>`,
+      );
+      await page.screenshot({
+        path: path.join(out, name),
+        omitBackground: transparent,
+        clip: { x: 0, y: 0, width: size, height: size },
+      });
+      await page.close();
+    }),
+  );
   const page = await browser.newPage({ deviceScaleFactor: 1 });
-  for (const [name, size, opts, transparent] of pngs) {
-    await page.setViewportSize({ width: size, height: size });
-    await page.setContent(
-      `<body style="margin:0;background:transparent">${tile({ ...opts, size })}</body>`,
-    );
-    await page.screenshot({
-      path: path.join(out, name),
-      omitBackground: transparent,
-      clip: { x: 0, y: 0, width: size, height: size },
-    });
-  }
 
   // social card, 1200 x 630
   await page.setViewportSize({ width: 1200, height: 630 });
@@ -152,4 +158,9 @@ const write = (name, data) => fs.writeFileSync(path.join(out, name), data);
     "browserconfig.xml",
     `<?xml version="1.0" encoding="utf-8"?>\n<browserconfig><msapplication><tile><square150x150logo src="mstile-150x150.png"/><TileColor>${BLUE}</TileColor></tile></msapplication></browserconfig>\n`,
   );
-})();
+};
+
+main().catch((e) => {
+  console.error(e);
+  process.exitCode = 1;
+});
