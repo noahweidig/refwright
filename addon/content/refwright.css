@@ -240,15 +240,13 @@
 }
 
 /* tag manager: follows Zotero's collection pane (sidebar), toolbar and item tree (table) */
-.refwright-tm {
-  --tm-row: 24px;
-  background: var(--material-background, var(--color-background));
-}
 /* No native dialog button row: the window is one flex column, so the sidebar footer
    (undo, count, status, Close) is always at the bottom and always visible. */
 .refwright-tm {
+  --tm-row: 24px;
   display: flex;
   flex-direction: column;
+  background: var(--material-background, var(--color-background));
 }
 .refwright-tm .refwright-split {
   flex: 1 1 0;
