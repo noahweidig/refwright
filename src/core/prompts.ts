@@ -125,3 +125,38 @@ export function routeUserPrompt(
 
 /** rough token estimate shown before an AI tag scan */
 export const estimateTokens = (s: string) => Math.ceil(s.length / 4);
+
+export const SUMMARY_NOTE_TITLE = "refwright summary";
+
+export function summarySystem(language: string, sentences = 4): string {
+  return `You summarize academic papers for a researcher's reference library. Write one plain-text paragraph of ${sentences} sentences or fewer in ${language || "English"}: the question, the method, the main result, and the main limitation if stated. Use only the supplied text. If the text does not support a point, leave it out. No headings, bullets, markdown, or preamble.`;
+}
+export function summaryUserPrompt(p: {
+  title: string;
+  authors?: string;
+  date?: string;
+  abstract?: string;
+  pdfText?: string;
+}): string {
+  const parts = [`Title: ${p.title}`];
+  if (p.authors) parts.push(`Authors: ${p.authors}`);
+  if (p.date) parts.push(`Date: ${p.date}`);
+  if (p.abstract) parts.push(`Abstract:\n${p.abstract}`);
+  if (p.pdfText) parts.push(`Full text excerpt:\n${p.pdfText}`);
+  return parts.join("\n\n");
+}
+/** strip fences, markdown marks and a leading label from a model summary */
+export function cleanSummary(text: string): string {
+  return text
+    .replace(/```[a-z]*/gi, "")
+    .replace(/^\s*(summary|tl;dr)\s*:\s*/i, "")
+    .replace(/[*_#>`]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+const esc = (t: string) =>
+  t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export const summaryNoteHtml = (summary: string, source: string) =>
+  `<h1>${SUMMARY_NOTE_TITLE}</h1><p>${esc(summary)}</p><p><i>${esc(source)}</i></p>`;
+export const isSummaryNote = (html: string) =>
+  html.includes(`<h1>${SUMMARY_NOTE_TITLE}</h1>`);

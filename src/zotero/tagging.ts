@@ -277,7 +277,7 @@ export async function suggestTags(
   return out;
 }
 
-async function pdfText(item: Zotero.Item): Promise<string | undefined> {
+export async function pdfText(item: Zotero.Item): Promise<string | undefined> {
   for (const id of item.getAttachments()) {
     const a = Zotero.Items.get(id) as Zotero.Item;
     if (a?.isPDFAttachment() && (await a.fileExists())) {

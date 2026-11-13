@@ -128,6 +128,11 @@ export function registerMenus() {
           },
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-summarize"),
+            onCommand: () => A.summarizeAction(items()),
+          },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-file"),
             onCommand: () => A.fileAction(items()),
           },

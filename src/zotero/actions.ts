@@ -2,6 +2,7 @@ import { startRun, Task } from "./engine";
 import { suggestTags, applyTags, ItemSuggestion } from "./tagging";
 import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
+import { summarizeItems } from "./summarize";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -212,6 +213,49 @@ export const suggestTagsAction = (items: Zotero.Item[], ai: boolean) =>
 export const fileAction = (items: Zotero.Item[]) =>
   reviewAction(items, { tags: false, collections: true });
 
+async function _summarizeAction(input: Zotero.Item[]) {
+  const items = regularItems(input);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  if (!aiReady()) return toast(getString("tm-need-ai"), "error");
+  if (items.length > 20) {
+    const ok = Services.prompt.confirm(
+      Zotero.getMainWindow() as any,
+      getString("progress-title"),
+      getString("progress-confirm-many", { args: { count: items.length } }),
+    );
+    if (!ok) return;
+  }
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("summary-working"),
+      type: "default",
+      progress: 5,
+    })
+    .show();
+  try {
+    const r = await summarizeItems(
+      items,
+      (d, t) => pw.changeLine({ progress: 5 + (90 * d) / t }),
+      abort.signal,
+    );
+    pw.close();
+    const text = getString("summary-done", {
+      args: { made: r.made, skipped: r.skipped, failed: r.failed },
+    });
+    toast(
+      r.error ? `${text}: ${r.error}` : text,
+      r.failed ? "error" : "success",
+    );
+  } catch (e: any) {
+    pw.close();
+    toast(String(e?.message ?? e), "error");
+  }
+}
+
 async function _undoFilingAction() {
   toast(
     (await undoFiling())
@@ -358,6 +402,7 @@ function _showAudit() {
 export const runTask = guard(_runTask);
 export const runTagged = guard(_runTagged);
 export const reviewAction = guard(_reviewAction);
+export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
 export const collectionTagAction = guard(_collectionTagAction);
 export const exportMissing = guard(_exportMissing);
