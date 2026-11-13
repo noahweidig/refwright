@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Related (AI): new **Link all** button links every suggestion in one click (and **Dismiss** clears the list).
+
 ## 0.2.1
 
 - Related (AI) now defaults to offline similarity (title, abstract, tags and venue compared locally), so it works with no key and with providers that have no embeddings endpoint, such as Groq. Switch to embeddings under Settings > Related items; if the provider fails, refwright falls back to offline matches and says why.

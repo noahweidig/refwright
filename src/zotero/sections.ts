@@ -8,7 +8,7 @@ import { hasUsablePdf } from "./library";
 import { invalidateRouter, routeItems, ItemRoute } from "./routing";
 import { S, saveState } from "./state";
 import { suggestTags, TagChoice } from "./tagging";
-import { linkRelated, relatedFor, RelatedHit } from "./related";
+import { linkAllRelated, linkRelated, relatedFor, RelatedHit } from "./related";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
@@ -391,6 +391,25 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
       );
     }
     kids.push(area);
+    if (st.list.length)
+      kids.push(
+        row(
+          doc,
+          "actions",
+          button(doc, getString("related-add-all"), async () => {
+            await linkAllRelated(
+              item,
+              st.list!.map((h) => h.item),
+            );
+            st.list = [];
+            redraw();
+          }),
+          button(doc, getString("btn-dismiss"), () => {
+            st.list = null;
+            redraw();
+          }),
+        ),
+      );
   }
   body.replaceChildren(el(doc, "div", "refwright-pane", ...kids));
 }
