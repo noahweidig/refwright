@@ -121,6 +121,8 @@ export interface ChatOptions {
   maxTokens: number; // 0 = provider default
   timeout: number; // seconds
   jsonMode: boolean;
+  /** keeps reasoning models (gpt-oss) from spending the budget on hidden thinking */
+  lowEffort?: boolean;
 }
 export const defaultChatOptions: ChatOptions = {
   temperature: 0.2,
@@ -203,18 +205,30 @@ export function buildChat(
         method: "POST",
         timeout,
         headers: { ...JSON_H, ...bearer(c.key) },
-        body: JSON.stringify({
-          model,
-          temperature: o.temperature,
-          ...(o.maxTokens ? { max_tokens: o.maxTokens } : {}),
-          ...(o.jsonMode ? { response_format: { type: "json_object" } } : {}),
-          messages: [
-            { role: "system", content: system },
-            { role: "user", content: user },
-          ],
-        }),
+        body: JSON.stringify(openaiBody(model, system, user, o)),
       };
   }
+}
+
+function openaiBody(
+  model: string,
+  system: string,
+  user: string,
+  o: ChatOptions,
+) {
+  return {
+    model,
+    temperature: o.temperature,
+    ...(o.maxTokens ? { max_tokens: o.maxTokens } : {}),
+    ...(o.jsonMode ? { response_format: { type: "json_object" } } : {}),
+    ...(o.lowEffort && /gpt-oss/i.test(model)
+      ? { reasoning_effort: "low" }
+      : {}),
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
+  };
 }
 
 export function parseChat(p: ProviderInfo, j: any): string {

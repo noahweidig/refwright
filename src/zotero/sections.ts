@@ -137,7 +137,6 @@ async function drawPdf(body: HTMLElement, item: Zotero.Item, pdf?: boolean) {
   const hero = row(
     doc,
     `hero ${state}`,
-    glyph(doc, "attachment", "big"),
     el(
       doc,
       "div",
@@ -208,7 +207,6 @@ function drawTags(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "tag", "big"),
     el(
       doc,
       "div",
@@ -323,7 +321,6 @@ function drawRelated(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "related", "big"),
     el(
       doc,
       "div",
@@ -446,7 +443,6 @@ function drawColl(body: HTMLElement, item: Zotero.Item) {
   const head = row(
     doc,
     "summary",
-    glyph(doc, "folder", "big"),
     el(
       doc,
       "div",

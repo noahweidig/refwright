@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3
+
+- Item pane: removed the large icon from the body of the PDFs, Tags, Related and Collections sections. It crowded the text; the section header icons stay.
+- Fix Tag Manager merge showing "Not in transaction": the tag purge ran outside its database transaction. The items were changed but the undo record was never saved. Merging now purges inside the transaction and records undo.
+- Tag Manager AI scan uses far fewer tokens: tag names only (no counts or target list), one representative per locally found duplicate group, a small output cap (a few hundred tokens instead of thousands), and low reasoning effort for `gpt-oss` models. A rate limit (HTTP 429 or 413) now stops the scan with advice instead of retrying. New setting: only send tags used at least N times.
+
 ## 0.2.2
 
 - Related (AI): new **Link all** button links every suggestion in one click (and **Dismiss** clears the list).

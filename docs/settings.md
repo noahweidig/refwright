@@ -16,7 +16,7 @@ icon: lucide/sliders-horizontal
 | Tag cleanup         | every rule listed in [Tags](tags.md)                                                                                                                         |
 | Related items       | similarity method: offline (default) or embeddings                                                                                                           |
 | Collections         | ranking mode, ignore words, minimum confidence, collections per paper, remove from inbox                                                                     |
-| Tag Manager         | AI scan tags per request and requests per scan                                                                                                               |
+| Tag Manager         | AI scan tags per request, requests per scan and minimum tag uses                                                                                                               |
 | Write-back API      | enable, token (generate, copy, test)                                                                                                                         |
 
 Hidden preferences: `concurrency` (1 to 6) and `delayMs`.

@@ -12,7 +12,7 @@ No accounts, no analytics, no server of ours.
 | Retractions, citations          | DOI or PMID to PubMed and Crossref                                                                                                                                |
 | Free tags                       | DOI only, to OpenAlex, PubMed, Crossref                                                                                                                           |
 | AI tags                         | the fields you tick under _What the model sees_, to your chosen provider. PDF text is off by default.                                                             |
-| Tag Manager (AI scan)           | tag names and counts only                                                                                                                                         |
+| Tag Manager (AI scan)           | tag names only                                                                                                                                                     |
 | Tag Manager (local scans)       | nothing                                                                                                                                                           |
 | Summaries                       | title, authors, date and abstract (or PDF text if there is no abstract) to your chosen provider                                                                   |
 | Cited column                    | DOIs to OpenAlex, plus your contact email and key if set                                                                                                          |
