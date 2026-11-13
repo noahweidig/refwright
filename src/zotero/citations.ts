@@ -3,7 +3,8 @@ import {
   CITE_BATCH,
   citationUrl,
   normDoi,
-  parseCounts,
+  parseWorks,
+  WorkInfo,
   sortKey,
   usableDoi,
 } from "../core/citations";
@@ -14,6 +15,10 @@ import { S, saveState } from "./state";
 import { getPref } from "../utils/prefs";
 
 export const citeKey = (i: Zotero.Item) => `${i.libraryID}/${i.key}`;
+
+/** open-access status the "OA" column shows (lowercase word, or empty) */
+export const oaData = (item: Zotero.Item): string =>
+  S().cites[citeKey(item)]?.oa ?? "";
 
 /** value the "Cited" column sorts and renders from */
 export function citedData(item: Zotero.Item): string {
@@ -44,17 +49,17 @@ function groupByDoi(items: Zotero.Item[], res: CiteResult) {
 function store(
   batch: string[],
   byDoi: Map<string, Zotero.Item[]>,
-  counts: Map<string, number>,
+  works: Map<string, WorkInfo>,
   res: CiteResult,
 ) {
   for (const d of batch)
     for (const it of byDoi.get(d) ?? []) {
-      const n = counts.get(d);
-      if (n == null) {
+      const w = works.get(d);
+      if (!w) {
         res.notFound++;
         continue;
       }
-      S().cites[citeKey(it)] = { n, at: Date.now() };
+      S().cites[citeKey(it)] = { n: w.n, oa: w.oa, at: Date.now() };
       res.updated++;
     }
 }
@@ -82,7 +87,7 @@ export async function updateCitations(
     const req = { url: citationUrl(batch, email), headers, signal };
     const r = await http(req); // NOSONAR: sequential on purpose (polite spacing)
     if (r.status >= 300) throw new Error(`OpenAlex: HTTP ${r.status}`);
-    store(batch, byDoi, parseCounts(r.json()), res);
+    store(batch, byDoi, parseWorks(r.json()), res);
   }
   progress(dois.length, dois.length);
   saveState();

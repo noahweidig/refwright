@@ -37,7 +37,14 @@ export default defineConfig({
         outfile: `.scaffold/build/addon/content/scripts/${pkg.config.addonRef}.js`,
       },
       // window scripts run in their own chrome windows
-      ...["review", "report", "tagmanager", "related"].map((name) => ({
+      ...[
+        "review",
+        "report",
+        "tagmanager",
+        "related",
+        "nearDup",
+        "clusters",
+      ].map((name) => ({
         entryPoints: [`src/ui/${name}.ts`],
         bundle: true,
         target: "firefox115",

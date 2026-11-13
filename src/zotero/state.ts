@@ -35,7 +35,9 @@ export interface State {
   tmChecked: Record<string, number>;
   tmUndo: TagUndo[];
   embeddings: Record<string, { sig: string; vec: number[] }>;
-  cites: Record<string, { n: number; at: number }>; // libraryID/itemKey
+  cites: Record<string, { n: number; at: number; oa?: string }>;
+  /** new items waiting for review; pdf is true once their PDF lookup ran */
+  inbox: { id: number; pdf: boolean }[]; // libraryID/itemKey
 }
 const fresh = (): State => ({
   misses: {},
@@ -47,6 +49,7 @@ const fresh = (): State => ({
   tmUndo: [],
   embeddings: {},
   cites: {},
+  inbox: [],
 });
 
 let state: State = fresh();

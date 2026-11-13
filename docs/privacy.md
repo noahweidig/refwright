@@ -15,9 +15,11 @@ No accounts, no analytics, no server of ours.
 | Tag Manager (AI scan)           | tag names only                                                                                                                                                     |
 | Tag Manager (local scans)       | nothing                                                                                                                                                           |
 | Summaries                       | title, authors, date and abstract (or PDF text if there is no abstract) to your chosen provider                                                                   |
-| Cited column                    | DOIs to OpenAlex, plus your contact email and key if set                                                                                                          |
+| Cited and OA columns            | DOIs to OpenAlex, plus your contact email and key if set                                                                                                          |
 | Related (AI), offline           | nothing                                                                                                                                                           |
 | Related (AI), embeddings        | title and the first 1,000 characters of the abstract of each item, to your embedding provider                                                                     |
+| New items (queue)               | PDF lookups as in Find PDFs; tag and collection suggestions as in Tags and Collections                                                                           |
+| Near-duplicates, new collections | nothing (both run offline)                                                                                                                                      |
 | Collections, offline            | nothing                                                                                                                                                           |
 | Collections, embeddings or LLM  | see [Collections](collections.md)                                                                                                                                 |
 | Ollama or a local custom server | nothing leaves your machine                                                                                                                                       |

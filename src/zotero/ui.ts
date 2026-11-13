@@ -2,7 +2,7 @@ import { STATUS_TAGS as T } from "../core/tags";
 import { getLocaleID, getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
 import * as A from "./actions";
-import { citedData } from "./citations";
+import { citedData, oaData } from "./citations";
 import { S } from "./state";
 
 const NS = "http://www.w3.org/1999/xhtml";
@@ -92,6 +92,28 @@ export async function registerCitedColumn() {
       const span = doc.createElement("span");
       span.className = `cell ${column.className} refwright-cited`;
       if (data) span.textContent = Number(data).toLocaleString();
+      return span;
+    },
+  });
+}
+
+export async function registerOaColumn() {
+  if (!getPref("ui.column")) return;
+  await Zotero.ItemTreeManager.registerColumns({
+    pluginID: pluginID(),
+    dataKey: "refwright-oa",
+    label: "OA",
+    flex: 0,
+    width: "70",
+    staticWidth: false,
+    zoteroPersist: ["width", "hidden", "sortDirection"],
+    dataProvider: (item) => oaData(item),
+    renderCell: (_i, data, column, _first, doc) => {
+      const span = doc.createElement("span");
+      span.className = `cell ${column.className}`;
+      span.textContent = data
+        ? data.charAt(0).toUpperCase() + data.slice(1)
+        : "";
       return span;
     },
   });
@@ -220,6 +242,21 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-tag-manager"),
             onCommand: () => A.openTagManager(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-review-new"),
+            onCommand: () => A.reviewNewAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-new-collections"),
+            onCommand: () => A.newCollectionsAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-near-dup"),
+            onCommand: () => A.nearDupAction(),
           },
           {
             menuType: "menuitem",

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   citationUrl,
-  parseCounts,
+  parseWorks,
   sortKey,
   usableDoi,
 } from "../src/core/citations";
@@ -12,10 +12,18 @@ describe("citations", () => {
     const u = citationUrl(["https://doi.org/10.1/A", "10.2/b"], "a@b.c");
     expect(u).toContain("filter=doi:10.1%2Fa|10.2%2Fb");
     expect(u).toContain("per-page=2");
-    const m = parseCounts({
-      results: [{ doi: "https://doi.org/10.1/a", cited_by_count: 12 }],
+    const m = parseWorks({
+      results: [
+        {
+          doi: "https://doi.org/10.1/a",
+          cited_by_count: 12,
+          open_access: { oa_status: "green" },
+        },
+        { doi: "https://doi.org/10.1/b", cited_by_count: 0 },
+      ],
     });
-    expect(m.get("10.1/a")).toBe(12);
+    expect(m.get("10.1/a")).toEqual({ n: 12, oa: "green" });
+    expect(m.get("10.1/b")).toEqual({ n: 0, oa: undefined });
   });
   it("skips unusable dois and pads sort keys", () => {
     expect(usableDoi("10.1/a,b")).toBe(false);

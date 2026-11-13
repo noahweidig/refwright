@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero/skin/zotero.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-platform/content/zotero.css"?>
+<?xml-stylesheet href="chrome://__addonRef__/content/refwright.css" type="text/css"?>
+<window
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  id="refwright-neardup-window"
+  class="zotero-dialog refwright-window refwright-rel"
+  width="900"
+  height="680"
+  persist="screenX screenY width height"
+>
+  <html:div class="refwright-shell">
+    <html:div id="note" class="refwright-note" hidden="hidden"></html:div>
+    <html:div class="refwright-bar">
+      <html:span id="count" class="refwright-muted refwright-grow"></html:span>
+      <html:button id="all"></html:button>
+      <html:button id="none"></html:button>
+    </html:div>
+    <html:div id="list" class="refwright-scroll"></html:div>
+    <html:div class="refwright-footer">
+      <html:span class="refwright-grow"></html:span>
+      <html:button id="cancel"></html:button>
+      <html:button id="apply"></html:button>
+    </html:div>
+  </html:div>
+  <script src="chrome://__addonRef__/content/scripts/ui-nearDup.js" />
+</window>

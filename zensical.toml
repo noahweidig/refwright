@@ -19,6 +19,8 @@ nav = [
     { "Tags" = "tags.md" },
     { "Tag Manager" = "tag-manager.md" },
     { "Collections" = "collections.md" },
+    { "New items" = "new-items.md" },
+    { "Near-duplicate items" = "near-duplicates.md" },
     { "Summaries and related items" = "insights.md" },
   ] },
   { "Reference" = [

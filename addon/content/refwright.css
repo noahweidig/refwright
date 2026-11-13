@@ -702,3 +702,34 @@
 .refwright-rel .refwright-chips {
   margin-top: 8px;
 }
+
+/* near-duplicate review */
+.refwright-nd-merge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.refwright-nd-keep {
+  margin: 6px 0 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.refwright-nd-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 3px 0;
+}
+.refwright-nd-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.refwright-nd-title {
+  font-weight: 600;
+}
+.refwright-rel .refwright-head input[type="text"] {
+  flex: 1;
+  min-width: 0;
+}

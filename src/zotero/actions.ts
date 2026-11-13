@@ -5,6 +5,9 @@ import * as TM from "./tagManager";
 import { summarizeItems } from "./summarize";
 import { updateCitations } from "./citations";
 import { linkMany, relatedForMany } from "./related";
+import { mergeNearGroups, scanNearDuplicates } from "./nearDup";
+import { createFromSuggestions, suggestClusters } from "./clusters";
+import { clearQueue, pending } from "./inbox";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -80,7 +83,11 @@ async function _runTagged(task: Task) {
 /** Unified review: tags (free or AI), collections, or both. */
 async function _reviewAction(
   input: Zotero.Item[],
-  opts: { tags: "free" | "ai" | false; collections: boolean },
+  opts: {
+    tags: "free" | "ai" | false;
+    collections: boolean;
+    onApplied?: () => void;
+  },
 ) {
   const items = regularItems(input);
   if (!items.length) return toast(getString("tags-none-selected"));
@@ -202,6 +209,7 @@ async function _reviewAction(
       if (opts.collections)
         parts.push(getString("route-filed", { args: { count: filed } }));
       toast(parts.join(" · "), "success");
+      opts.onApplied?.();
     },
   };
   openRefwrightWindow("review.xhtml", ctrl);
@@ -367,6 +375,96 @@ async function _relatedBatchAction(input: Zotero.Item[]) {
   });
 }
 
+function progressLine(text: string) {
+  return new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({ text, type: "default", progress: 50 })
+    .show();
+}
+
+async function _nearDupAction() {
+  const pw = progressLine(getString("neardup-working"));
+  let groups;
+  try {
+    groups = await scanNearDuplicates(currentLibraryID());
+  } finally {
+    pw.close();
+  }
+  if (!groups.length) return toast(getString("neardup-none"));
+  openRefwrightWindow("nearduplicates.xhtml", {
+    groups,
+    labels: {
+      title: getString("neardup-title"),
+      apply: getString("neardup-apply"),
+      cancel: getString("review-cancel"),
+      selectAll: getString("select-all"),
+      selectNone: getString("related-batch-none"),
+      selected: getString("related-batch-selected", {
+        args: { count: "{count}" },
+      }),
+      mergeGroup: getString("neardup-merge-group"),
+      keep: getString("neardup-keep"),
+      confirm: getString("neardup-confirm", { args: { count: "{count}" } }),
+      attachments: getString("neardup-attachments", {
+        args: { count: "{count}" },
+      }),
+      attachment: getString("neardup-attachment", {
+        args: { count: "{count}" },
+      }),
+      preprint: getString("neardup-preprint"),
+      empty: getString("neardup-none"),
+    },
+    apply: async (picks: { masterID: number; otherIDs: number[] }[]) => {
+      const n = await mergeNearGroups(picks);
+      toast(getString("neardup-merged", { args: { count: n } }), "success");
+    },
+  });
+}
+
+async function _newCollectionsAction() {
+  const pw = progressLine(getString("clusters-working"));
+  let items;
+  try {
+    items = await suggestClusters(currentLibraryID());
+  } finally {
+    pw.close();
+  }
+  if (!items.length) return toast(getString("clusters-none"));
+  openRefwrightWindow("collections-suggest.xhtml", {
+    items,
+    labels: {
+      title: getString("clusters-title"),
+      apply: getString("clusters-apply"),
+      cancel: getString("review-cancel"),
+      selectAll: getString("select-all"),
+      selectNone: getString("related-batch-none"),
+      selected: getString("related-batch-selected", {
+        args: { count: "{count}" },
+      }),
+      papers: getString("clusters-papers", { args: { count: "{count}" } }),
+      more: getString("clusters-more", { args: { count: "{count}" } }),
+      empty: getString("clusters-none"),
+    },
+    apply: async (picks: { name: string; ids: number[] }[]) => {
+      const n = await createFromSuggestions(currentLibraryID(), picks);
+      toast(getString("clusters-created", { args: { count: n } }), "success");
+    },
+  });
+}
+
+/** One review window of tag and collection suggestions for everything the new-items queue collected. */
+async function _reviewNewAction() {
+  const items = pending();
+  if (!items.length) return toast(getString("inbox-none"));
+  return reviewAction(items, {
+    tags: g("tag.method") === "ai" ? "ai" : "free",
+    collections: true,
+    onApplied: () => clearQueue(items.map((i) => i.id)),
+  });
+}
+
 async function _undoFilingAction() {
   toast(
     (await undoFiling())
@@ -524,6 +622,9 @@ export const reviewAction = guard(_reviewAction);
 export const citationsAction = guard(_citationsAction);
 export const citationsAllAction = guard(_citationsAllAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
+export const nearDupAction = guard(_nearDupAction);
+export const newCollectionsAction = guard(_newCollectionsAction);
+export const reviewNewAction = guard(_reviewNewAction);
 export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
 export const collectionTagAction = guard(_collectionTagAction);

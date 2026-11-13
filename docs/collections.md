@@ -36,3 +36,14 @@ Each paper shows its top 5 suggestions as chips, best pre-selected. Hover for th
 ## Undo
 
 **refwright > Undo Last Filing** reverses additions and inbox removals in one step. It survives restarts and covers the last filing only.
+
+## Suggest new collections
+
+**Tools > refwright > Suggest New Collections…** looks at papers that are in no collection (or only in an ignored one such as an inbox) and groups them by topic. It runs offline on title, abstract, tags and journal.
+
+- Each suggested group has a name taken from its strongest words, which you can edit, and a list of its papers.
+- Only groups of 4 or more papers are shown, largest first, up to 30.
+- Tick the groups you want, or use **Select all**, then **Create selected**. Nothing is created until then.
+- If a top-level collection with the same name already exists, the papers go into it instead of making a second one.
+- **Undo Last Filing** takes the papers back out of the collections. The collections themselves stay.
+
