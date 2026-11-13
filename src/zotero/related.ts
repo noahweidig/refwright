@@ -122,3 +122,12 @@ export async function linkRelated(a: Zotero.Item, b: Zotero.Item) {
   await a.saveTx();
   await b.saveTx();
 }
+
+/** Links every item in one pass: relations first, then one save per item. */
+export async function linkAllRelated(a: Zotero.Item, others: Zotero.Item[]) {
+  for (const b of others) {
+    a.addRelatedItem(b);
+    b.addRelatedItem(a);
+  }
+  await Promise.all([a, ...others].map((i) => i.saveTx()));
+}

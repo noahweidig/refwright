@@ -34,7 +34,7 @@ Counts are looked up by DOI, 50 at a time, and cached on your computer. Items wi
 The **Related (AI)** section of the item pane suggests other items in the same library that cover similar ground.
 
 1. Select an item and click **Find related**.
-2. Click a suggestion to link both items in Zotero's own **Related** field. Items that are already linked are not suggested. Hovering a suggestion shows its similarity score.
+2. Click a suggestion to link both items in Zotero's own **Related** field, or click **Link all** to link every suggestion at once. **Dismiss** clears the list. Items that are already linked are not suggested. Hovering a suggestion shows its similarity score.
 
 Choose how similarity is measured under **Settings > Related items**:
 
