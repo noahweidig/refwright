@@ -121,6 +121,8 @@ export interface ChatOptions {
   maxTokens: number; // 0 = provider default
   timeout: number; // seconds
   jsonMode: boolean;
+  /** keeps reasoning models (gpt-oss) from spending the budget on hidden thinking */
+  lowEffort?: boolean;
 }
 export const defaultChatOptions: ChatOptions = {
   temperature: 0.2,
@@ -208,6 +210,9 @@ export function buildChat(
           temperature: o.temperature,
           ...(o.maxTokens ? { max_tokens: o.maxTokens } : {}),
           ...(o.jsonMode ? { response_format: { type: "json_object" } } : {}),
+          ...(o.lowEffort && /gpt-oss/i.test(model)
+            ? { reasoning_effort: "low" }
+            : {}),
           messages: [
             { role: "system", content: system },
             { role: "user", content: user },

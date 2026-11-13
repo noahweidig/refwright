@@ -107,6 +107,7 @@ pref("route.minConfidence", 0);
 pref("route.perPaper", 4);
 pref("route.removeInbox", true);
 pref("related.mode", "offline");
+pref("tm.minUses", 1);
 pref("tm.perRequest", 150);
 pref("tm.requests", 3);
 pref("ui.column", true);

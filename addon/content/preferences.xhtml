@@ -599,6 +599,21 @@
       ></html:input>
     </hbox>
     <hbox align="center" class="refwright-pref-row">
+      <label
+        value="AI scan: only tags used at least"
+        control="refwright-tm-minuses"
+        style="min-width: 150px"
+      />
+      <html:input
+        id="refwright-tm-minuses"
+        type="number"
+        min="1"
+        preference="tm.minUses"
+        style="width: 90px"
+      ></html:input>
+      <label value="times (raise to cut tokens)" />
+    </hbox>
+    <hbox align="center" class="refwright-pref-row">
       <label value="AI scan: requests per scan" style="min-width: 150px" />
       <html:input
         type="number"

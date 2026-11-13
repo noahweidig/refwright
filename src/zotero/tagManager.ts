@@ -1,4 +1,5 @@
 import {
+  findDuplicates,
   findDuplicatesAsync,
   findFormatting,
   TagCount,
@@ -27,46 +28,80 @@ export const scanDuplicates = (tags: TagCount[]): Promise<DupGroup[]> =>
 export const scanFormatting = (tags: TagCount[]) =>
   findFormatting(tags, cleanOptions());
 
-export function estimateScan(tags: TagCount[]) {
+interface Candidates {
+  /** what the model sees: one tag per local duplicate group, minus rarely used tags */
+  send: TagCount[];
+  /** a sent tag -> everything the local scan already groups with it */
+  expand: Map<string, TagCount[]>;
+}
+
+/** Tags worth sending. Local duplicates collapse to one representative, so no tokens go to what a free scan already found. */
+function candidates(tags: TagCount[]): Candidates {
+  const min = Math.max(1, Number(g("tm.minUses")) || 1);
   const usable = tags.filter(
-    (t) => !isReserved(t.name) && !S().tmChecked[tagKey(t.name)],
+    (t) =>
+      !isReserved(t.name) && !S().tmChecked[tagKey(t.name)] && t.count >= min,
   );
+  const expand = new Map<string, TagCount[]>();
+  const hidden = new Set<string>();
+  for (const grp of findDuplicates(usable)) {
+    expand.set(grp.target, grp.tags);
+    for (const t of grp.tags) if (t.name !== grp.target) hidden.add(t.name);
+  }
+  return { send: usable.filter((t) => !hidden.has(t.name)), expand };
+}
+
+/** Output room: a reply is a few short groups, so a small cap is enough and keeps small rate limits happy. */
+const outputCap = (n: number) =>
+  Number(g("ai.maxTokens")) || Math.min(2048, Math.max(512, n * 6));
+
+export function estimateScan(tags: TagCount[]) {
+  const { send } = candidates(tags);
   const per = Math.max(20, Number(g("tm.perRequest")) || 150);
   const reqs = Math.min(
     Math.max(1, Number(g("tm.requests")) || 3),
-    Math.ceil(usable.length / per),
+    Math.ceil(send.length / per),
   );
-  const batch = usable.slice(0, per * reqs);
+  const batch = send.slice(0, per * reqs);
   return {
     tags: batch.length,
     requests: Math.ceil(batch.length / per),
     tokens:
-      estimateTokens(JSON.stringify(batch.map((t) => [t.name, t.count]))) +
-      300 * reqs,
+      estimateTokens(mergeUserPrompt(batch.map((t) => t.name))) +
+      70 * reqs +
+      Math.min(outputCap(per), 300) * reqs,
   };
 }
 
-/** JSON mode first; if the reply is unusable, retry once in plain mode with more room. */
-async function askMerge(
-  batch: TagCount[],
-  targets: string[],
-  signal: AbortSignal,
-) {
-  const user = mergeUserPrompt(batch, targets);
-  const room = Math.max(Number(g("ai.maxTokens")) || 0, 4096);
+const RATE = /HTTP (413|429|5\d\d)/;
+
+/** JSON mode first; retry once in plain mode only for a bad reply, never after a rate limit. */
+async function askMerge(names: string[], signal: AbortSignal) {
+  const user = mergeUserPrompt(names);
+  const cap = outputCap(names.length);
   let last = "";
   for (const jsonMode of [true, false]) {
     try {
-      const opts = { jsonMode, maxTokens: room * (jsonMode ? 1 : 2) };
+      const opts = {
+        jsonMode,
+        maxTokens: jsonMode ? cap : Math.min(cap * 2, 4096),
+        lowEffort: true,
+      };
       last = await chat(MERGE_SYSTEM, user, signal, opts); // NOSONAR: retry only after a failure
       return parseMergeReply(last);
     } catch (e: any) {
       if (signal.aborted) throw e;
+      const msg = String(e?.message ?? e);
+      if (RATE.test(msg))
+        throw new Error(
+          `${msg}. Lower "AI scan: tags per request" or raise "only tags used at least" in settings.`,
+          { cause: e },
+        );
       if (!jsonMode)
         throw new Error(
           last.trim()
-            ? `${e.message}. Reply began: ${last.trim().slice(0, 120)}`
-            : `${e.message}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
+            ? `${msg}. Reply began: ${last.trim().slice(0, 120)}`
+            : `${msg}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
           { cause: e },
         );
     }
@@ -74,38 +109,39 @@ async function askMerge(
   return [];
 }
 
-/** Similar meaning (AI): sends tag names and counts only. */
+/** Similar meaning (AI): sends tag names only. */
 export async function scanSimilar(
   tags: TagCount[],
   signal: AbortSignal,
 ): Promise<DupGroup[]> {
   if (!aiReady())
     throw new Error("Add an API key and model in refwright settings > AI");
-  const usable = tags.filter(
-    (t) => !isReserved(t.name) && !S().tmChecked[tagKey(t.name)],
-  );
+  const { send, expand } = candidates(tags);
   const per = Math.max(20, Number(g("tm.perRequest")) || 150);
   const reqs = Math.max(1, Number(g("tm.requests")) || 3);
-  const targets = [...usable]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 20)
-    .map((t) => t.name);
-  const byName = new Map(tags.map((t) => [t.name, t]));
+  const byName = new Map(send.map((t) => [t.name, t]));
   const groups: DupGroup[] = [];
-  for (let i = 0; i < reqs && i * per < usable.length; i++) {
+  for (let i = 0; i < reqs && i * per < send.length; i++) {
     if (signal.aborted) throw new Error("Cancelled");
-    const batch = usable.slice(i * per, (i + 1) * per);
-    const replies = await askMerge(batch, targets, signal); // NOSONAR: sequential (rate limits)
-    for (const gr of replies) {
-      const members = [gr.target, ...gr.merge]
-        .map((n) => byName.get(n))
-        .filter(Boolean) as TagCount[];
-      if (members.length > 1)
+    const batch = send.slice(i * per, (i + 1) * per);
+    const replies = await askMerge(
+      batch.map((t) => t.name),
+      signal,
+    ); // NOSONAR: sequential (rate limits)
+    for (const names of replies) {
+      const members = new Map<string, TagCount>();
+      for (const n of names)
+        for (const t of expand.get(n) ??
+          (byName.has(n) ? [byName.get(n)!] : []))
+          members.set(t.name, t);
+      if (members.size > 1) {
+        const m = [...members.values()];
         groups.push({
           reason: "similar meaning",
-          tags: members,
-          target: byName.has(gr.target) ? gr.target : pickTarget(members),
+          tags: m,
+          target: pickTarget(m),
         });
+      }
     }
     for (const t of batch) S().tmChecked[tagKey(t.name)] = Date.now();
   }
@@ -157,8 +193,8 @@ export async function mergeTags(
         n++;
       }
     }
+    await Zotero.Tags.purge(); // needs the open transaction
   });
-  await Zotero.Tags.purge();
   S().tmUndo.push(rec);
   S().tmUndo = S().tmUndo.slice(-50);
   saveState();
