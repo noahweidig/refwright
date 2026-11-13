@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - New: "Cited" column with OpenAlex citation counts (sortable). Fill it from the item menu (Update Citation Counts) or Tools (whole library). Counts are cached locally and need a DOI.
 - New: "Related (AI)" item pane section. Embeds the library once (cached, resumable) and suggests similar items; click a suggestion to link both items in Zotero's Related field. Uses the embedding provider from settings.
