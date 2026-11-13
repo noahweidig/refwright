@@ -2,6 +2,7 @@ import { STATUS_TAGS as T } from "../core/tags";
 import { getLocaleID, getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
 import * as A from "./actions";
+import { citedData } from "./citations";
 import { S } from "./state";
 
 const NS = "http://www.w3.org/1999/xhtml";
@@ -76,6 +77,26 @@ export async function registerColumn() {
   });
 }
 
+export async function registerCitedColumn() {
+  if (!getPref("ui.column")) return;
+  await Zotero.ItemTreeManager.registerColumns({
+    pluginID: pluginID(),
+    dataKey: "refwright-cited",
+    label: "Cited",
+    flex: 0,
+    width: "60",
+    staticWidth: false,
+    zoteroPersist: ["width", "hidden", "sortDirection"],
+    dataProvider: (item) => citedData(item),
+    renderCell: (_i, data, column, _first, doc) => {
+      const span = doc.createElement("span");
+      span.className = `cell ${column.className} refwright-cited`;
+      if (data) span.textContent = Number(data).toLocaleString();
+      return span;
+    },
+  });
+}
+
 /* ---------- menus ---------- */
 export function registerMenus() {
   const I = icon();
@@ -125,6 +146,11 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-suggest-tags-ai"),
             onCommand: () => A.suggestTagsAction(items(), true),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-citations-update"),
+            onCommand: () => A.citationsAction(items()),
           },
           {
             menuType: "menuitem",
@@ -189,6 +215,11 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-tag-manager"),
             onCommand: () => A.openTagManager(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-citations-all"),
+            onCommand: () => A.citationsAllAction(),
           },
           {
             menuType: "menuitem",

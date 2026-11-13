@@ -676,3 +676,8 @@
 .refwright-cell.ok {
   color: var(--fill-secondary);
 }
+
+.refwright-cited {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}

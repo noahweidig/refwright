@@ -144,3 +144,14 @@ task-preview = Preview PDF Sources
 task-retraction = Check for Retractions
 task-citation = Check Citation Metadata
 task-full = Full Check
+cites-working = Fetching citation counts…
+cites-done = Citation counts: { $updated } updated, { $missing } not found, { $nodoi } without a DOI
+related-hint = Ranks items in this library by similarity of title and abstract.
+related-looking = Embedding the library… { $done } / { $total }
+related-none = No similar items found
+related-find = Find related
+related-add-all = Link all
+related-count = { $count ->
+    [one] { $count } linked item
+   *[other] { $count } linked items
+}

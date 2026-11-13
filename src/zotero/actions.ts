@@ -3,6 +3,7 @@ import { suggestTags, applyTags, ItemSuggestion } from "./tagging";
 import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
 import { summarizeItems } from "./summarize";
+import { updateCitations } from "./citations";
 import {
   currentLibraryID,
   hasUsablePdf,
@@ -256,6 +257,47 @@ async function _summarizeAction(input: Zotero.Item[]) {
   }
 }
 
+async function _citationsAction(input: Zotero.Item[]) {
+  const items = regularItems(input);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("cites-working"),
+      type: "default",
+      progress: 5,
+    })
+    .show();
+  try {
+    const r = await updateCitations(
+      items,
+      (d, t) => pw.changeLine({ progress: 5 + (90 * d) / Math.max(1, t) }),
+      abort.signal,
+    );
+    pw.close();
+    toast(
+      getString("cites-done", {
+        args: { updated: r.updated, missing: r.notFound, nodoi: r.noDoi },
+      }),
+      "success",
+    );
+  } catch (e: any) {
+    pw.close();
+    toast(String(e?.message ?? e), "error");
+  }
+}
+
+async function _citationsAllAction() {
+  const all = (await Zotero.Items.getAll(
+    currentLibraryID(),
+    true,
+  )) as Zotero.Item[];
+  return citationsAction(all.filter((i) => i.isRegularItem() && !i.deleted));
+}
+
 async function _undoFilingAction() {
   toast(
     (await undoFiling())
@@ -403,6 +445,8 @@ function _showAudit() {
 export const runTask = guard(_runTask);
 export const runTagged = guard(_runTagged);
 export const reviewAction = guard(_reviewAction);
+export const citationsAction = guard(_citationsAction);
+export const citationsAllAction = guard(_citationsAllAction);
 export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
 export const collectionTagAction = guard(_collectionTagAction);
