@@ -8,6 +8,7 @@ interface Suggestion {
 }
 interface Ctrl {
   items: Suggestion[];
+  note?: string;
   labels: Record<string, string>;
   apply(picks: { name: string; ids: number[] }[]): Promise<void>;
 }
@@ -73,6 +74,10 @@ const setAll = (on: boolean) => {
 
 window.addEventListener("load", () => {
   document.title = L.title;
+  if (c.note) {
+    $("note").textContent = c.note;
+    $("note").hidden = false;
+  }
   $("all").textContent = L.selectAll;
   $("none").textContent = L.selectNone;
   $("apply").textContent = L.apply;

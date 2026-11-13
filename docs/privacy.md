@@ -19,6 +19,7 @@ No accounts, no analytics, no server of ours.
 | Related (AI), offline           | nothing                                                                                                                                                           |
 | Related (AI), embeddings        | title and the first 1,000 characters of the abstract of each item, to your embedding provider                                                                     |
 | New items (queue)               | PDF lookups as in Find PDFs; tag and collection suggestions as in Tags and Collections                                                                           |
+| New collections with AI         | titles of up to 6 papers per group and your collection names, to your chosen provider                                                                            |
 | Near-duplicates, new collections | nothing (both run offline)                                                                                                                                      |
 | Collections, offline            | nothing                                                                                                                                                           |
 | Collections, embeddings or LLM  | see [Collections](collections.md)                                                                                                                                 |

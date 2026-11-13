@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+- New: **Suggest New Collections with AI…** (Tools). The same offline grouping, then your AI provider names each group. It sends only the titles of up to 6 papers per group and your collection names, in one request per 8 groups. Groups the model calls incoherent are dropped, and a group that belongs in an existing collection can be pointed at it. If the AI step fails, the offline names are shown with the reason.
+
 ## 0.4.2
 
 - Fix Suggest New Collections still proposing groups for papers that an existing collection fits. The check added in 0.4.1 was not connected, so it never ran. It now drops those papers before grouping.

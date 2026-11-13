@@ -423,17 +423,23 @@ async function _nearDupAction() {
   });
 }
 
-async function _newCollectionsAction() {
+async function runNewCollections(ai: boolean) {
+  if (ai && !aiReady()) return toast(getString("tm-need-ai"), "error");
   const pw = progressLine(getString("clusters-working"));
-  let items;
+  let found;
   try {
-    items = await suggestClusters(currentLibraryID());
+    found = await suggestClusters(
+      currentLibraryID(),
+      ai,
+      new AbortController().signal,
+    );
   } finally {
     pw.close();
   }
-  if (!items.length) return toast(getString("clusters-none"));
+  if (!found.items.length) return toast(getString("clusters-none"));
   openRefwrightWindow("collections-suggest.xhtml", {
-    items,
+    items: found.items,
+    note: found.note,
     labels: {
       title: getString("clusters-title"),
       apply: getString("clusters-apply"),
@@ -453,6 +459,9 @@ async function _newCollectionsAction() {
     },
   });
 }
+
+const _newCollectionsAction = () => runNewCollections(false);
+const _newCollectionsAiAction = () => runNewCollections(true);
 
 /** One review window of tag and collection suggestions for everything the new-items queue collected. */
 async function _reviewNewAction() {
@@ -624,6 +633,7 @@ export const citationsAllAction = guard(_citationsAllAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
 export const nearDupAction = guard(_nearDupAction);
 export const newCollectionsAction = guard(_newCollectionsAction);
+export const newCollectionsAiAction = guard(_newCollectionsAiAction);
 export const reviewNewAction = guard(_reviewNewAction);
 export const summarizeAction = guard(_summarizeAction);
 export const undoFilingAction = guard(_undoFilingAction);
