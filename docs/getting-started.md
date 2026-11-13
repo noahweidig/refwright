@@ -18,11 +18,12 @@ Download the `.xpi` from the latest release, then in Zotero: **Tools > Plugins >
 
 | Place                         | What                                                            |
 | ----------------------------- | --------------------------------------------------------------- |
-| Item right-click > refwright  | PDF, retraction, citation, tag and collection actions           |
+| Item right-click > refwright  | PDF, retraction, citation, tag, summary and collection actions  |
 | Collection right-click        | Suggest tags for the whole collection                           |
-| Tools > refwright             | Tagged-batch runs, Tag Manager, CSV export, audit log, settings |
+| Tools > refwright             | Tagged-batch runs, Tag Manager, citation counts, CSV export, audit log, settings |
 | Item list column `refwright`  | `PDF`, `No PDF`, `Check`, `⚠ Retracted` (sortable)              |
-| Item pane section `refwright` | Status and per-item buttons                                     |
+| Item list column `Cited`      | OpenAlex citation count (sortable)                              |
+| Item pane sections            | PDFs, tags, related (AI) and collections, with per-item buttons |
 
 ## Status tags
 

@@ -38,11 +38,4 @@ A tag you remove twice (net of times you kept it) stops appearing. A replacement
 
 ## Tag Manager
 
-**Tools > refwright > Tag Manager.** Nothing changes until you merge, and every change can be undone.
-
-- **Duplicates** (local): case, plurals, typos, word order, abbreviations.
-- **Formatting** (local): tags that break your cleanup rules.
-- **Similar meaning** (AI): sends tag names and counts only. Shows a token estimate first.
-- **All tags**: search, sort, filter, bulk rename, merge, delete.
-
-The merge target is the most-used tag; ties go to the shorter name, then alphabetical.
+Duplicates, formatting fixes, AI synonyms and bulk edits live in their own window. See [Tag Manager](tag-manager.md).
