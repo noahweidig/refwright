@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.7
+
+- Tag Manager selection works like a file list: click selects one tag, Cmd/Ctrl+click adds or removes one, and Shift+click selects the range from the last click (Cmd/Ctrl+Shift+click adds the range to the current selection). Before, every click toggled one tag.
+- Fix Backspace and Delete in the Tag Manager search and name boxes. They tried to delete the selected tags instead of editing the text, and the same check in the review window swallowed `/` typed into a text field. Shortcuts now stand aside whenever you are typing in a text box or dropdown, and only act when the list itself has focus. The check compared an uppercase `INPUT`, but these windows report lowercase `input`, so it never matched.
+
 ## 0.4.6
 
 - Fix deleting tags in the Tag Manager. The Delete button did nothing, because the code stopped when the new name was empty and a delete has no new name.

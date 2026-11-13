@@ -1,4 +1,4 @@
-import { $, arg, h } from "./dom";
+import { $, arg, h, isTyping } from "./dom";
 
 interface TC {
   name: string;
@@ -35,6 +35,8 @@ let fmt: (TC & { fixed: string })[] = [];
 let busy = "";
 /** the tags the All Tags list shows right now (after search and filter) */
 let visible: TC[] = [];
+/** the tag a Shift-click range starts from */
+let anchor = "";
 let scanning = false;
 let scanSeq = 0;
 
@@ -72,6 +74,7 @@ async function reload() {
   tags = await c.load();
   if (view === "fmt") fmt = c.formatting(tags);
   sel.clear();
+  anchor = "";
   prune();
   draw();
 }
@@ -123,11 +126,6 @@ async function doUndo() {
   await reload();
 }
 
-const typing = (e: Event) =>
-  ["INPUT", "TEXTAREA", "SELECT"].includes(
-    (e.target as HTMLElement | null)?.tagName ?? "",
-  );
-
 function selectVisible() {
   for (const t of visible) sel.add(t.name);
   draw(true);
@@ -145,7 +143,7 @@ function shortcut(e: KeyboardEvent): (() => void) | undefined {
   const key = e.key.toLowerCase();
   const all = view === "all";
   if (mod && key === "f" && all) return focusSearch;
-  if (typing(e)) return undefined;
+  if (isTyping(e)) return undefined;
   if (mod && key === "a" && all) return selectVisible;
   if (mod && key === "z") return () => void doUndo();
   if ((e.key === "Delete" || e.key === "Backspace") && all)
@@ -210,6 +208,38 @@ function allPane(): HTMLElement[] {
     e.preventDefault();
     if (sel.size && target.value.trim()) ren.click();
   });
+  const paint = () => {
+    for (const el of Array.from(listEl.children)) {
+      const on = sel.has(el.getAttribute("data-name") ?? "");
+      el.classList.toggle("selected", on);
+      el.setAttribute("aria-selected", String(on));
+    }
+    sync();
+  };
+  /** click selects one tag; Cmd/Ctrl-click adds or removes one; Shift-click selects the range from the last click */
+  const pick = (
+    name: string,
+    e: Pick<MouseEvent, "metaKey" | "ctrlKey" | "shiftKey">,
+  ) => {
+    const add = e.metaKey || e.ctrlKey;
+    const names = list.map((x) => x.name);
+    if (e.shiftKey && names.includes(anchor)) {
+      const [lo, hi] = [names.indexOf(anchor), names.indexOf(name)].sort(
+        (x, y) => x - y,
+      );
+      if (!add) sel.clear();
+      for (const n of names.slice(lo, hi + 1)) sel.add(n);
+    } else if (add) {
+      if (!sel.delete(name)) sel.add(name);
+      anchor = name;
+    } else {
+      const only = sel.size === 1 && sel.has(name);
+      sel.clear();
+      if (!only) sel.add(name);
+      anchor = name;
+    }
+    paint();
+  };
   const row = (t: TC) => {
     const r = h(
       "div",
@@ -217,24 +247,18 @@ function allPane(): HTMLElement[] {
         class: `refwright-tagrow${sel.has(t.name) ? " selected" : ""}`,
         role: "option",
         tabindex: "0",
+        "data-name": t.name,
         "aria-selected": String(sel.has(t.name)),
       },
       glyph("tag"),
       h("span", { class: "n" }, t.name),
       h("span", { class: "c" }, String(t.count)),
     );
-    const flip = () => {
-      if (sel.has(t.name)) sel.delete(t.name);
-      else sel.add(t.name);
-      r.classList.toggle("selected", sel.has(t.name));
-      r.setAttribute("aria-selected", String(sel.has(t.name)));
-      sync();
-    };
-    r.addEventListener("click", flip);
+    r.addEventListener("click", (e: MouseEvent) => pick(t.name, e));
     r.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === " " || e.key === "Enter") {
         e.preventDefault();
-        flip();
+        pick(t.name, { metaKey: true, ctrlKey: false, shiftKey: false });
       }
     });
     return r;

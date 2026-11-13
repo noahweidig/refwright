@@ -35,6 +35,16 @@ A group disappears from the list as soon as you merge it, and groups drop out wh
 
     Status tags such as `fulltext:pdf-missing` are never listed, merged or deleted.
 
+## Selecting tags
+
+In All Tags:
+
+- **Click** a tag to select just that one. Click it again to clear the selection.
+- **Cmd/Ctrl + click** adds a tag to the selection or removes it.
+- **Shift + click** selects every tag from the last one you clicked to this one. Add Cmd/Ctrl to keep what was already selected.
+
+Then rename, merge or delete them together. Shift selects through the list as it is shown, so search and sort first to bring the tags together.
+
 ## Keyboard shortcuts
 
 Use **Cmd** on macOS and **Ctrl** on Windows and Linux. In All Tags:
