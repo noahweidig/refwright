@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.3.4
+
+- Tag Manager: buttons use Zotero's default button style. Removed the custom blue "primary" look and the spacing and size overrides, so Rename, Merge, Scan, Merge all and the rest match every other button.
+
 ## 0.3.3
 
 - Tag Manager: the counts, status and a **Close** button now sit at the bottom of the sidebar and always stay visible, however small the window is. The native OK row, which was pushed off screen when the window was not fully expanded, is gone.

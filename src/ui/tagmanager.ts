@@ -133,7 +133,7 @@ function allPane(): HTMLElement[] {
     id: "target",
   }) as HTMLInputElement;
   const count = h("span", { class: "refwright-muted refwright-selcount" });
-  const ren = h("button", { class: "primary" }) as HTMLButtonElement;
+  const ren = h("button") as HTMLButtonElement;
   const del = h("button") as HTMLButtonElement;
   const sync = () => {
     count.textContent = sel.size
@@ -293,7 +293,6 @@ function mergeAllButton(count: number) {
   return h(
     "button",
     {
-      class: "primary",
       disabled: !!busy || scanning || !count,
       onclick: mergeAll,
     },
@@ -321,7 +320,6 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         h(
           "button",
           {
-            class: "primary",
             disabled: !!busy || !c.aiReady() || !est.tags,
             onclick: runSimilar,
           },
@@ -410,7 +408,6 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
           h(
             "button",
             {
-              class: "primary",
               disabled: !!busy,
               onclick: () =>
                 doMerge(
@@ -479,7 +476,6 @@ function fmtPane(): HTMLElement[] {
       h(
         "button",
         {
-          class: "primary",
           onclick: async () => {
             for (const t of fmt.filter((x) => x.fixed))
               await doMerge([t.name], t.fixed);
