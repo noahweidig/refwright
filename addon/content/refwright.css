@@ -665,7 +665,16 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* batch related window */
+/* batch related window: a plain window, one flex column, footer always visible */
+.refwright-rel {
+  display: flex;
+  flex-direction: column;
+}
+.refwright-rel .refwright-shell {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 360px;
+}
 .refwright-rel .refwright-grow {
   flex: 1;
   min-width: 0;
