@@ -17,7 +17,7 @@ interface Ctrl {
   estimate(tags: TC[]): { tags: number; requests: number; tokens: number };
   similar(tags: TC[]): Promise<Group[]>;
   forget(): void;
-  merge(from: string[], to: string): Promise<number>;
+  merge(from: string[], to: string, batch?: number): Promise<number>;
   undo(): Promise<boolean>;
   aiReady(): boolean;
   cancel(): void;
@@ -70,16 +70,32 @@ async function reload() {
   tags = await c.load();
   if (view === "fmt") fmt = c.formatting(tags);
   sel.clear();
-  if (view === "dup") await scanDup();
-  else draw();
+  prune();
+  draw();
 }
 
-async function doMerge(from: string[], to: string) {
+/** Drop merged-away tags from the open groups; a group left with one tag disappears. */
+function prune() {
+  const live = new Map(tags.map((t) => [t.name, t]));
+  groups = groups
+    .map((g) => {
+      const m = g.tags
+        .filter((t) => live.has(t.name))
+        .map((t) => live.get(t.name)!);
+      const best =
+        [...m].sort((a, b) => b.count - a.count)[0]?.name ?? g.target;
+      return { ...g, tags: m, target: live.has(g.target) ? g.target : best };
+    })
+    .filter((g) => g.tags.length > 1);
+}
+
+async function doMerge(from: string[], to: string, done?: Group) {
   if (!to.trim() || !from.length) return;
   busy = "…";
   draw();
   try {
     const n = await c.merge(from, to.trim());
+    if (done) groups = groups.filter((g) => g !== done);
     status(`${L.merged}: ${n}`);
   } catch (e: any) {
     status(String(e?.message ?? e));
@@ -239,8 +255,55 @@ function allPane(): HTMLElement[] {
   ];
 }
 
+interface Card {
+  group: Group;
+  names(): string[];
+  target(): string;
+}
+let cards: Card[] = [];
+
+/** Merge every open group with the ticks and targets currently shown. One undo reverses all. */
+async function mergeAll() {
+  const todo = cards
+    .map((cd) => ({ group: cd.group, from: cd.names(), to: cd.target() }))
+    .filter((t) => t.from.some((n) => n !== t.to));
+  if (!todo.length) return status(L.none);
+  if (
+    !window.confirm(L.confirmMergeAll.replace("{count}", String(todo.length)))
+  )
+    return;
+  busy = "…";
+  draw();
+  const batch = Date.now();
+  let n = 0;
+  try {
+    for (const t of todo) {
+      n += await c.merge(t.from, t.to, batch); // NOSONAR: one database write at a time
+      groups = groups.filter((g) => g !== t.group);
+    }
+    status(`${L.merged}: ${n}`);
+  } catch (e: any) {
+    status(String(e?.message ?? e));
+  }
+  busy = "";
+  await reload();
+}
+
+function mergeAllButton(count: number) {
+  return h(
+    "button",
+    {
+      class: "primary",
+      disabled: !!busy || scanning || !count,
+      onclick: mergeAll,
+    },
+    `${L.mergeAll} (${count})`,
+  );
+}
+
 function groupPane(gs: Group[], ai = false): HTMLElement[] {
   const out: HTMLElement[] = [];
+  cards = [];
   if (ai) {
     const est = c.estimate(tags);
     out.push(
@@ -274,9 +337,19 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
           },
           L.forget,
         ),
+        mergeAllButton(gs.length),
       ),
     );
     if (!c.aiReady()) out.push(h("div", { class: "refwright-note" }, L.needAi));
+  } else if (gs.length) {
+    out.push(
+      h(
+        "div",
+        { class: "refwright-bar" },
+        h("span", { class: "refwright-muted refwright-grow" }, `${gs.length}`),
+        mergeAllButton(gs.length),
+      ),
+    );
   }
   const body = h("div", { class: "refwright-body" });
   out.push(body);
@@ -294,6 +367,11 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
         ),
       ),
     ) as HTMLSelectElement;
+    cards.push({
+      group: g,
+      names: () => [...checks].filter(([, cb]) => cb.checked).map(([n]) => n),
+      target: () => targetSel.value,
+    });
     body.append(
       h(
         "div",
@@ -333,10 +411,12 @@ function groupPane(gs: Group[], ai = false): HTMLElement[] {
             "button",
             {
               class: "primary",
+              disabled: !!busy,
               onclick: () =>
                 doMerge(
                   [...checks].filter(([, cb]) => cb.checked).map(([n]) => n),
                   targetSel.value,
+                  g,
                 ),
             },
             L.merge,
@@ -433,7 +513,7 @@ function draw(keepFocus = false) {
   }
   for (const b of document.querySelectorAll("#nav button"))
     b.classList.toggle("active", (b as HTMLElement).dataset.view === view);
-  $("total").textContent = `${tags.length}`;
+  $("total").textContent = `${tags.length} ${L.total}`;
 }
 
 window.addEventListener("load", async () => {
@@ -466,6 +546,11 @@ window.addEventListener("load", async () => {
       ),
     ),
   );
+  $("close").textContent = L.close;
+  $("close").addEventListener("click", () => window.close());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") window.close();
+  });
   $("undo").textContent = L.undo;
   $("undo").addEventListener("click", async () => {
     status((await c.undo()) ? L.undone : L.nothing);

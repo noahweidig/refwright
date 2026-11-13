@@ -25,6 +25,12 @@ The window follows Zotero's own layout: views in the left pane, a searchable tab
 
 In **Duplicates** and **Similar Meaning**, untick the tags you want to leave out and choose the merge target from the list. The default target is the most-used tag; ties go to the shorter name, then alphabetical.
 
+### Merge all
+
+**Duplicates** and **Similar Meaning (AI)** each have a **Merge all** button. It merges every group listed, using the tags currently ticked and the merge target currently chosen in each card, after asking you to confirm. Untick tags or change a target first to steer it. **Undo last change** reverses the whole Merge all at once.
+
+A group disappears from the list as soon as you merge it, and groups drop out when their tags no longer exist.
+
 !!! note
 
     Status tags such as `fulltext:pdf-missing` are never listed, merged or deleted.

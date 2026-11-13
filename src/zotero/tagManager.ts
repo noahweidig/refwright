@@ -170,6 +170,7 @@ export async function mergeTags(
   libraryID: number,
   from: string[],
   to: string,
+  batch?: number,
 ): Promise<number> {
   const rec: TagUndo = {
     at: Date.now(),
@@ -179,6 +180,7 @@ export async function mergeTags(
     fromItems: {},
     hadTo: [],
     type: 0,
+    batch,
   };
   let n = 0;
   const hadTo = to
@@ -207,9 +209,7 @@ export async function mergeTags(
   return n;
 }
 
-export async function undoLast(): Promise<boolean> {
-  const rec = S().tmUndo.pop();
-  if (!rec) return false;
+async function undoOne(rec: TagUndo) {
   const had = new Set(rec.hadTo);
   await Zotero.DB.executeTransaction(async () => {
     for (const [f, ids] of Object.entries(rec.fromItems))
@@ -217,12 +217,20 @@ export async function undoLast(): Promise<boolean> {
         const item = Zotero.Items.get(id) as Zotero.Item;
         if (!item) continue;
         if (!item.hasTag(f)) item.addTag(f, rec.type);
-        if (rec.to && !had.has(id)) {
-          item.removeTag(rec.to);
-        }
+        if (rec.to && !had.has(id)) item.removeTag(rec.to);
         await item.save();
       }
   });
+}
+
+/** Undoes the last change; a Merge all undoes every merge it made. */
+export async function undoLast(): Promise<boolean> {
+  const first = S().tmUndo.pop();
+  if (!first) return false;
+  const recs = [first];
+  while (first.batch && S().tmUndo.at(-1)?.batch === first.batch)
+    recs.push(S().tmUndo.pop()!);
+  for (const rec of recs) await undoOne(rec); // NOSONAR: one transaction at a time
   saveState();
   return true;
 }

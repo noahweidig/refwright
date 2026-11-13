@@ -14,6 +14,8 @@ export interface TagUndo {
   fromItems: Record<string, number[]>;
   hadTo: number[];
   type: number;
+  /** records written by one Merge all share a batch id and undo together */
+  batch?: number;
 }
 export interface AuditEntry {
   at: number;

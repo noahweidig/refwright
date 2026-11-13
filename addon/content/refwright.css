@@ -19,6 +19,17 @@
 .refwright-split {
   flex-direction: row;
 }
+/* The dialog does not give its content a bounded height, so size it from the window.
+   Without this the list grows past the window and cannot scroll. */
+.refwright-window dialog {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.refwright-shell {
+  height: calc(100vh - 64px);
+  min-height: 360px;
+}
 .refwright-scroll {
   overflow: auto;
   flex: 1;
@@ -229,20 +240,18 @@
 }
 
 /* tag manager: follows Zotero's collection pane (sidebar), toolbar and item tree (table) */
+/* No native dialog button row: the window is one flex column, so the sidebar footer
+   (undo, count, status, Close) is always at the bottom and always visible. */
 .refwright-tm {
   --tm-row: 24px;
-  background: var(--material-background, var(--color-background));
-}
-.refwright-tm #refwright-tagmanager-dialog {
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  background: var(--material-background, var(--color-background));
 }
 .refwright-tm .refwright-split {
   flex: 1 1 0;
-  min-width: 880px;
-  min-height: 560px;
-  height: calc(100vh - 64px);
+  min-width: 760px;
+  min-height: 420px;
   overflow: hidden;
 }
 .refwright-tm .refwright-side {
