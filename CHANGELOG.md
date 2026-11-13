@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.1
+
+- Suggest New Collections: no longer proposes collections for papers an existing collection already fits (it uses the same offline matching as File into Collections). Groups are named after the phrase their titles share, for example "Wildland urban interface", instead of their three strongest words.
+
 ## 0.4.0
 
 - New: **OA** column with each paper's open-access status from OpenAlex (gold, green, hybrid, bronze, diamond, closed). It is filled by the same update as the Cited column, which is now **Update Citations and Open Access** in the item menu and the Tools menu.
