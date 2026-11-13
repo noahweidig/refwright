@@ -611,11 +611,16 @@
         preference="tm.minUses"
         style="width: 90px"
       ></html:input>
-      <label value="times (raise to cut tokens)" />
+      <description>times (raise to cut tokens)</description>
     </hbox>
     <hbox align="center" class="refwright-pref-row">
-      <label value="AI scan: requests per scan" style="min-width: 150px" />
+      <label
+        value="AI scan: requests per scan"
+        control="refwright-tm-requests"
+        style="min-width: 150px"
+      />
       <html:input
+        id="refwright-tm-requests"
         type="number"
         preference="tm.requests"
         style="width: 90px"

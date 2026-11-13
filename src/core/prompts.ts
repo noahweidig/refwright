@@ -105,15 +105,14 @@ export function mergeUserPrompt(names: string[]) {
 export function parseMergeReply(text: string): string[][] {
   const j = extractJson(text);
   const groups: any[] = Array.isArray(j) ? j : (j.groups ?? []);
-  return groups
-    .map((g) =>
-      Array.isArray(g)
-        ? g.map(String)
-        : g?.target && Array.isArray(g.merge)
-          ? [String(g.target), ...g.merge.map(String)]
-          : [],
-    )
-    .filter((g) => g.length > 1);
+  return groups.map(asGroup).filter((g) => g.length > 1);
+}
+
+function asGroup(g: any): string[] {
+  if (Array.isArray(g)) return g.map(String);
+  if (g?.target && Array.isArray(g.merge))
+    return [String(g.target), ...g.merge.map(String)];
+  return [];
 }
 
 export const ROUTE_SYSTEM =

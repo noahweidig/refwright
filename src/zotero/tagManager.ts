@@ -75,38 +75,46 @@ export function estimateScan(tags: TagCount[]) {
 
 const RATE = /HTTP (413|429|5\d\d)/;
 
+type Attempt =
+  { groups: string[][] } | { error: string; reply: string; limited: boolean };
+
+async function attempt(
+  names: string[],
+  signal: AbortSignal,
+  jsonMode: boolean,
+): Promise<Attempt> {
+  const cap = outputCap(names.length);
+  const opts = {
+    jsonMode,
+    maxTokens: jsonMode ? cap : Math.min(cap * 2, 4096),
+    lowEffort: true,
+  };
+  let reply = "";
+  try {
+    reply = await chat(MERGE_SYSTEM, mergeUserPrompt(names), signal, opts);
+    return { groups: parseMergeReply(reply) };
+  } catch (e: any) {
+    if (signal.aborted) throw e;
+    const error = String(e?.message ?? e);
+    return { error, reply, limited: RATE.test(error) };
+  }
+}
+
 /** JSON mode first; retry once in plain mode only for a bad reply, never after a rate limit. */
 async function askMerge(names: string[], signal: AbortSignal) {
-  const user = mergeUserPrompt(names);
-  const cap = outputCap(names.length);
-  let last = "";
-  for (const jsonMode of [true, false]) {
-    try {
-      const opts = {
-        jsonMode,
-        maxTokens: jsonMode ? cap : Math.min(cap * 2, 4096),
-        lowEffort: true,
-      };
-      last = await chat(MERGE_SYSTEM, user, signal, opts); // NOSONAR: retry only after a failure
-      return parseMergeReply(last);
-    } catch (e: any) {
-      if (signal.aborted) throw e;
-      const msg = String(e?.message ?? e);
-      if (RATE.test(msg))
-        throw new Error(
-          `${msg}. Lower "AI scan: tags per request" or raise "only tags used at least" in settings.`,
-          { cause: e },
-        );
-      if (!jsonMode)
-        throw new Error(
-          last.trim()
-            ? `${msg}. Reply began: ${last.trim().slice(0, 120)}`
-            : `${msg}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
-          { cause: e },
-        );
-    }
-  }
-  return [];
+  const first = await attempt(names, signal, true);
+  if ("groups" in first) return first.groups;
+  if (first.limited)
+    throw new Error(
+      `${first.error}. Lower "AI scan: tags per request" or raise "only tags used at least" in settings.`,
+    );
+  const second = await attempt(names, signal, false); // NOSONAR: retry only after a failure
+  if ("groups" in second) return second.groups;
+  throw new Error(
+    second.reply.trim()
+      ? `${second.error}. Reply began: ${second.reply.trim().slice(0, 120)}`
+      : `${second.error}. The model returned an empty reply (try another model or raise Max tokens in settings).`,
+  );
 }
 
 /** Similar meaning (AI): sends tag names only. */
@@ -124,10 +132,8 @@ export async function scanSimilar(
   for (let i = 0; i < reqs && i * per < send.length; i++) {
     if (signal.aborted) throw new Error("Cancelled");
     const batch = send.slice(i * per, (i + 1) * per);
-    const replies = await askMerge(
-      batch.map((t) => t.name),
-      signal,
-    ); // NOSONAR: sequential (rate limits)
+    const names = batch.map((t) => t.name);
+    const replies = await askMerge(names, signal); // NOSONAR: sequential (rate limits)
     for (const names of replies) {
       const members = new Map<string, TagCount>();
       for (const n of names)

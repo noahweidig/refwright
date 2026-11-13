@@ -595,11 +595,6 @@
   -moz-context-properties: fill, fill-opacity;
   fill: currentColor;
 }
-.refwright-glyph.big {
-  width: 26px;
-  height: 26px;
-  color: var(--accent-blue);
-}
 .refwright-btn {
   display: inline-flex;
   align-items: center;
