@@ -6,26 +6,29 @@
 <window
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  id="refwright-related"
+  id="refwright-related-window"
   class="zotero-dialog refwright-window refwright-rel"
   width="860"
   height="640"
   persist="screenX screenY width height"
 >
-  <dialog id="refwright-related-dialog" buttons="cancel,accept">
-    <html:div class="refwright-shell">
-      <html:div id="note" class="refwright-note" hidden="hidden"></html:div>
-      <html:div class="refwright-bar">
-        <html:label class="refwright-slider refwright-grow">
-          <html:span id="thresh-label"></html:span>
-          <html:input id="thresh" type="range" min="0" max="100" value="100" />
-          <html:span id="thresh-value" class="refwright-muted"></html:span>
-        </html:label>
-        <html:button id="none"></html:button>
-        <html:span id="count" class="refwright-muted"></html:span>
-      </html:div>
-      <html:div id="list" class="refwright-scroll"></html:div>
+  <html:div class="refwright-shell">
+    <html:div id="note" class="refwright-note" hidden="hidden"></html:div>
+    <html:div class="refwright-bar">
+      <html:label class="refwright-slider refwright-grow">
+        <html:span id="thresh-label"></html:span>
+        <html:input id="thresh" type="range" min="0" max="100" value="100" />
+        <html:span id="thresh-value" class="refwright-muted"></html:span>
+      </html:label>
+      <html:button id="none"></html:button>
+      <html:span id="count" class="refwright-muted"></html:span>
     </html:div>
-  </dialog>
+    <html:div id="list" class="refwright-scroll"></html:div>
+    <html:div class="refwright-footer">
+      <html:span class="refwright-grow"></html:span>
+      <html:button id="cancel"></html:button>
+      <html:button id="apply"></html:button>
+    </html:div>
+  </html:div>
   <script src="chrome://__addonRef__/content/scripts/ui-related.js" />
 </window>

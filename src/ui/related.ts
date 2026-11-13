@@ -34,8 +34,7 @@ const chips = new Map<Hit, HTMLElement>();
 function refresh() {
   const n = all().filter((x) => x.on).length;
   $("count").textContent = L.selected.replace("{count}", String(n));
-  const dlg = document.querySelector("dialog") as any;
-  dlg.getButton("accept").disabled = !n;
+  ($("apply") as HTMLButtonElement).disabled = !n;
   for (const [hit, el] of chips) {
     el.classList.toggle("on", hit.on);
     (el.querySelector("input") as HTMLInputElement).checked = hit.on;
@@ -120,12 +119,14 @@ window.addEventListener("load", () => {
     shown();
     refresh();
   });
-  const dlg = document.querySelector("dialog") as any;
-  dlg.getButton("accept").label = L.apply;
-  dlg.getButton("cancel").label = L.cancel;
-  document.addEventListener("dialogaccept", async (e) => {
-    e.preventDefault();
-    dlg.getButton("accept").disabled = true;
+  $("apply").textContent = L.apply;
+  $("cancel").textContent = L.cancel;
+  $("cancel").addEventListener("click", () => window.close());
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") window.close();
+  });
+  $("apply").addEventListener("click", async () => {
+    ($("apply") as HTMLButtonElement).disabled = true;
     try {
       await c.apply(
         c.items

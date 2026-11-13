@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.3.5
+
+- Find Related Items window: scrolling now works. The window no longer uses the native dialog wrapper; it is a plain window with its own **Cancel** and **Link selected** buttons in a footer that always stays visible. Esc closes it.
+
 ## 0.3.4
 
 - Tag Manager: buttons use Zotero's default button style. Removed the custom blue "primary" look and the spacing and size overrides, so Rename, Merge, Scan, Merge all and the rest match every other button.
