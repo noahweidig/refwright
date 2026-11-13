@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { clusterDocs, nameFor, surfaceForms } from "../src/core/cluster";
+import {
+  clusterDocs,
+  nameFor,
+  phraseFor,
+  surfaceForms,
+} from "../src/core/cluster";
 import { runToEnd } from "../src/core/nearDup";
 
 const smoke = (i: number) => ({
@@ -37,5 +42,20 @@ describe("clusters", () => {
     const f = surfaceForms(["forests forests forest", "forests"]);
     expect(f.get("forest")).toBe("forests");
     expect(nameFor(new Map([["forest", 2]]), f)).toBe("Forests");
+  });
+
+  it("names a cluster with the phrase its titles share", () => {
+    const titles = [
+      "Changing large wildfire dynamics in the wildland-urban interface",
+      "Drivers of fires in the wildland urban interface of the east",
+      "Defining the wildland-urban interface for California",
+      "Smoke exposure and health",
+    ];
+    expect(phraseFor(titles)).toBe("Wildland urban interface");
+  });
+  it("gives no phrase when titles share nothing", () => {
+    expect(
+      phraseFor(["Alpha beta gamma", "Delta epsilon zeta"]),
+    ).toBeUndefined();
   });
 });
