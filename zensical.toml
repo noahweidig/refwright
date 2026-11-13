@@ -1,11 +1,14 @@
 [project]
 site_name = "refwright"
 site_description = "Find PDFs, check retractions and citations, tag, and file papers in Zotero."
+site_author = "Noah Weidig"
 site_url = "https://noahweidig.github.io/refwright/"
 repo_url = "https://github.com/noahweidig/refwright"
+repo_name = "noahweidig/refwright"
 docs_dir = "docs"
 site_dir = "site"
-copyright = "AGPL-3.0-or-later"
+copyright = "refwright is free and open source. AGPL-3.0-or-later."
+extra_css = ["stylesheets/extra.css"]
 
 nav = [
   { "Home" = "index.md" },
@@ -14,7 +17,9 @@ nav = [
     { "PDFs" = "pdfs.md" },
     { "Retractions and citations" = "integrity.md" },
     { "Tags" = "tags.md" },
+    { "Tag Manager" = "tag-manager.md" },
     { "Collections" = "collections.md" },
+    { "Summaries and related items" = "insights.md" },
   ] },
   { "Reference" = [
     { "Settings" = "settings.md" },
@@ -26,52 +31,75 @@ nav = [
 ]
 
 [project.theme]
+language = "en"
 custom_dir = "overrides"
+favicon = "favicon.svg"
+logo = "favicon.svg"
 features = [
-  "navigation.instant",
-  "navigation.tabs",
-  "navigation.sections",
-  "navigation.top",
-  "navigation.footer",
-  "toc.follow",
+  "content.code.annotate",
   "content.code.copy",
+  "content.code.select",
+  "content.footnote.tooltips",
   "content.tabs.link",
+  "content.tooltips",
+  "navigation.footer",
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.path",
+  "navigation.sections",
+  "navigation.tabs",
+  "navigation.top",
+  "navigation.tracking",
   "search.highlight",
   "search.suggest",
+  "toc.follow",
 ]
 
+[project.theme.icon]
+repo = "octicons/mark-github-16"
+
 [[project.theme.palette]]
+media = "(prefers-color-scheme)"
+toggle.icon = "lucide/sun-moon"
+toggle.name = "Switch to light mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
 scheme = "default"
-primary = "indigo"
-accent = "indigo"
 toggle.icon = "lucide/sun"
 toggle.name = "Switch to dark mode"
 
 [[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
 scheme = "slate"
-primary = "indigo"
-accent = "indigo"
 toggle.icon = "lucide/moon"
-toggle.name = "Switch to light mode"
+toggle.name = "Switch to system preference"
 
-[project.theme.icon]
-repo = "lucide/git-branch"
-logo = "lucide/book-marked"
-
-[project.markdown_extensions.attr_list]
-[project.markdown_extensions.md_in_html]
-[project.markdown_extensions.admonition]
-[project.markdown_extensions.pymdownx.details]
-[project.markdown_extensions.pymdownx.superfences]
-[project.markdown_extensions.pymdownx.tabbed]
-alternate_style = true
-[project.markdown_extensions.pymdownx.highlight]
-anchor_linenums = true
-[project.markdown_extensions.pymdownx.inlinehilite]
-[project.markdown_extensions.tables]
-[project.markdown_extensions.toc]
-permalink = true
-[project.markdown_extensions.pymdownx.emoji]
-emoji_index = "zensical.extensions.emoji.twemoji"
-emoji_generator = "zensical.extensions.emoji.to_svg"
-options = { custom_icons = ["overrides/.icons"] }
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+tables = {}
+toc.permalink = true
+pymdownx.betterem = {}
+pymdownx.caret = {}
+pymdownx.details = {}
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.emoji.options = { custom_icons = ["overrides/.icons"] }
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+pymdownx.keys = {}
+pymdownx.magiclink = {}
+pymdownx.mark = {}
+pymdownx.smartsymbols = {}
+pymdownx.superfences = {}
+pymdownx.tabbed.alternate_style = true
+pymdownx.tabbed.combine_header_slug = true
+pymdownx.tasklist.custom_checkbox = true
+pymdownx.tilde = {}
