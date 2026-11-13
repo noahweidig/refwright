@@ -5,7 +5,9 @@
  * Writes favicon.svg (also the site logo), favicon.ico, PNGs, apple-touch-icon.png, android-chrome and
  * maskable icons, mstile, safari-pinned-tab.svg, og.png, site.webmanifest and browserconfig.xml to docs/.
  */
+/* global __dirname */
 const fs = require("fs");
+const { Buffer } = require("buffer");
 const path = require("path");
 const { chromium } = require("playwright");
 
