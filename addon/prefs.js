@@ -114,3 +114,5 @@ pref("tm.perRequest", 150);
 pref("tm.requests", 3);
 pref("ui.column", true);
 pref("ui.itemSection", true);
+pref("queue.wpm", 150);
+pref("queue.autoUnread", false);

@@ -4,6 +4,20 @@ import { getPref } from "../utils/prefs";
 import * as A from "./actions";
 import { citedData, oaData } from "./citations";
 import { S } from "./state";
+import {
+  minutesOf,
+  readStatus,
+  relevanceOf,
+  selectNextUp,
+  setReadStatus,
+} from "./queue";
+import {
+  fmtMinutes,
+  minutesSortKey,
+  statusFromSortKey,
+  statusSortKey,
+} from "../core/queue";
+import { sortKey } from "../core/citations";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
@@ -119,7 +133,88 @@ export async function registerOaColumn() {
   });
 }
 
+export async function registerQueueColumns() {
+  if (!getPref("ui.column")) return;
+  const reg = (
+    dataKey: string,
+    label: string,
+    width: string,
+    dataProvider: (item: Zotero.Item) => string,
+    paint: (cell: HTMLElement, data: string, doc: Document) => void,
+    extra = "",
+  ) =>
+    Zotero.ItemTreeManager.registerColumns({
+      pluginID: pluginID(),
+      flex: 0,
+      staticWidth: false,
+      zoteroPersist: ["width", "hidden", "sortDirection"],
+      dataKey,
+      label,
+      width,
+      dataProvider,
+      renderCell: (_i, data, column, _first, doc) => {
+        const span = doc.createElement("span");
+        span.className = `cell ${column.className} ${extra}`;
+        if (data) paint(span, data, doc);
+        return span;
+      },
+    });
+  const number =
+    (fmt: (n: number) => string) => (cell: HTMLElement, d: string) => {
+      cell.textContent = fmt(Number(d));
+    };
+  await reg(
+    "refwright-read",
+    "Reading status",
+    "38",
+    (item) => statusSortKey(readStatus(item)),
+    (cell, data, doc) => {
+      const s = statusFromSortKey(data);
+      if (!s) return;
+      const g = doc.createElement("span");
+      g.className = `refwright-read ${s}`;
+      g.title = getString(`queue-${s}` as any);
+      cell.append(g);
+    },
+  );
+  await reg(
+    "refwright-time",
+    "Read time",
+    "70",
+    (item) => {
+      const m = minutesOf(item);
+      return m ? minutesSortKey(m) : "";
+    },
+    number(fmtMinutes),
+    "refwright-cited",
+  );
+  await reg(
+    "refwright-next",
+    "Relevance",
+    "64",
+    (item) => {
+      const r = relevanceOf(item);
+      return r === undefined ? "" : sortKey(r);
+    },
+    number((n) => `${n}%`),
+    "refwright-cited",
+  );
+}
+
 /* ---------- menus ---------- */
+const readMenu = (items: () => Zotero.Item[]) =>
+  (
+    [
+      ["unread", "unread"],
+      ["reading", "reading"],
+      ["done", "done"],
+      ["clear", ""],
+    ] as const
+  ).map(([id, status]) => ({
+    menuType: "menuitem" as const,
+    l10nID: getLocaleID(`menu-read-${id}` as any),
+    onCommand: () => setReadStatus(items(), status),
+  }));
 export function registerMenus() {
   const I = icon();
   const items = () => A.selected();
@@ -189,6 +284,14 @@ export function registerMenus() {
             l10nID: getLocaleID("menu-file"),
             onCommand: () => A.fileAction(items()),
           },
+          { menuType: "separator" },
+          ...readMenu(items),
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-next-up" as any),
+            onCommand: () => selectNextUp(),
+          },
+          { menuType: "separator" },
           {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-undo-filing"),
@@ -238,6 +341,11 @@ export function registerMenus() {
             onCommand: () => A.runTagged("citation"),
           },
           { menuType: "separator" },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-next-up" as any),
+            onCommand: () => selectNextUp(),
+          },
           {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-tag-manager"),

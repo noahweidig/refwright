@@ -7,6 +7,7 @@ import {
   registerColumn,
   registerCitedColumn,
   registerOaColumn,
+  registerQueueColumns,
   registerMenus,
   registerPrefs,
 } from "./zotero/ui";
@@ -14,6 +15,7 @@ import { registerSections } from "./zotero/sections";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 import { onItemsAdded } from "./zotero/inbox";
+import { invalidateQueue, loadTextStats } from "./zotero/queue";
 
 let notifierID: string | undefined;
 
@@ -30,6 +32,8 @@ async function onStartup() {
   await registerColumn();
   await registerCitedColumn();
   await registerOaColumn();
+  await registerQueueColumns();
+  void loadTextStats();
   registerSections();
   notifierID = Zotero.Notifier.registerObserver(
     {
@@ -40,8 +44,10 @@ async function onStartup() {
             type,
           ) ||
           type === "tag"
-        )
+        ) {
           invalidateRouter();
+          invalidateQueue();
+        }
         if (event === "add" && type === "item") onItemsAdded(ids.map(Number));
       },
     },

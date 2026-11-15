@@ -1,5 +1,6 @@
 import { startRun } from "./engine";
 import { regularItems } from "./library";
+import { readStatus, setReadStatus } from "./queue";
 import { S, saveState } from "./state";
 import { getPref } from "../utils/prefs";
 import { getString } from "../utils/locale";
@@ -32,6 +33,12 @@ const isNew = (item: Zotero.Item | false) =>
 
 /** Called for every item add. Waits for a quiet moment, then queues the batch. */
 export function onItemsAdded(ids: number[]) {
+  if (g("queue.autoUnread"))
+    for (const id of ids) {
+      const it = Zotero.Items.get(id);
+      if (isNew(it) && !readStatus(it as Zotero.Item))
+        void setReadStatus([it as Zotero.Item], "unread", true);
+    }
   if (!g("auto.enabled")) return;
   for (const id of ids) if (isNew(Zotero.Items.get(id))) burst.add(id);
   if (!burst.size) return;

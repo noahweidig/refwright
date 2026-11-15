@@ -3,6 +3,9 @@ icon: lucide/history
 ---
 
 # Changelog
+## 0.5.0
+
+- Reading queue. Mark items **Unread**, **Reading** or **Done** from the item right-click menu. Status is stored as `refwright:read:*` tags, so it syncs. Three new sortable columns: **Reading status** (Zotero's own book, view and tick icons in blue, orange and green), **Read time** (from the text Zotero indexed from the PDF, else page count; speed is a setting) and **Relevance** (unread items scored against the reading and finished papers in the selected collection, offline TF-IDF). **Select Next Up** picks the highest-scoring unread item, shorter reads first on ties. Optional: mark new items Unread.
 
 ## 0.4.7
 

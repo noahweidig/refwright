@@ -55,6 +55,29 @@
     />
   </groupbox>
   <groupbox class="refwright-group">
+    <label><html:h2>Reading queue</html:h2></label>
+    <description class="refwright-pref-desc"
+      >Status is stored as refwright:read: tags, so it syncs with your library.
+      Read time comes from the text Zotero indexed from each PDF. Relevance
+      compares unread items with the papers you are reading or have finished in
+      the selected collection.</description
+    >
+    <hbox align="center" class="refwright-pref-row">
+      <label
+        value="Reading speed (words per minute)"
+        style="min-width: 150px"
+      />
+      <html:input
+        type="number"
+        preference="queue.wpm"
+        min="50"
+        max="600"
+        style="width: 80px"
+      ></html:input>
+    </hbox>
+    <checkbox preference="queue.autoUnread" label="Mark new items as Unread" />
+  </groupbox>
+  <groupbox class="refwright-group">
     <label><html:h2>PDF sources</html:h2></label>
     <description class="refwright-pref-desc"
       >Unpaywall, PubMed Central and OpenAlex links are always on. Sources run
