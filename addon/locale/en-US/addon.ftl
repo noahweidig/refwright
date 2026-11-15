@@ -186,3 +186,12 @@ clusters-created = Collections created or filled: { $count }
 inbox-ready = { $count } new items ready. Tools > RefWright > Review New Items…
 inbox-skipped = Skipped automatic processing of { $count } items (this looks like an import)
 inbox-none = No new items are waiting
+queue-unread = Unread
+queue-reading = Reading
+queue-done = Done
+queue-marked = { $count ->
+    [one] { $count } item marked { $status }
+   *[other] { $count } items marked { $status }
+}
+queue-none = No unread items to rank. Mark some as Unread first.
+queue-next = Next up: { $title } ({ $score }% match, { $minutes } min)

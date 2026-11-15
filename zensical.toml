@@ -21,6 +21,7 @@ nav = [
     { "Collections" = "collections.md" },
     { "New items" = "new-items.md" },
     { "Near-duplicate items" = "near-duplicates.md" },
+    { "Reading queue" = "reading-queue.md" },
     { "Summaries and related items" = "insights.md" },
   ] },
   { "Reference" = [

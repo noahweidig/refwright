@@ -123,6 +123,8 @@ declare namespace _ZoteroTypes {
       "tm.requests": number;
       "ui.column": boolean;
       "ui.itemSection": boolean;
+      "queue.wpm": number;
+      "queue.autoUnread": boolean;
     };
   }
 }

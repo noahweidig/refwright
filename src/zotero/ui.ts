@@ -4,6 +4,20 @@ import { getPref } from "../utils/prefs";
 import * as A from "./actions";
 import { citedData, oaData } from "./citations";
 import { S } from "./state";
+import {
+  minutesOf,
+  readStatus,
+  relevanceOf,
+  selectNextUp,
+  setReadStatus,
+} from "./queue";
+import {
+  fmtMinutes,
+  minutesSortKey,
+  statusFromSortKey,
+  statusSortKey,
+} from "../core/queue";
+import { sortKey } from "../core/citations";
 
 const NS = "http://www.w3.org/1999/xhtml";
 const ref = () => addon.data.config.addonRef;
@@ -119,6 +133,67 @@ export async function registerOaColumn() {
   });
 }
 
+export async function registerQueueColumns() {
+  if (!getPref("ui.column")) return;
+  const common = {
+    pluginID: pluginID(),
+    flex: 0,
+    staticWidth: false,
+    zoteroPersist: ["width", "hidden", "sortDirection"],
+  };
+  await Zotero.ItemTreeManager.registerColumns({
+    ...common,
+    dataKey: "refwright-read",
+    label: "Reading status",
+    width: "38",
+    dataProvider: (item) => statusSortKey(readStatus(item)),
+    renderCell: (_i, data, column, _first, doc) => {
+      const span = doc.createElement("span");
+      span.className = `cell ${column.className}`;
+      const s = statusFromSortKey(data);
+      if (s) {
+        const g = doc.createElement("span");
+        g.className = `refwright-read ${s}`;
+        g.title = getString(`queue-${s}` as any);
+        span.append(g);
+      }
+      return span;
+    },
+  });
+  await Zotero.ItemTreeManager.registerColumns({
+    ...common,
+    dataKey: "refwright-time",
+    label: "Read time",
+    width: "70",
+    dataProvider: (item) => {
+      const m = minutesOf(item);
+      return m ? minutesSortKey(m) : "";
+    },
+    renderCell: (_i, data, column, _first, doc) => {
+      const span = doc.createElement("span");
+      span.className = `cell ${column.className} refwright-cited`;
+      if (data) span.textContent = fmtMinutes(Number(data));
+      return span;
+    },
+  });
+  await Zotero.ItemTreeManager.registerColumns({
+    ...common,
+    dataKey: "refwright-next",
+    label: "Relevance",
+    width: "64",
+    dataProvider: (item) => {
+      const r = relevanceOf(item);
+      return r === undefined ? "" : sortKey(r);
+    },
+    renderCell: (_i, data, column, _first, doc) => {
+      const span = doc.createElement("span");
+      span.className = `cell ${column.className} refwright-cited`;
+      if (data) span.textContent = `${Number(data)}%`;
+      return span;
+    },
+  });
+}
+
 /* ---------- menus ---------- */
 export function registerMenus() {
   const I = icon();
@@ -189,6 +264,33 @@ export function registerMenus() {
             l10nID: getLocaleID("menu-file"),
             onCommand: () => A.fileAction(items()),
           },
+          { menuType: "separator" },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-read-unread" as any),
+            onCommand: () => setReadStatus(items(), "unread"),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-read-reading" as any),
+            onCommand: () => setReadStatus(items(), "reading"),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-read-done" as any),
+            onCommand: () => setReadStatus(items(), "done"),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-read-clear" as any),
+            onCommand: () => setReadStatus(items(), ""),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-next-up" as any),
+            onCommand: () => selectNextUp(),
+          },
+          { menuType: "separator" },
           {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-undo-filing"),
@@ -238,6 +340,11 @@ export function registerMenus() {
             onCommand: () => A.runTagged("citation"),
           },
           { menuType: "separator" },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-next-up" as any),
+            onCommand: () => selectNextUp(),
+          },
           {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-tag-manager"),

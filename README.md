@@ -10,6 +10,7 @@ Zotero 8+. Built from [zotero-plugin-template](https://github.com/windingwind/zo
 - **Integrity**: retraction check (PubMed, then Crossref/Retraction Watch) and read-only citation check against Crossref.
 - **Tags**: free (your library, OpenAlex, PubMed, offline keywords) or AI (OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter, Cohere, custom, Ollama). Cleanup rules, review window, learning from your edits, Tag Manager with undo.
 - **Collections**: offline TF-IDF ranking by default; optional embeddings or LLM. Batch review, inbox triage, one-step undo.
+- **Reading queue**: Unread/Reading/Done as synced tags, sortable status, read-time and relevance columns, and Select Next Up ranked against the selected collection.
 - **Zotero-native UI**: right-click menu, Tools menu, sortable item column, item pane section, preferences pane. Windows use Zotero's own theme variables, so light/dark follow Zotero.
 - **Local write-back API** (off by default, token + tag-prefix allowlist, audit log, undo).
 

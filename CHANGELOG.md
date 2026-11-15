@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Reading queue. Mark items **Unread**, **Reading** or **Done** from the item right-click menu. Status is stored as `refwright:read:*` tags, so it syncs. Three new sortable columns: **Reading status** (Zotero's own book, view and tick icons in blue, orange and green), **Read time** (from the text Zotero indexed from the PDF, else page count; speed is a setting) and **Relevance** (unread items scored against the reading and finished papers in the selected collection, offline TF-IDF). **Select Next Up** picks the highest-scoring unread item, shorter reads first on ties. Optional: mark new items Unread.
+
 ## 0.4.7
 
 - Tag Manager selection works like a file list: click selects one tag, Cmd/Ctrl+click adds or removes one, and Shift+click selects the range from the last click (Cmd/Ctrl+Shift+click adds the range to the current selection). Before, every click toggled one tag.

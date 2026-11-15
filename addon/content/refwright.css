@@ -736,3 +736,27 @@
   flex: 1;
   min-width: 0;
 }
+
+/* reading status: Zotero's own icons, colored through context-fill */
+.refwright-read {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  -moz-context-properties: fill;
+}
+.refwright-read.unread {
+  background-image: url("chrome://zotero/skin/16/universal/book.svg");
+  fill: var(--accent-blue);
+}
+.refwright-read.reading {
+  background-image: url("chrome://zotero/skin/16/universal/view.svg");
+  fill: var(--accent-orange);
+}
+.refwright-read.done {
+  background-image: url("chrome://zotero/skin/16/universal/tick.svg");
+  fill: var(--accent-green);
+}
