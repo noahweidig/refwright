@@ -135,66 +135,86 @@ export async function registerOaColumn() {
 
 export async function registerQueueColumns() {
   if (!getPref("ui.column")) return;
-  const common = {
-    pluginID: pluginID(),
-    flex: 0,
-    staticWidth: false,
-    zoteroPersist: ["width", "hidden", "sortDirection"],
-  };
-  await Zotero.ItemTreeManager.registerColumns({
-    ...common,
-    dataKey: "refwright-read",
-    label: "Reading status",
-    width: "38",
-    dataProvider: (item) => statusSortKey(readStatus(item)),
-    renderCell: (_i, data, column, _first, doc) => {
-      const span = doc.createElement("span");
-      span.className = `cell ${column.className}`;
+  const reg = (
+    dataKey: string,
+    label: string,
+    width: string,
+    dataProvider: (item: Zotero.Item) => string,
+    paint: (cell: HTMLElement, data: string, doc: Document) => void,
+    extra = "",
+  ) =>
+    Zotero.ItemTreeManager.registerColumns({
+      pluginID: pluginID(),
+      flex: 0,
+      staticWidth: false,
+      zoteroPersist: ["width", "hidden", "sortDirection"],
+      dataKey,
+      label,
+      width,
+      dataProvider,
+      renderCell: (_i, data, column, _first, doc) => {
+        const span = doc.createElement("span");
+        span.className = `cell ${column.className} ${extra}`;
+        if (data) paint(span, data, doc);
+        return span;
+      },
+    });
+  const number =
+    (fmt: (n: number) => string) => (cell: HTMLElement, d: string) => {
+      cell.textContent = fmt(Number(d));
+    };
+  await reg(
+    "refwright-read",
+    "Reading status",
+    "38",
+    (item) => statusSortKey(readStatus(item)),
+    (cell, data, doc) => {
       const s = statusFromSortKey(data);
-      if (s) {
-        const g = doc.createElement("span");
-        g.className = `refwright-read ${s}`;
-        g.title = getString(`queue-${s}` as any);
-        span.append(g);
-      }
-      return span;
+      if (!s) return;
+      const g = doc.createElement("span");
+      g.className = `refwright-read ${s}`;
+      g.title = getString(`queue-${s}` as any);
+      cell.append(g);
     },
-  });
-  await Zotero.ItemTreeManager.registerColumns({
-    ...common,
-    dataKey: "refwright-time",
-    label: "Read time",
-    width: "70",
-    dataProvider: (item) => {
+  );
+  await reg(
+    "refwright-time",
+    "Read time",
+    "70",
+    (item) => {
       const m = minutesOf(item);
       return m ? minutesSortKey(m) : "";
     },
-    renderCell: (_i, data, column, _first, doc) => {
-      const span = doc.createElement("span");
-      span.className = `cell ${column.className} refwright-cited`;
-      if (data) span.textContent = fmtMinutes(Number(data));
-      return span;
-    },
-  });
-  await Zotero.ItemTreeManager.registerColumns({
-    ...common,
-    dataKey: "refwright-next",
-    label: "Relevance",
-    width: "64",
-    dataProvider: (item) => {
+    number(fmtMinutes),
+    "refwright-cited",
+  );
+  await reg(
+    "refwright-next",
+    "Relevance",
+    "64",
+    (item) => {
       const r = relevanceOf(item);
       return r === undefined ? "" : sortKey(r);
     },
-    renderCell: (_i, data, column, _first, doc) => {
-      const span = doc.createElement("span");
-      span.className = `cell ${column.className} refwright-cited`;
-      if (data) span.textContent = `${Number(data)}%`;
-      return span;
-    },
-  });
+    number((n) => `${n}%`),
+    "refwright-cited",
+  );
 }
 
 /* ---------- menus ---------- */
+const readMenu = (items: () => Zotero.Item[]) =>
+  (
+    [
+      ["unread", "unread"],
+      ["reading", "reading"],
+      ["done", "done"],
+      ["clear", ""],
+    ] as const
+  ).map(([id, status]) => ({
+    menuType: "menuitem" as const,
+    l10nID: getLocaleID(`menu-read-${id}` as any),
+    onCommand: () => setReadStatus(items(), status),
+  }));
 export function registerMenus() {
   const I = icon();
   const items = () => A.selected();
@@ -265,26 +285,7 @@ export function registerMenus() {
             onCommand: () => A.fileAction(items()),
           },
           { menuType: "separator" },
-          {
-            menuType: "menuitem",
-            l10nID: getLocaleID("menu-read-unread" as any),
-            onCommand: () => setReadStatus(items(), "unread"),
-          },
-          {
-            menuType: "menuitem",
-            l10nID: getLocaleID("menu-read-reading" as any),
-            onCommand: () => setReadStatus(items(), "reading"),
-          },
-          {
-            menuType: "menuitem",
-            l10nID: getLocaleID("menu-read-done" as any),
-            onCommand: () => setReadStatus(items(), "done"),
-          },
-          {
-            menuType: "menuitem",
-            l10nID: getLocaleID("menu-read-clear" as any),
-            onCommand: () => setReadStatus(items(), ""),
-          },
+          ...readMenu(items),
           {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-next-up" as any),
