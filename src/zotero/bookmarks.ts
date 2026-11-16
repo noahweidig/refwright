@@ -108,7 +108,7 @@ const pageOf = (reader: _ZoteroTypes.ReaderInstance) =>
 
 async function addBookmark(reader: _ZoteroTypes.ReaderInstance) {
   const att = attachmentOf(reader);
-  if (!att || reader.type !== "pdf") return;
+  if (!att?.isPDFAttachment()) return;
   if (!(Zotero.Libraries.get(att.libraryID) as any)?.editable)
     return toast(s("bookmark-readonly"), "error");
   const i = pageOf(reader);
@@ -197,18 +197,25 @@ async function run(fn: () => Promise<unknown>) {
   }
 }
 
+/** The reader may not know its type yet when the toolbar renders; only skip a known non-PDF. */
+const maybePdf = (reader: _ZoteroTypes.ReaderInstance) => {
+  const t = (reader as any).type ?? (reader as any)._type;
+  return !t || t === "pdf";
+};
+
 const onToolbar: _ZoteroTypes.Reader.EventHandler<"renderToolbar"> = ({
   reader,
   doc,
   append,
 }) => {
-  if (reader.type === "pdf") append(button(doc, reader));
+  ztoolkit.log("bookmark: renderToolbar", reader.type, reader.itemID);
+  if (maybePdf(reader)) append(button(doc, reader));
 };
 const onViewMenu: _ZoteroTypes.Reader.EventHandler<"createViewContextMenu"> = ({
   reader,
   append,
 }) => {
-  if (reader.type !== "pdf") return;
+  if (!maybePdf(reader)) return;
   append({
     label: s("bookmark-add"),
     onCommand: () => void run(() => addBookmark(reader)),
@@ -224,6 +231,7 @@ const onViewMenu: _ZoteroTypes.Reader.EventHandler<"createViewContextMenu"> = ({
 };
 
 export function registerReaderHooks() {
+  ztoolkit.log("bookmark: registering reader hooks");
   Zotero.Reader.registerEventListener("renderToolbar", onToolbar, pluginID());
   Zotero.Reader.registerEventListener(
     "createViewContextMenu",
