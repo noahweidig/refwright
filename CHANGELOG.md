@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.3
+
+- Bookmark button: take the icon colour and hover shade from the reader's own toolbar buttons, so it is light on the dark theme and dark on the light theme. It inherited the toolbar's fixed dark grey, which was unreadable in dark mode.
+- Bookmark page: read the page from the PDF viewer itself, then the reader's view stats and view state, and use the page's own label (a journal PDF can label page 1 as 772). Each click logs all the page values it found in Debug Output, as `bookmark: page sources`.
+
 ## 0.7.2
 
 - Fix the bookmark button. Its icon loaded from a plugin file that the PDF reader page may not be allowed to open, so the button showed as an empty square. The icon is now drawn inline. Bookmarks also used a page number the reader does not set, so every one would have landed on page 1. They now read the page you are on from the reader's live view state.
