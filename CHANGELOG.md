@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- Fix the bookmark toolbar button not showing. The button was skipped when the reader had not set its type yet at the moment the toolbar rendered. It now appears unless the reader is known not to be a PDF, and the PDF check happens when you click. The Debug Output now logs when the reader hooks register and when each toolbar renders.
+
 ## 0.7.0
 
 - New: **PDF bookmarks**. A bookmark button in the reader toolbar, and **Bookmark This Page**, **Next Bookmark** and **Previous Bookmark** in the reader's right-click menu. A bookmark is a blue note annotation tagged `refwright:bookmark`, so it syncs through Zotero and does not change the PDF. The item pane lists an item's bookmarks as `p. N` buttons that open the PDF at that page, and **Open at Last Bookmark** in the item menu resumes where you stopped.
