@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.1
+## 0.8.0
 
 - Fix the bookmark toolbar button not showing. The button was skipped when the reader had not set its type yet at the moment the toolbar rendered. It now appears unless the reader is known not to be a PDF, and the PDF check happens when you click. The Debug Output now logs when the reader hooks register and when each toolbar renders.
 
