@@ -11,6 +11,7 @@ export const STATUS_TAGS = {
   citeMismatch: "citation:mismatch",
   citeCheck: "citation:check-needed",
   report: "refwright:report",
+  bookmark: "refwright:bookmark",
   upgraded: "refwright:upgraded-from-preprint",
 } as const;
 

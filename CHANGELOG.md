@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- New: **PDF bookmarks**. A bookmark button in the reader toolbar, and **Bookmark This Page**, **Next Bookmark** and **Previous Bookmark** in the reader's right-click menu. A bookmark is a blue note annotation tagged `refwright:bookmark`, so it syncs through Zotero and does not change the PDF. The item pane lists an item's bookmarks as `p. N` buttons that open the PDF at that page, and **Open at Last Bookmark** in the item menu resumes where you stopped.
+
 ## 0.6.0
 
 - New: **Library Health Report…** (Tools). Lists items filed under the wrong type, missing DOIs, missing abstracts, broken attachments, standalone PDFs with no parent item, and inconsistent author names (`J. Smith` and `John Smith`, `José` and `Jose`). Tick what to fix and click **Fix selected**: retype, look up the DOI or abstract on Crossref and OpenAlex, trash the broken attachment, create the parent with Zotero's recognizer, or unify author names. A retype that would drop a filled-in field is listed but not fixable.

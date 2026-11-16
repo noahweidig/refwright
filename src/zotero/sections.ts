@@ -8,6 +8,8 @@ import { hasUsablePdf } from "./library";
 import { invalidateRouter, routeItems, ItemRoute } from "./routing";
 import { S, saveState } from "./state";
 import { suggestTags, TagChoice } from "./tagging";
+import { bookmarkIcon, bookmarksForItem, openBookmark } from "./bookmarks";
+import { ordered } from "../core/bookmarks";
 import { linkAllRelated, linkRelated, relatedFor, RelatedHit } from "./related";
 
 const NS = "http://www.w3.org/1999/xhtml";
@@ -178,7 +180,26 @@ async function drawPdf(body: HTMLElement, item: Zotero.Item, pdf?: boolean) {
     button(doc, getString("btn-preview"), () => A.runTask("preview", [item])),
     button(doc, getString("btn-full-check"), () => A.runTask("full", [item])),
   );
-  body.replaceChildren(el(doc, "div", "refwright-pane", hero, badges, actions));
+  const marks = bookmarksForItem(item);
+  const bookmarks =
+    marks.length > 0 &&
+    row(
+      doc,
+      "actions",
+      ...ordered(marks).map((b) => {
+        const label = getString("bookmark-page", {
+          args: { page: b.pageLabel },
+        });
+        const btn = button(doc, label, () => openBookmark(b), {
+          glyph: bookmarkIcon(),
+          title: b.comment || getString("bookmark-comment"),
+        });
+        return btn;
+      }),
+    );
+  body.replaceChildren(
+    el(doc, "div", "refwright-pane", hero, badges, actions, bookmarks),
+  );
 }
 
 /* ============================ Tags ============================ */
