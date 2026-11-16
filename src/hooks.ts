@@ -12,6 +12,7 @@ import {
   registerPrefs,
 } from "./zotero/ui";
 import { registerSections } from "./zotero/sections";
+import { registerReaderHooks, unregisterReaderHooks } from "./zotero/bookmarks";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 import { onItemsAdded } from "./zotero/inbox";
@@ -35,6 +36,7 @@ async function onStartup() {
   await registerQueueColumns();
   void loadTextStats();
   registerSections();
+  registerReaderHooks();
   notifierID = Zotero.Notifier.registerObserver(
     {
       notify: async (event: string, type: string, ids: (string | number)[]) => {
@@ -81,6 +83,7 @@ async function onMainWindowUnload(_win: Window): Promise<void> {
 
 async function onShutdown() {
   if (notifierID) Zotero.Notifier.unregisterObserver(notifierID);
+  unregisterReaderHooks();
   await flushState();
   ztoolkit.unregisterAll();
   addon.data.alive = false;

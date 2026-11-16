@@ -12,6 +12,7 @@ Zotero 8+. Built from [zotero-plugin-template](https://github.com/windingwind/zo
 - **Collections**: offline TF-IDF ranking by default; optional embeddings or LLM. Batch review, inbox triage, one-step undo.
 - **Library health**: wrong item type, missing DOI or abstract, broken attachments, standalone PDFs, inconsistent author names. Batch fix.
 - **Preprint upgrade**: finds the journal version of an arXiv or bioRxiv item and upgrades it in place, with the final PDF.
+- **Bookmarks**: page bookmarks in the PDF reader, stored as synced annotations, with next/previous and open-at-last.
 - **Reading queue**: Unread/Reading/Done as synced tags, sortable status, read-time and relevance columns, and Select Next Up ranked against the selected collection.
 - **Zotero-native UI**: right-click menu, Tools menu, sortable item column, item pane section, preferences pane. Windows use Zotero's own theme variables, so light/dark follow Zotero.
 - **Local write-back API** (off by default, token + tag-prefix allowlist, audit log, undo).
@@ -33,7 +34,7 @@ Pure logic lives in `src/core` (no Zotero globals, unit-tested in `unit/`). Zote
 
 ## Status
 
-0.1.0. Core logic is unit-tested (111 tests). The Zotero integration layer has not been run inside a live Zotero yet.
+0.1.0. Core logic is unit-tested (117 tests). The Zotero integration layer has not been run inside a live Zotero yet.
 
 Docs: `pip install zensical && zensical build` (sources in `docs/`, Lucide icons in `overrides/.icons/lucide`).
 

@@ -247,3 +247,13 @@ upgrade-confirm = Upgrade { $count } preprints to their published version? The i
 upgrade-done = Upgraded
 upgrade-pdf-ok = final PDF attached
 upgrade-pdf-none = no open-access PDF found
+
+bookmark-add = Bookmark This Page
+bookmark-next = Next Bookmark
+bookmark-prev = Previous Bookmark
+bookmark-added = Bookmarked page { $page }
+bookmark-exists = Page { $page } is already bookmarked
+bookmark-none = No bookmarks in this PDF
+bookmark-readonly = This library is read-only
+bookmark-comment = Bookmark
+bookmark-page = p. { $page }

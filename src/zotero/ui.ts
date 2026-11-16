@@ -230,6 +230,12 @@ export function registerMenus() {
         menus: [
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-open-bookmark" as any),
+            onCommand: () => A.openBookmarkAction(items()),
+          },
+          { menuType: "separator" },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-find-pdfs"),
             onCommand: () => A.runTask("pdf", items()),
           },

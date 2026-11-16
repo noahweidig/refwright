@@ -7,6 +7,7 @@ import { updateCitations } from "./citations";
 import { linkMany, relatedForMany } from "./related";
 import { mergeNearGroups, scanNearDuplicates } from "./nearDup";
 import { scanHealth } from "./health";
+import { openLastBookmark } from "./bookmarks";
 import { scanPreprints } from "./upgrade";
 import { count, Job } from "./fixlist";
 import { createFromSuggestions, suggestClusters } from "./clusters";
@@ -700,6 +701,9 @@ export const citationsAllAction = guard(_citationsAllAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
 export const nearDupAction = guard(_nearDupAction);
 export const healthAction = guard(_healthAction);
+export const openBookmarkAction = guard((items: Zotero.Item[]) =>
+  openLastBookmark(items),
+);
 export const upgradeAction = guard(_upgradeAction);
 export const newCollectionsAction = guard(_newCollectionsAction);
 export const newCollectionsAiAction = guard(_newCollectionsAiAction);
