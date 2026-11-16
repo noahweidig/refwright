@@ -23,3 +23,7 @@ Add them from the column picker (right-click the column header).
 Three reserved tags: `refwright:read:unread`, `refwright:read:reading`, `refwright:read:done`. They sync with your library and are never suggested, cleaned or merged. If sync leaves more than one on an item, done beats reading beats unread.
 
 Turn on **Mark new items as Unread** in settings to queue every new item.
+
+## Opening a PDF starts it
+
+When you open an Unread item's PDF in the reader, RefWright marks the item **Reading**. Items with no status, and items already Reading or Done, are left alone. Each reader tab does this once, so marking the item Unread again while the PDF stays open sticks. Turn it off with **Mark Unread items as Reading when I open their PDF** in settings. It does nothing in a library you can't edit.

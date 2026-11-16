@@ -1,5 +1,6 @@
 import { isReserved } from "../core/tags";
 import {
+  afterOpening,
   estimateMinutes,
   nextUp,
   rankForProject,
@@ -208,4 +209,40 @@ export async function selectNextUp() {
       },
     }),
   );
+}
+
+/* ---------- opening a PDF starts it ---------- */
+const started = new Set<string>();
+
+const onReaderOpen: _ZoteroTypes.Reader.EventHandler<"renderToolbar"> = ({
+  reader,
+}) => {
+  void (async () => {
+    try {
+      if (!g("queue.autoReading")) return;
+      const id = (reader as any)._instanceID ?? String(reader.itemID);
+      if (started.has(id)) return;
+      started.add(id);
+      const att: Zotero.Item | undefined =
+        (reader as any)._item ?? Zotero.Items.get(reader.itemID as number);
+      const item = att?.parentItem;
+      if (!item?.isRegularItem()) return;
+      if (!(Zotero.Libraries.get(item.libraryID) as any)?.editable) return;
+      const next = afterOpening(readStatus(item));
+      if (next) await setReadStatus([item], next, true);
+    } catch (e) {
+      ztoolkit.log("reading status on open failed", e);
+    }
+  })();
+};
+
+export function registerReadingHook() {
+  Zotero.Reader.registerEventListener(
+    "renderToolbar",
+    onReaderOpen,
+    addon.data.config.addonID,
+  );
+}
+export function unregisterReadingHook() {
+  Zotero.Reader.unregisterEventListener("renderToolbar", onReaderOpen);
 }

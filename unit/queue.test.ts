@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  afterOpening,
   estimateMinutes,
   fmtMinutes,
   minutesSortKey,
@@ -78,5 +79,14 @@ describe("next up", () => {
       (id) => (id === 1 ? 60 : 20),
     );
     expect(r.map((x) => x.id)).toEqual([2, 1]);
+  });
+});
+
+describe("opening a PDF", () => {
+  it("starts Unread items only", () => {
+    expect(afterOpening("unread")).toBe("reading");
+    expect(afterOpening("reading")).toBeUndefined();
+    expect(afterOpening("done")).toBeUndefined();
+    expect(afterOpening("")).toBeUndefined();
   });
 });

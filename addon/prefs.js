@@ -116,3 +116,4 @@ pref("ui.column", true);
 pref("ui.itemSection", true);
 pref("queue.wpm", 150);
 pref("queue.autoUnread", false);
+pref("queue.autoReading", true);

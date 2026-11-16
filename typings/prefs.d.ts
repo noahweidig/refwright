@@ -125,6 +125,7 @@ declare namespace _ZoteroTypes {
       "ui.itemSection": boolean;
       "queue.wpm": number;
       "queue.autoUnread": boolean;
+      "queue.autoReading": boolean;
     };
   }
 }
