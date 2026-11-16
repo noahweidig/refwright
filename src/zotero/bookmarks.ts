@@ -90,11 +90,43 @@ function pageBox(
   }
   return undefined;
 }
+const viewStats = (reader: _ZoteroTypes.ReaderInstance): any => {
+  try {
+    return (reader as any)._internalReader?._state?.primaryViewStats;
+  } catch {
+    return undefined;
+  }
+};
+const isPage = (n: unknown): n is number =>
+  Number.isInteger(n) && (n as number) >= 0;
+
+/**
+ * The page on screen. The viewer's own page number is live; the reader's stats and view state
+ * are debounced copies. All are logged so a wrong page can be traced from the Debug Output.
+ */
+function pageOf(reader: _ZoteroTypes.ReaderInstance): number {
+  let viewer: number | undefined;
+  try {
+    const n = Number(pdfApp(reader)?.pdfViewer?.currentPageNumber);
+    viewer = Number.isFinite(n) ? n - 1 : undefined;
+  } catch {
+    /* viewer internals changed */
+  }
+  const stats = viewStats(reader)?.pageIndex;
+  const view = (reader as any).getPrimaryViewState?.()?.pageIndex;
+  const old = reader.state?.pageIndex;
+  ztoolkit.log("bookmark: page sources", { viewer, stats, view, old });
+  return [viewer, stats, view, old].find(isPage) ?? 0;
+}
+
+/** The page's own label (it can differ from the page number, e.g. a journal's 772 for page 1). */
 function pageLabel(
   reader: _ZoteroTypes.ReaderInstance,
   i: number,
 ): string | undefined {
   try {
+    const st = viewStats(reader);
+    if (st?.pageIndex === i && st.pageLabel) return String(st.pageLabel);
     return pdfApp(reader)?.pdfViewer?._pageLabels?.[i] || undefined;
   } catch {
     return undefined;
@@ -106,11 +138,6 @@ const attachmentOf = (reader: _ZoteroTypes.ReaderInstance) =>
   (reader.itemID
     ? (Zotero.Items.get(reader.itemID) as Zotero.Item)
     : undefined);
-/** Zotero keeps the live page in the primary view state; `reader.state` is not set by the reader. */
-const pageOf = (reader: _ZoteroTypes.ReaderInstance) => {
-  const live = (reader as any).getPrimaryViewState?.()?.pageIndex;
-  return Number(live ?? reader.state?.pageIndex) || 0;
-};
 
 async function addBookmark(reader: _ZoteroTypes.ReaderInstance) {
   const att = attachmentOf(reader);
@@ -160,15 +187,9 @@ export async function openLastBookmark(items: Zotero.Item[]) {
 
 /* ---------- reader UI ---------- */
 const STYLE = `
-.refwright-bookmark-btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; margin: 0; padding: 0; border: 0; border-radius: 5px;
-  background: transparent; color: inherit; cursor: default;
-}
-.refwright-bookmark-btn:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
-.refwright-bookmark-btn:active { background: color-mix(in srgb, currentColor 20%, transparent); }
+.refwright-bookmark-btn { display: inline-flex; align-items: center; justify-content: center; }
 .refwright-bookmark-btn:focus-visible { outline: 2px solid var(--accent-blue, #4072e5); outline-offset: -2px; }
-.refwright-bookmark-btn svg { width: 16px; height: 16px; pointer-events: none; fill: currentColor; opacity: .8; }
+.refwright-bookmark-btn svg { width: 16px; height: 16px; pointer-events: none; fill: currentColor; }
 `;
 
 /** Inline, because the reader is a content page that may not load a plugin's chrome:// files. */
