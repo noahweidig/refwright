@@ -36,6 +36,8 @@ export interface State {
   tmUndo: TagUndo[];
   embeddings: Record<string, { sig: string; vec: number[] }>;
   cites: Record<string, { n: number; at: number; oa?: string }>;
+  /** preprint key -> time of the last lookup that found no published version */
+  upgradeMiss: Record<string, number>;
   /** new items waiting for review; pdf is true once their PDF lookup ran */
   inbox: { id: number; pdf: boolean }[]; // libraryID/itemKey
 }
@@ -49,6 +51,7 @@ const fresh = (): State => ({
   tmUndo: [],
   embeddings: {},
   cites: {},
+  upgradeMiss: {},
   inbox: [],
 });
 

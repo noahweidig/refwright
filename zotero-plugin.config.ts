@@ -44,6 +44,7 @@ export default defineConfig({
         "related",
         "nearDup",
         "clusters",
+        "fixlist",
       ].map((name) => ({
         entryPoints: [`src/ui/${name}.ts`],
         bundle: true,

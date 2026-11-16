@@ -266,6 +266,11 @@ export function registerMenus() {
           },
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-upgrade" as any),
+            onCommand: () => A.upgradeAction(items()),
+          },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-citations-update"),
             onCommand: () => A.citationsAction(items()),
           },
@@ -370,6 +375,16 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-near-dup"),
             onCommand: () => A.nearDupAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-health" as any),
+            onCommand: () => A.healthAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-upgrade" as any),
+            onCommand: () => A.upgradeAction(),
           },
           {
             menuType: "menuitem",

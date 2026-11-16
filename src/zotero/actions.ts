@@ -6,6 +6,9 @@ import { summarizeItems } from "./summarize";
 import { updateCitations } from "./citations";
 import { linkMany, relatedForMany } from "./related";
 import { mergeNearGroups, scanNearDuplicates } from "./nearDup";
+import { scanHealth } from "./health";
+import { scanPreprints } from "./upgrade";
+import { count, Job } from "./fixlist";
 import { createFromSuggestions, suggestClusters } from "./clusters";
 import { clearQueue, pending } from "./inbox";
 import {
@@ -423,6 +426,70 @@ async function _nearDupAction() {
   });
 }
 
+function openFixList(job: Job, title: string, confirmKey: string) {
+  openRefwrightWindow("fixlist.xhtml", {
+    sections: job.sections,
+    options: job.options ?? [],
+    labels: {
+      title,
+      selected: getString("fixlist-selected", { args: { count: "{count}" } }),
+      apply: getString("fixlist-apply"),
+      close: getString("fixlist-close"),
+      stop: getString("fixlist-stop"),
+      selectAll: getString("fixlist-select-all"),
+      selectNone: getString("fixlist-select-none"),
+      sectionAll: getString("fixlist-section-all"),
+      noFix: getString("fixlist-no-fix"),
+      running: getString("fixlist-running"),
+      finished: getString("fixlist-finished", {
+        args: { ok: "{ok}", failed: "{failed}" },
+      }),
+      confirm: getString(confirmKey as any, { args: { count: "{count}" } }),
+    },
+    run: job.run,
+  });
+}
+
+async function _healthAction() {
+  const pw = progressLine(getString("health-working"));
+  let job: Job;
+  try {
+    job = await scanHealth(currentLibraryID());
+  } finally {
+    pw.close();
+  }
+  if (!count(job.sections)) return toast(getString("health-none"));
+  openFixList(job, getString("health-title"), "health-confirm");
+}
+
+async function _upgradeAction(items?: Zotero.Item[]) {
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
+    closeOnClick: true,
+    closeTime: -1,
+  });
+  const line = pw.createLine({
+    text: getString("upgrade-working"),
+    type: "default",
+    progress: 0,
+  });
+  pw.show();
+  let job: Job;
+  try {
+    job = await scanPreprints(
+      currentLibraryID(),
+      abort.signal,
+      (done, total) =>
+        line.changeLine({ progress: Math.round((done / total) * 100) }),
+      items?.length ? regularItems(items) : undefined,
+    );
+  } finally {
+    pw.close();
+  }
+  if (!count(job.sections)) return toast(getString("upgrade-none"));
+  openFixList(job, getString("upgrade-title"), "upgrade-confirm");
+}
+
 async function runNewCollections(ai: boolean) {
   if (ai && !aiReady()) return toast(getString("tm-need-ai"), "error");
   const pw = progressLine(getString("clusters-working"));
@@ -632,6 +699,8 @@ export const citationsAction = guard(_citationsAction);
 export const citationsAllAction = guard(_citationsAllAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
 export const nearDupAction = guard(_nearDupAction);
+export const healthAction = guard(_healthAction);
+export const upgradeAction = guard(_upgradeAction);
 export const newCollectionsAction = guard(_newCollectionsAction);
 export const newCollectionsAiAction = guard(_newCollectionsAiAction);
 export const reviewNewAction = guard(_reviewNewAction);
