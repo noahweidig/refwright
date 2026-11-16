@@ -21,6 +21,10 @@ export function statusOf(tags: string[]): ReadStatus | "" {
         : "";
 }
 
+/** Opening an Unread item's PDF starts it. Reading, Done and untracked items stay as they are. */
+export const afterOpening = (s: ReadStatus | ""): ReadStatus | undefined =>
+  s === "unread" ? "reading" : undefined;
+
 /** Sort order for the status column: reading, unread, done, then untracked. */
 const ORDER: Record<ReadStatus | "", string> = {
   reading: "1",

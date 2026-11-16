@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.7.4
+
+- Opening a PDF marks its item **Reading** when it was **Unread**. Items with no status, and items already Reading or Done, are left alone, and each reader tab triggers it once. Turn it off in Settings under Reading queue: **Mark Unread items as Reading when I open their PDF**.
+
 ## 0.7.3
 
 - Bookmark button: take the icon colour and hover shade from the reader's own toolbar buttons, so it is light on the dark theme and dark on the light theme. It inherited the toolbar's fixed dark grey, which was unreadable in dark mode.
