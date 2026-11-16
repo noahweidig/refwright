@@ -61,6 +61,36 @@ function makeCtx(http: Http, signal: AbortSignal): Ctx {
   };
 }
 
+/** Shared by batch jobs outside a Run: polite, memoised, honours the user's delay setting. */
+export function newCtx(signal: AbortSignal): Ctx {
+  const raw = polite(zoteroHttp, {
+    delayMs: Number(getPref("delayMs")) || 400,
+    restMs: 60_000,
+    retries: 1,
+  });
+  return makeCtx(memoGet(raw), signal);
+}
+
+/** Find and attach the PDF for the item's current DOI even when it already has one. */
+export async function attachFinalPdf(
+  item: Zotero.Item,
+  ctx: Ctx,
+): Promise<{ ok: boolean; text: string }> {
+  for (const id of item.getAttachments()) {
+    const a = Zotero.Items.get(id) as Zotero.Item | false;
+    if (
+      a &&
+      a.isPDFAttachment() &&
+      /^(Full Text PDF)?$/.test(a.getField("title") as string)
+    ) {
+      a.setField("title", "Preprint PDF");
+      await a.saveTx();
+    }
+  }
+  const r = await doPdf(item, fieldsOf(item), ctx, false, undefined, true);
+  return { ok: !!r.attached, text: r.text };
+}
+
 export function startRun(task: Task, input: Zotero.Item[], win?: Window): Run {
   const items = regularItems(input);
   const rows: Row[] = items.map((i) => ({
@@ -175,9 +205,10 @@ async function doPdf(
   ctx: Ctx,
   preview: boolean,
   win?: Window,
+  force = false,
 ): Promise<R> {
   const abort = ctx.signal!;
-  if (await hasUsablePdf(item)) {
+  if (!force && (await hasUsablePdf(item))) {
     if (!preview) await setStatusTags(item, [], [T.pdfMissing, T.pdfCheck]);
     return { status: "skip", text: getString("status-pdf-existing") };
   }

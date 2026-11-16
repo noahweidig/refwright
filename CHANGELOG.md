@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+- New: **Library Health Report…** (Tools). Lists items filed under the wrong type, missing DOIs, missing abstracts, broken attachments, standalone PDFs with no parent item, and inconsistent author names (`J. Smith` and `John Smith`, `José` and `Jose`). Tick what to fix and click **Fix selected**: retype, look up the DOI or abstract on Crossref and OpenAlex, trash the broken attachment, create the parent with Zotero's recognizer, or unify author names. A retype that would drop a filled-in field is listed but not fixable.
+- New: **Find Published Versions of Preprints…** (Tools) and **Find Published Version…** (item menu). Finds the journal version of an arXiv, bioRxiv or medRxiv item through Crossref, OpenAlex or a title and author search, and upgrades the item in place: type, journal fields, DOI, URL and authors change, notes and attachments stay, the old DOI goes to Extra, and the final open-access PDF is attached on request.
+- Both use one new review window styled with Zotero's own theme variables and icons.
+
 ## 0.5.0
 
 - Reading queue. Mark items **Unread**, **Reading** or **Done** from the item right-click menu. Status is stored as `refwright:read:*` tags, so it syncs. Three new sortable columns: **Reading status** (Zotero's own book, view and tick icons in blue, orange and green), **Read time** (from the text Zotero indexed from the PDF, else page count; speed is a setting) and **Relevance** (unread items scored against the reading and finished papers in the selected collection, offline TF-IDF). **Select Next Up** picks the highest-scoring unread item, shorter reads first on ties. Optional: mark new items Unread.

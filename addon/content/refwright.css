@@ -760,3 +760,40 @@
   background-image: url("chrome://zotero/skin/16/universal/tick.svg");
   fill: var(--accent-green);
 }
+
+/* fix list (library health, preprint upgrade) */
+.refwright-fx-type {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  margin-top: 1px;
+  -moz-context-properties: fill, fill-opacity;
+  fill: var(--fill-secondary);
+}
+.refwright-fx-result {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  max-width: 45%;
+  font-size: 12px;
+}
+.refwright-fx-result .refwright-glyph {
+  color: var(--accent-red);
+}
+.refwright-fx-result.ok .refwright-glyph {
+  color: var(--accent-green);
+}
+.refwright-fx-bad {
+  color: var(--accent-red);
+}
+.refwright-fx-opts {
+  display: flex;
+  gap: 12px;
+}
+.refwright-fx-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
