@@ -102,9 +102,15 @@ function pageLabel(
 }
 
 const attachmentOf = (reader: _ZoteroTypes.ReaderInstance) =>
-  reader.itemID ? (Zotero.Items.get(reader.itemID) as Zotero.Item) : undefined;
-const pageOf = (reader: _ZoteroTypes.ReaderInstance) =>
-  Number(reader.state?.pageIndex) || 0;
+  (reader as any)._item ??
+  (reader.itemID
+    ? (Zotero.Items.get(reader.itemID) as Zotero.Item)
+    : undefined);
+/** Zotero keeps the live page in the primary view state; `reader.state` is not set by the reader. */
+const pageOf = (reader: _ZoteroTypes.ReaderInstance) => {
+  const live = (reader as any).getPrimaryViewState?.()?.pageIndex;
+  return Number(live ?? reader.state?.pageIndex) || 0;
+};
 
 async function addBookmark(reader: _ZoteroTypes.ReaderInstance) {
   const att = attachmentOf(reader);
@@ -162,10 +168,24 @@ const STYLE = `
 .refwright-bookmark-btn:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
 .refwright-bookmark-btn:active { background: color-mix(in srgb, currentColor 20%, transparent); }
 .refwright-bookmark-btn:focus-visible { outline: 2px solid var(--accent-blue, #4072e5); outline-offset: -2px; }
-.refwright-bookmark-btn img {
-  width: 16px; height: 16px; pointer-events: none;
-  -moz-context-properties: fill, fill-opacity; fill: currentColor; fill-opacity: .8;
-}`;
+.refwright-bookmark-btn svg { width: 16px; height: 16px; pointer-events: none; fill: currentColor; opacity: .8; }
+`;
+
+/** Inline, because the reader is a content page that may not load a plugin's chrome:// files. */
+const SVG_NS = "http://www.w3.org/2000/svg";
+const ICON_PATH =
+  "M4 1.5h8A1.5 1.5 0 0 1 13.5 3v11.2a.5.5 0 0 1-.8.4L8 11.1l-4.7 3.5a.5.5 0 0 1-.8-.4V3A1.5 1.5 0 0 1 4 1.5Z";
+function icon(doc: Document) {
+  const svg = doc.createElementNS(SVG_NS, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("width", "16");
+  svg.setAttribute("height", "16");
+  svg.setAttribute("aria-hidden", "true");
+  const path = doc.createElementNS(SVG_NS, "path");
+  path.setAttribute("d", ICON_PATH);
+  svg.append(path);
+  return svg;
+}
 
 const styled = new WeakSet<Document>();
 function button(doc: Document, reader: _ZoteroTypes.ReaderInstance) {
@@ -180,11 +200,11 @@ function button(doc: Document, reader: _ZoteroTypes.ReaderInstance) {
   b.title = s("bookmark-add");
   b.setAttribute("aria-label", s("bookmark-add"));
   b.tabIndex = -1;
-  const img = doc.createElement("img");
-  img.src = bookmarkIcon();
-  img.alt = "";
-  b.append(img);
-  b.addEventListener("click", () => void run(() => addBookmark(reader)));
+  b.append(icon(doc));
+  b.addEventListener("click", () => {
+    ztoolkit.log("bookmark: click", reader.itemID, pageOf(reader));
+    void run(() => addBookmark(reader));
+  });
   return b;
 }
 

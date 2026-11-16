@@ -4,6 +4,10 @@ icon: lucide/history
 
 # Changelog
 
+## 0.7.2
+
+- Fix the bookmark button. Its icon loaded from a plugin file that the PDF reader page may not be allowed to open, so the button showed as an empty square. The icon is now drawn inline. Bookmarks also used a page number the reader does not set, so every one would have landed on page 1. They now read the page you are on from the reader's live view state.
+
 ## 0.7.1
 
 - Fix the bookmark toolbar button not showing. The button was skipped when the reader had not set its type yet at the moment the toolbar rendered. It now appears unless the reader is known not to be a PDF, and the PDF check happens when you click. The Debug Output now logs when the reader hooks register and when each toolbar renders.
