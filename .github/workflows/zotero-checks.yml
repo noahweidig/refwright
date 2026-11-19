@@ -1,0 +1,185 @@
+name: Zotero checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 5 * * 1" # weekly: catch breakage from new Zotero releases
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zotero-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_ENV: production
+
+jobs:
+  static:
+    name: Static add-on checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils
+      - run: npm ci
+      - run: npm run build
+      - name: Verify built XPI (manifest, prefs, locale, chrome refs, hashes)
+        run: node scripts/verify-addon.mjs
+      - name: Version matches newest CHANGELOG entry
+        run: |
+          V=$(node -p "require('./package.json').version")
+          TOP=$(grep -m1 -oP '^## \K[0-9][^ ]*' CHANGELOG.md)
+          [ "$V" = "$TOP" ] || { echo "::error::package.json $V != CHANGELOG $TOP"; exit 1; }
+      - name: docs/changelog.md in sync
+        run: |
+          if [ -f docs/changelog.md ]; then
+            diff <(grep -E '^## ' CHANGELOG.md) <(grep -E '^## ' docs/changelog.md) \
+              || { echo "::error::docs/changelog.md headings differ from CHANGELOG.md"; exit 1; }
+          fi
+      - name: package-lock in sync
+        run: npm ls --all >/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xpi
+          path: |
+            .scaffold/build/*.xpi
+            .scaffold/build/update*.json
+
+  source-hygiene:
+    name: Source hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No plain http:// endpoints (except loopback/XML namespaces)
+        run: |
+          if grep -rnE "http://" src addon --include=*.ts --include=*.js --include=*.xhtml \
+            | grep -vE "localhost|127\.0\.0\.1|w3\.org|mozilla\.org"; then
+            echo "::error::plain http:// URL found"; exit 1
+          fi
+      - name: No committed secrets or key-shaped strings
+        run: |
+          if grep -rnE "sk-[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,}|ghp_[A-Za-z0-9]{30,}|sk-ant-[A-Za-z0-9_-]{20,}" \
+            --exclude-dir=node_modules --exclude-dir=.git --exclude=package-lock.json .; then
+            echo "::error::secret-like string committed"; exit 1
+          fi
+      - name: No .only / debugger / console.log leftovers in source and tests
+        run: |
+          if grep -rnE "\b(describe|it)\.only\b|\bdebugger\b" src test unit; then
+            echo "::error::.only or debugger left in"; exit 1
+          fi
+          if grep -rnE "console\.log" src; then
+            echo "::error::console.log in src (use Zotero.debug / ztoolkit.log)"; exit 1
+          fi
+      - name: Plugin code uses Zotero.debug, no alert()/confirm() blocking calls
+        run: |
+          if grep -rnE "(^|[^.\w])(alert|confirm|prompt)\(" src --include=*.ts \
+            | grep -vE "^\S+:\s*[0-9]+:\s*(//|\*)"; then
+            echo "::error::blocking dialog call found"; exit 1
+          fi
+      - name: Workflow files lint (actionlint)
+        run: |
+          bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          ./actionlint -color
+
+  unit:
+    name: Typecheck + unit (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx tsc --noEmit -p src/ui
+      - run: npx tsc --noEmit -p test
+      - run: npx vitest run --reporter=verbose
+      - name: Unit tests are deterministic (run twice, shuffled)
+        run: |
+          npx vitest run --sequence.shuffle
+          npx vitest run --sequence.shuffle
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm audit --omit=dev --audit-level=high
+
+  zotero:
+    name: Zotero ${{ matrix.channel }} integration
+    runs-on: ubuntu-latest
+    needs: static
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [release, beta]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Zotero (${{ matrix.channel }})
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libdbus-glib-1-2 libasound2t64 libxt6 libx11-xcb1
+          mkdir -p "$RUNNER_TEMP/zotero"
+          curl -fsSL --retry 3 \
+            "https://www.zotero.org/download/client/dl?channel=${{ matrix.channel }}&platform=linux-x86_64" \
+            -o "$RUNNER_TEMP/zotero.tar.xz"
+          tar -xJf "$RUNNER_TEMP/zotero.tar.xz" -C "$RUNNER_TEMP/zotero" --strip-components=1
+          echo "ZOTERO_PLUGIN_ZOTERO_BIN_PATH=$RUNNER_TEMP/zotero/zotero" >> "$GITHUB_ENV"
+          echo "ZOTERO_PLUGIN_PROFILE_PATH=$RUNNER_TEMP/profile" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/profile"
+      - name: Zotero version
+        run: |
+          grep -E "^Version" "$RUNNER_TEMP/zotero/application.ini" || true
+          echo "ZOTERO_VERSION=$(grep -m1 -oP '^Version=\K.*' "$RUNNER_TEMP/zotero/application.ini")" >> "$GITHUB_ENV"
+      - name: Declared compat range covers this Zotero
+        run: |
+          MIN=$(node -p "require('./addon/manifest.json').applications.zotero.strict_min_version")
+          MAX=$(node -p "require('./addon/manifest.json').applications.zotero.strict_max_version")
+          MAJOR=${ZOTERO_VERSION%%.*}
+          MAXMAJOR=${MAX%%.*}
+          echo "Zotero $ZOTERO_VERSION, declared $MIN - $MAX"
+          [ "$MAJOR" -ge "${MIN%%.*}" ] && [ "$MAJOR" -le "$MAXMAJOR" ] \
+            || { echo "::error::Zotero $ZOTERO_VERSION outside declared range $MIN - $MAX"; exit 1; }
+      - name: Build
+        run: npm run build
+      - name: Run in-Zotero tests (install, startup, UI, prefs, shutdown)
+        run: xvfb-run -a npm run test -- --trace off 2>&1 | tee zotero-test.log
+        env:
+          ZOTERO_PLUGIN_ZOTERO_BIN_PATH: ${{ env.ZOTERO_PLUGIN_ZOTERO_BIN_PATH }}
+      - name: Zotero debug log has no RefWright errors
+        if: always()
+        run: |
+          if grep -iE "refwright.*(error|exception|TypeError|ReferenceError)|(TypeError|ReferenceError).*refwright" zotero-test.log; then
+            echo "::error::plugin errors in Zotero output"; exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zotero-${{ matrix.channel }}-logs
+          path: |
+            zotero-test.log
+          if-no-files-found: ignore
