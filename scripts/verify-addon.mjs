@@ -36,7 +36,9 @@ const xpi = join(build, `${ref}.xpi`);
 check(existsSync(xpi), "xpi exists");
 const kb = statSync(xpi).size / 1024;
 check(kb <= MAX_XPI_KB, `xpi size ${kb.toFixed(0)} KB <= ${MAX_XPI_KB} KB`);
-const zipList = execFileSync("unzip", ["-Z1", xpi], { encoding: "utf8" })
+const zipList = execFileSync("/usr/bin/unzip", ["-Z1", xpi], {
+  encoding: "utf8",
+})
   .split("\n")
   .filter(Boolean);
 for (const req of ["manifest.json", "bootstrap.js", "prefs.js"])
@@ -49,7 +51,7 @@ check(
   !zipList.some((n) => /node_modules|\.map$|\.ts$|\.env/.test(n)),
   "xpi has no sourcemaps, ts, node_modules or .env",
 );
-execFileSync("unzip", ["-tq", xpi]);
+execFileSync("/usr/bin/unzip", ["-tq", xpi]);
 ok("xpi zip integrity");
 const diskSet = new Set(files.map(rel));
 for (const f of diskSet)
@@ -72,10 +74,10 @@ check(
   `strict_max_version set (${z.strict_max_version})`,
 );
 check(
-  parseFloat(z.strict_min_version) >= 7,
+  Number.parseFloat(z.strict_min_version) >= 7,
   "strict_min_version >= 7 (bootstrap plugins)",
 );
-check(/^https:\/\//.test(z.update_url ?? ""), "update_url is https");
+check((z.update_url ?? "").startsWith("https://"), "update_url is https");
 for (const [size, p] of Object.entries(mf.icons ?? {}))
   check(existsSync(join(addon, p)), `icon ${size} exists (${p})`);
 check(
@@ -103,7 +105,7 @@ for (const fn of [
   "onMainWindowUnload",
 ])
   check(
-    new RegExp(`function\\s+${fn}\\s*\\(`).test(boot),
+    new RegExp(String.raw`function\s+${fn}\s*\(`).test(boot),
     `bootstrap defines ${fn}`,
   );
 check(
@@ -125,7 +127,7 @@ for (const f of files.filter((f) => f.endsWith(".js"))) {
     continue;
   }
   const src = read(f);
-  if (/^\s*(import|export)\s/m.test(src) && f.includes("/scripts/"))
+  if (/^[ \t]*(?:import|export)\s/m.test(src) && f.includes("/scripts/"))
     fail(`bundle has ES import/export: ${rel(f)}`);
   if (/\brequire\(["'](?!chrome)/.test(src) && f.includes("/scripts/"))
     fail(`bundle has unresolved require(): ${rel(f)}`);
@@ -139,7 +141,7 @@ for (const f of xhtml) {
   try {
     // preferences.xhtml is a fragment with several roots
     const frag = f.endsWith("preferences.xhtml");
-    execFileSync("xmllint", ["--noout", "-"], {
+    execFileSync("/usr/bin/xmllint", ["--noout", "-"], {
       input: frag
         ? `<root xmlns:html="http://www.w3.org/1999/xhtml" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">${read(f).replace(/<\?xml[^>]*>/, "")}</root>`
         : read(f),

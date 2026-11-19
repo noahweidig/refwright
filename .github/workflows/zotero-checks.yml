@@ -27,7 +27,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq libxml2-utils
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - name: Verify built XPI (manifest, prefs, locale, chrome refs, hashes)
         run: node scripts/verify-addon.mjs
@@ -84,8 +84,7 @@ jobs:
           fi
       - name: Workflow files lint (actionlint)
         run: |
-          bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
-          ./actionlint -color .github/workflows/zotero-checks.yml
+          docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -color .github/workflows/zotero-checks.yml
 
   unit:
     name: Typecheck + unit (Node ${{ matrix.node }})
@@ -100,15 +99,15 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-      - run: npm ci
-      - run: npx tsc --noEmit
-      - run: npx tsc --noEmit -p src/ui
-      - run: npx tsc --noEmit -p test
-      - run: npx vitest run --reporter=verbose
+      - run: npm ci --ignore-scripts
+      - run: ./node_modules/.bin/tsc --noEmit
+      - run: ./node_modules/.bin/tsc --noEmit -p src/ui
+      - run: ./node_modules/.bin/tsc --noEmit -p test
+      - run: ./node_modules/.bin/vitest run --reporter=verbose
       - name: Unit tests are deterministic (run twice, shuffled)
         run: |
-          npx vitest run --sequence.shuffle
-          npx vitest run --sequence.shuffle
+          ./node_modules/.bin/vitest run --sequence.shuffle
+          ./node_modules/.bin/vitest run --sequence.shuffle
 
   audit:
     name: Dependency audit
@@ -135,13 +134,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - name: Install Zotero (${{ matrix.channel }})
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb libgtk-3-0 libdbus-glib-1-2 libasound2t64 libxt6 libx11-xcb1
           mkdir -p "$RUNNER_TEMP/zotero"
-          curl -fsSL --retry 3 \
+          curl -fsSL --proto "=https" --tlsv1.2 --retry 3 \
             "https://www.zotero.org/download/client/dl?channel=${{ matrix.channel }}&platform=linux-x86_64" \
             -o "$RUNNER_TEMP/zotero.tar.xz"
           tar -xJf "$RUNNER_TEMP/zotero.tar.xz" -C "$RUNNER_TEMP/zotero" --strip-components=1
