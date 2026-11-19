@@ -158,8 +158,10 @@ jobs:
           MAJOR=${ZOTERO_VERSION%%.*}
           MAXMAJOR=${MAX%%.*}
           echo "Zotero $ZOTERO_VERSION, declared $MIN - $MAX"
-          [ "$MAJOR" -ge "${MIN%%.*}" ] && [ "$MAJOR" -le "$MAXMAJOR" ] \
-            || { echo "::error::Zotero $ZOTERO_VERSION outside declared range $MIN - $MAX"; exit 1; }
+          if [ "$MAJOR" -lt "${MIN%%.*}" ] || [ "$MAJOR" -gt "$MAXMAJOR" ]; then
+            echo "::error::Zotero $ZOTERO_VERSION outside declared range $MIN - $MAX"
+            exit 1
+          fi
       - name: Build
         run: npm run build
       - name: Run in-Zotero tests (install, startup, UI, prefs, shutdown)
