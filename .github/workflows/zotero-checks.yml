@@ -16,9 +16,6 @@ concurrency:
   group: zotero-checks-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_ENV: production
-
 jobs:
   static:
     name: Static add-on checks
@@ -88,7 +85,7 @@ jobs:
       - name: Workflow files lint (actionlint)
         run: |
           bash <(curl -s https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
-          ./actionlint -color
+          ./actionlint -color .github/workflows/zotero-checks.yml
 
   unit:
     name: Typecheck + unit (Node ${{ matrix.node }})
