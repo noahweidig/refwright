@@ -47,7 +47,7 @@ OpenAI, Anthropic, Gemini, DeepSeek, OpenRouter, Cohere, custom endpoints, and O
 
 </details>
 
-Status tags written by RefWright (`fulltext:`, `retraction:`, `citation:`, `refwright:`) are never suggested, cleaned or merged.
+Status tags written by RefWright (`fulltext:`, `retraction:`, `citation:`, `code:`, `data:`, `refwright:`) are never suggested, cleaned or merged.
 
 ### <img src="docs/img/icons/rocket.svg" width="22" height="22" align="top" alt=""> Install
 
@@ -56,7 +56,7 @@ Status tags written by RefWright (`fulltext:`, `retraction:`, `citation:`, `refw
 
 ### <img src="docs/img/icons/book-open.svg" width="22" height="22" align="top" alt=""> Documentation
 
-Guides for every feature live in [`docs/`](docs): [getting started](docs/getting-started.md), [PDFs](docs/pdfs.md), [integrity](docs/integrity.md), [tags](docs/tags.md), [collections](docs/collections.md), [library health](docs/library-health.md), [preprint upgrade](docs/preprint-upgrade.md), [bookmarks](docs/bookmarks.md), [reading queue](docs/reading-queue.md), [providers](docs/providers.md), [API](docs/api.md), [privacy](docs/privacy.md).
+Guides for every feature live in [`docs/`](docs): [getting started](docs/getting-started.md), [PDFs](docs/pdfs.md), [integrity](docs/integrity.md), [tags](docs/tags.md), [collections](docs/collections.md), [library health](docs/library-health.md), [preprint upgrade](docs/preprint-upgrade.md), [bookmarks](docs/bookmarks.md), [reading queue](docs/reading-queue.md), [code and data links](docs/code-links.md), [providers](docs/providers.md), [API](docs/api.md), [privacy](docs/privacy.md).
 
 Build the site: `pip install zensical && zensical build`. Lucide icons live in `overrides/.icons/lucide`.
 

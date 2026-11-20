@@ -4,6 +4,7 @@ import { applyFiling, routeItems, undoFiling, ItemRoute } from "./routing";
 import * as TM from "./tagManager";
 import { summarizeItems } from "./summarize";
 import { updateCitations } from "./citations";
+import { findCodeLinks } from "./code";
 import { linkMany, relatedForMany } from "./related";
 import { mergeNearGroups, scanNearDuplicates } from "./nearDup";
 import { scanHealth } from "./health";
@@ -294,6 +295,43 @@ async function _citationsAction(input: Zotero.Item[]) {
     toast(
       getString("cites-done", {
         args: { updated: r.updated, missing: r.notFound, nodoi: r.noDoi },
+      }),
+      "success",
+    );
+  } catch (e: any) {
+    pw.close();
+    toast(String(e?.message ?? e), "error");
+  }
+}
+
+async function _codeLinksAction(input?: Zotero.Item[]) {
+  const items = input
+    ? regularItems(input)
+    : (
+        (await Zotero.Items.getAll(currentLibraryID(), true)) as Zotero.Item[]
+      ).filter((i) => i.isRegularItem() && !i.deleted);
+  if (!items.length) return toast(getString("tags-none-selected"));
+  const abort = new AbortController();
+  const pw = new ztoolkit.ProgressWindow(addon.data.config.addonDisplayName, {
+    closeOnClick: true,
+    closeTime: -1,
+  })
+    .createLine({
+      text: getString("code-working"),
+      type: "default",
+      progress: 5,
+    })
+    .show();
+  try {
+    const r = await findCodeLinks(
+      items,
+      (d, t) => pw.changeLine({ progress: 5 + (90 * d) / Math.max(1, t) }),
+      abort.signal,
+    );
+    pw.close();
+    toast(
+      getString("code-done", {
+        args: { items: r.linked, links: r.links, scanned: r.scanned },
       }),
       "success",
     );
@@ -698,6 +736,7 @@ export const runTagged = guard(_runTagged);
 export const reviewAction = guard(_reviewAction);
 export const citationsAction = guard(_citationsAction);
 export const citationsAllAction = guard(_citationsAllAction);
+export const codeLinksAction = guard(_codeLinksAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
 export const nearDupAction = guard(_nearDupAction);
 export const healthAction = guard(_healthAction);

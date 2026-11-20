@@ -282,6 +282,11 @@ export function registerMenus() {
           },
           {
             menuType: "menuitem",
+            l10nID: getLocaleID("menu-code-links"),
+            onCommand: () => A.codeLinksAction(items()),
+          },
+          {
+            menuType: "menuitem",
             l10nID: getLocaleID("menu-related"),
             onCommand: () => A.relatedBatchAction(items()),
           },
@@ -396,6 +401,11 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-citations-all"),
             onCommand: () => A.citationsAllAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-code-links"),
+            onCommand: () => A.codeLinksAction(),
           },
           {
             menuType: "menuitem",

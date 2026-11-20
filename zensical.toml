@@ -24,6 +24,7 @@ nav = [
     { "Library health" = "library-health.md" },
     { "Preprint upgrade" = "preprint-upgrade.md" },
     { "Reading queue" = "reading-queue.md" },
+    { "Code and data links" = "code-links.md" },
     { "Bookmarks" = "bookmarks.md" },
     { "Summaries and related items" = "insights.md" },
   ] },

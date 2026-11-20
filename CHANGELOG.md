@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0
+
+- Find Code and Data Links: scans the abstract, Extra, URL and indexed full text for GitHub, GitLab, Bitbucket, Hugging Face, Zenodo, OSF, figshare and Dryad links. Each new one is attached as a link and the item gets `code:available` or `data:available`. Offline, six items in parallel, safe to rerun. Full-text hits count only after an availability cue ("code is available at…") and before the reference list. Right-click > **RefWright**, or **Tools > RefWright** for the whole library.
+
 ## 0.7.4
 
 - Opening a PDF marks its item **Reading** when it was **Unread**. Items with no status, and items already Reading or Done, are left alone, and each reader tab triggers it once. Turn it off in Settings under Reading queue: **Mark Unread items as Reading when I open their PDF**.

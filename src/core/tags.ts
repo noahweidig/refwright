@@ -20,6 +20,8 @@ export const RESERVED_PREFIXES = [
   "retraction:",
   "citation:",
   "refwright:",
+  "code:",
+  "data:",
 ];
 /** prefixes other local programs may write through the write-back API */
 export const WRITEBACK_PREFIXES = [
