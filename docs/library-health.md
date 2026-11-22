@@ -1,5 +1,9 @@
 ---
 icon: lucide/heart-pulse
+tags:
+  - Library cleanup
+  - Integrity
+  - Bulk edit
 ---
 
 # Library health

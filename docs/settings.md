@@ -1,5 +1,7 @@
 ---
 icon: lucide/sliders-horizontal
+tags:
+  - Setup
 ---
 
 # Settings

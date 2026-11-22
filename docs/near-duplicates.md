@@ -1,5 +1,8 @@
 ---
 icon: lucide/copy
+tags:
+  - Library cleanup
+  - Bulk edit
 ---
 
 # Near-duplicate items

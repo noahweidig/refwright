@@ -34,6 +34,7 @@ nav = [
     { "Write-back API" = "api.md" },
     { "Privacy" = "privacy.md" },
   ] },
+  { "Topics" = "topics.md" },
   { "Changelog" = "changelog.md" },
 ]
 
@@ -81,6 +82,9 @@ media = "(prefers-color-scheme: dark)"
 scheme = "slate"
 toggle.icon = "lucide/moon"
 toggle.name = "Switch to system preference"
+
+[project.plugins.tags]
+tags_allowed = ["Find","Open access","Integrity","Organize","Offline","AI","Bulk edit","Library cleanup","Reading","Automation","Setup","Privacy"]
 
 [project.markdown_extensions]
 abbr = {}

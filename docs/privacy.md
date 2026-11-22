@@ -1,5 +1,8 @@
 ---
 icon: lucide/lock-keyhole
+tags:
+  - Privacy
+  - Setup
 ---
 
 # Privacy

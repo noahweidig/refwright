@@ -1,5 +1,8 @@
 ---
 icon: lucide/file-down
+tags:
+  - Find
+  - Open access
 ---
 
 # PDFs

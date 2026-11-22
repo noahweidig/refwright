@@ -1,5 +1,8 @@
 ---
 icon: lucide/shield-alert
+tags:
+  - Integrity
+  - Find
 ---
 
 # Retractions and citations

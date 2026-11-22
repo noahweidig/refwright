@@ -1,5 +1,7 @@
 ---
 icon: lucide/bookmark
+tags:
+  - Reading
 ---
 
 # Bookmarks

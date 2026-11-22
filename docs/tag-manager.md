@@ -1,5 +1,9 @@
 ---
 icon: lucide/merge
+tags:
+  - Organize
+  - Bulk edit
+  - AI
 ---
 
 # Tag Manager
