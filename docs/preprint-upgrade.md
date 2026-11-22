@@ -1,5 +1,9 @@
 ---
 icon: lucide/arrow-up-right
+tags:
+  - Library cleanup
+  - Find
+  - Open access
 ---
 
 # Preprint upgrade

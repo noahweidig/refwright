@@ -1,5 +1,8 @@
 ---
 icon: lucide/plug-zap
+tags:
+  - Automation
+  - Setup
 ---
 
 # Write-back API

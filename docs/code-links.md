@@ -1,3 +1,11 @@
+---
+icon: lucide/git-branch
+tags:
+  - Find
+  - Integrity
+  - Offline
+---
+
 # Code and data links
 
 Right-click items > **RefWright** > **Find Code and Data Links**, or **Tools > RefWright** for the whole library.

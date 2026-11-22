@@ -1,5 +1,8 @@
 ---
 icon: lucide/book-open
+tags:
+  - Reading
+  - Offline
 ---
 
 # Reading queue

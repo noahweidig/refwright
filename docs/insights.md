@@ -1,5 +1,8 @@
 ---
 icon: lucide/sparkles
+tags:
+  - AI
+  - Reading
 ---
 
 # Summaries and related items

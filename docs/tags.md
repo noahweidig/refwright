@@ -1,5 +1,9 @@
 ---
 icon: lucide/tags
+tags:
+  - Organize
+  - Offline
+  - AI
 ---
 
 # Tags

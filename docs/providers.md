@@ -1,5 +1,9 @@
 ---
 icon: lucide/bot
+tags:
+  - AI
+  - Setup
+  - Privacy
 ---
 
 # AI providers

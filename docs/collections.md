@@ -1,5 +1,9 @@
 ---
 icon: lucide/folder-input
+tags:
+  - Organize
+  - Offline
+  - AI
 ---
 
 # Collections

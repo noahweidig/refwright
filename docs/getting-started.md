@@ -1,5 +1,7 @@
 ---
 icon: lucide/rocket
+tags:
+  - Setup
 ---
 
 # Getting started

@@ -1,5 +1,8 @@
 ---
 icon: lucide/inbox
+tags:
+  - Organize
+  - Automation
 ---
 
 # New items
