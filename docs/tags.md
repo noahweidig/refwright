@@ -28,6 +28,9 @@ tags:
 
 Tags appear in one window per batch. Click a chip to toggle it, **×** to reject, type to add. Collection suggestions share the same window.
 
+![Review window with tag and collection suggestions](img/shots/review-light.png#only-light)
+![Review window with tag and collection suggestions](img/shots/review-dark.png#only-dark)
+
 ## Steering
 
 Seed keywords, only-seeds mode, tag language, custom prompt, marker tag, automatic (gray) tags, skip already-tagged items.

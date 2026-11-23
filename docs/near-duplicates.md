@@ -26,6 +26,9 @@ Each group lists its items with authors, year, venue, DOI, number of attachments
 2. Tick **Merge** on the groups you want, or use **Select all**. Nothing is ticked at the start.
 3. Click **Merge selected** and confirm.
 
+![Near-duplicate review window](img/shots/nearduplicates-light.png#only-light)
+![Near-duplicate review window](img/shots/nearduplicates-dark.png#only-dark)
+
 ## What merging does
 
 It uses Zotero's own merge. Notes, attachments, tags, collections and relations move to the item you keep, and the other items go to the trash. The item you keep keeps its own fields, so check that the preferred record is the one with the correct metadata. **Edit > Undo** can reverse a merge, and trashed items can be restored.

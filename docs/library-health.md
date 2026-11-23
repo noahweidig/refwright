@@ -21,6 +21,9 @@ tags:
 | Standalone PDFs | A PDF with no parent item | Runs Zotero's own document recognizer to create the parent item. |
 | Inconsistent author names | The same person written as `J. Smith`, `John Smith`, `SMITH, John` or `Jose Garcia` and `José García` | Rewrites each variant to the fullest, best-formatted form. |
 
+![Library health window](img/shots/health-light.png#only-light)
+![Library health window](img/shots/health-dark.png#only-dark)
+
 ## Author names
 
 Names are grouped by family name and first initial, then by compatible given names: `J.` matches `John` and `John A.` matches `John`, but `John` does not match `Jane` and `John A.` does not match `John B.`. Institutions and single-field names are skipped. The preferred form has the most complete given name, mixed case and accents. Check each group before ticking it. Two different people can share a name.

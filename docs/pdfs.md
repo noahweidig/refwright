@@ -23,6 +23,9 @@ Open-access only. Sources run in this order and stop at the first valid PDF:
 12. Internet Archive retry for dead links
 13. Free-to-read publisher pages through Zotero's own downloader (on by default)
 
+![Find PDFs progress window](img/shots/report-light.png#only-light)
+![Find PDFs progress window](img/shots/report-dark.png#only-dark)
+
 ## Safety checks
 
 - Bytes must start with `%PDF-` and be 10 KB to 100 MB.

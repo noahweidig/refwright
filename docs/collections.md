@@ -37,6 +37,9 @@ If a remote method fails, RefWright falls back to offline ranking and says so.
 
 Each paper shows its top 5 suggestions as chips, best pre-selected. Hover for the matched words and the most similar papers filed there. Single-paper mode adds a search box (`/`) and a threshold slider.
 
+![Review window with collection suggestions](img/shots/review-light.png#only-light)
+![Review window with collection suggestions](img/shots/review-dark.png#only-dark)
+
 ## Undo
 
 **RefWright > Undo Last Filing** reverses additions and inbox removals in one step. It survives restarts and covers the last filing only.
@@ -67,3 +70,5 @@ In the review window, tick the groups you want, rename them if you like, and cli
 
 Only titles and collection names are sent, never abstracts or PDF text. See [Privacy](privacy.md).
 
+![Suggested new collections](img/shots/clusters-light.png#only-light)
+![Suggested new collections](img/shots/clusters-dark.png#only-dark)

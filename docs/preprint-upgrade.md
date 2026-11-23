@@ -22,6 +22,9 @@ An item of type *Preprint*, or one with a DOI or URL from arXiv, bioRxiv, medRxi
 
 Each row shows the journal, volume, pages, year, DOI and which step found it. A preprint with no result is not looked up again for 7 days, unless you select it yourself.
 
+![Published versions of preprints](img/shots/upgrade-light.png#only-light)
+![Published versions of preprints](img/shots/upgrade-dark.png#only-dark)
+
 ## What the upgrade does
 
 The item is changed in place, so its notes, tags, collections, annotations and attachments stay.
