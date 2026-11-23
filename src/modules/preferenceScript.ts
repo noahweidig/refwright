@@ -5,6 +5,7 @@ import { clearEmbeddings } from "../zotero/routing";
 import { S, saveState } from "../zotero/state";
 import { getString } from "../utils/locale";
 import { zoteroHttp } from "../zotero/net";
+import { exportNonDupsFile, importNonDupsFile } from "../zotero/dupes";
 
 export async function registerPrefsScripts(win: Window) {
   const $ = <T extends HTMLElement = HTMLInputElement>(id: string) =>
@@ -70,6 +71,12 @@ export async function registerPrefsScripts(win: Window) {
     S().misses = {};
     saveState();
   });
+  $("refwright-dup-export")?.addEventListener("click", () =>
+    exportNonDupsFile(win),
+  );
+  $("refwright-dup-import")?.addEventListener("click", () =>
+    importNonDupsFile(win),
+  );
   $("refwright-clear-embed")?.addEventListener("click", () =>
     clearEmbeddings(),
   );

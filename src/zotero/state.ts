@@ -40,6 +40,8 @@ export interface State {
   upgradeMiss: Record<string, number>;
   /** new items waiting for review; pdf is true once their PDF lookup ran */
   inbox: { id: number; pdf: boolean }[]; // libraryID/itemKey
+  /** pairKey -> time marked as not duplicates */
+  nonDups: Record<string, number>;
 }
 const fresh = (): State => ({
   misses: {},
@@ -53,6 +55,7 @@ const fresh = (): State => ({
   cites: {},
   upgradeMiss: {},
   inbox: [],
+  nonDups: {},
 });
 
 let state: State = fresh();

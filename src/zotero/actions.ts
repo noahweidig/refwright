@@ -8,6 +8,7 @@ import { findCodeLinks } from "./code";
 import { linkMany, relatedForMany } from "./related";
 import { mergeNearGroups, scanNearDuplicates } from "./nearDup";
 import { scanHealth } from "./health";
+import * as D from "./dupes";
 import { openLastBookmark } from "./bookmarks";
 import { scanPreprints } from "./upgrade";
 import { count, Job } from "./fixlist";
@@ -740,6 +741,11 @@ export const codeLinksAction = guard(_codeLinksAction);
 export const relatedBatchAction = guard(_relatedBatchAction);
 export const nearDupAction = guard(_nearDupAction);
 export const healthAction = guard(_healthAction);
+export const bulkMergeAction = guard(() =>
+  D.bulkMerge(currentLibraryID(), Zotero.getMainWindow()),
+);
+export const markNonDupAction = (items: Zotero.Item[], not: boolean) =>
+  D.markNonDups(items, not);
 export const openBookmarkAction = guard((items: Zotero.Item[]) =>
   openLastBookmark(items),
 );

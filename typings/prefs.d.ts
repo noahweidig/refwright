@@ -126,6 +126,12 @@ declare namespace _ZoteroTypes {
       "queue.wpm": number;
       "queue.autoUnread": boolean;
       "queue.autoReading": boolean;
+      "dup.detect": boolean;
+      "dup.action": string;
+      "dup.master": string;
+      "dup.smartFill": boolean;
+      "focus.shortcut": boolean;
+      "focus.fullscreen": boolean;
     };
   }
 }

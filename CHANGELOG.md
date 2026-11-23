@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Focused reading mode: F11 (Ctrl+Cmd+F on macOS) hides the tab bar, reader toolbar, reader sidebar and item pane and enters fullscreen. Also in Tools > RefWright and the reader right-click menu. See [focused reading](docs/focus-mode.md).
+
+- Duplicates: new items are checked against Zotero's duplicate finder (ask, keep new, keep old, keep all, with a remembered default). Merge All Duplicates with a master rule (earliest, latest, modified, most complete), smart fill of missing fields, stop and restore. Mark items as not duplicates from the right-click menu; marks apply to new-item checks, Merge All and near-duplicate scans, and export/import as JSON. See [duplicates](docs/duplicates.md).
+
 ## 0.8.0
 
 - Find Code and Data Links: scans the abstract, Extra, URL and indexed full text for GitHub, GitLab, Bitbucket, Hugging Face, Zenodo, OSF, figshare and Dryad links. Each new one is attached as a link and the item gets `code:available` or `data:available`. Offline, six items in parallel, safe to rerun. Full-text hits count only after an availability cue ("code is available at…") and before the reference list. Right-click > **RefWright**, or **Tools > RefWright** for the whole library.
