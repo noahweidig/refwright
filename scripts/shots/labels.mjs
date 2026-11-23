@@ -1,4 +1,4 @@
-/* global URL, process, console */
+/* global URL */
 // Pulls `key: getString("ftl-id", ...)` pairs from the Zotero layer and resolves them against addon.ftl.
 import { readFileSync } from "node:fs";
 const root = new URL("../../", import.meta.url);
