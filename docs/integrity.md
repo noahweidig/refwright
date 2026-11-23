@@ -13,6 +13,9 @@ PubMed (`Retracted Publication` type) first, then Crossref, which includes Retra
 
 Tags: `retraction:retracted`, `retraction:none`, `retraction:check-needed`.
 
+![Retraction check results](img/shots/integrity-light.png#only-light)
+![Retraction check results](img/shots/integrity-dark.png#only-dark)
+
 ## Citation metadata check
 
 Compares title, year, journal, volume, issue, pages and first author with Crossref. **It never changes a field.**

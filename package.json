@@ -30,7 +30,8 @@
     "test": "zotero-plugin test",
     "update-deps": "npm update --save",
     "test:unit": "vitest run",
-    "check": "tsc --noEmit && tsc --noEmit -p src/ui && prettier --check . && eslint . && vitest run"
+    "check": "tsc --noEmit && tsc --noEmit -p src/ui && prettier --check . && eslint . && vitest run",
+    "shots": "npm run build && node scripts/shots/shoot.mjs"
   },
   "dependencies": {
     "zotero-plugin-toolkit": "^6.0.0"

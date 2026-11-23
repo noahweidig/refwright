@@ -1,0 +1,192 @@
+/* Approximation of Zotero 8's theme variables, for docs screenshots only. */
+:root {
+  --fill-primary: rgba(0, 0, 0, 0.85);
+  --fill-secondary: rgba(0, 0, 0, 0.55);
+  --fill-tertiary: rgba(0, 0, 0, 0.3);
+  --fill-quarternary: rgba(0, 0, 0, 0.1);
+  --fill-quinary: rgba(0, 0, 0, 0.05);
+  --fill-senary: rgba(0, 0, 0, 0.02);
+  --accent-blue: #4072e5;
+  --accent-blue50: rgba(64, 114, 229, 0.5);
+  --accent-blue30: rgba(64, 114, 229, 0.3);
+  --accent-blue10: rgba(64, 114, 229, 0.1);
+  --accent-red: #db2c3a;
+  --accent-green: #39bf68;
+  --accent-orange: #ff794c;
+  --accent-yellow: #faa700;
+  --accent-white: #fff;
+  --color-background: #fff;
+  --color-toolbar: #f9f9f9;
+  --color-sidepane: #f2f2f2;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-panedivider: #dadada;
+  --color-stripe: rgba(0, 0, 0, 0.03);
+  --material-background: #fff;
+  --material-toolbar: #f9f9f9;
+  --material-sidepane: #f2f2f2;
+  --desk-a: #c9d6f2;
+  --desk-b: #eadff5;
+  --frame: #ececec;
+  --frame-border: rgba(0, 0, 0, 0.18);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --fill-primary: rgba(255, 255, 255, 0.85);
+  --fill-secondary: rgba(255, 255, 255, 0.55);
+  --fill-tertiary: rgba(255, 255, 255, 0.3);
+  --fill-quarternary: rgba(255, 255, 255, 0.1);
+  --fill-quinary: rgba(255, 255, 255, 0.05);
+  --fill-senary: rgba(255, 255, 255, 0.02);
+  --accent-blue: #5a8bff;
+  --accent-blue50: rgba(90, 139, 255, 0.5);
+  --accent-blue30: rgba(90, 139, 255, 0.3);
+  --accent-blue10: rgba(90, 139, 255, 0.14);
+  --color-background: #1e1e1e;
+  --color-toolbar: #2b2b2b;
+  --color-sidepane: #252525;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-panedivider: #3d3d3d;
+  --color-stripe: rgba(255, 255, 255, 0.03);
+  --material-background: #1e1e1e;
+  --material-toolbar: #2b2b2b;
+  --material-sidepane: #252525;
+  --desk-a: #1d2742;
+  --desk-b: #2d2140;
+  --frame: #323232;
+  --frame-border: rgba(255, 255, 255, 0.14);
+  color-scheme: dark;
+}
+html,
+body {
+  margin: 0;
+}
+body {
+  font:
+    13px/1.35 -apple-system,
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    sans-serif;
+  background: linear-gradient(135deg, var(--desk-a), var(--desk-b));
+  padding: 36px;
+  display: inline-block;
+}
+.win {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--frame-border);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.28),
+    0 4px 14px rgba(0, 0, 0, 0.14);
+  background: var(--color-background);
+  display: flex;
+  flex-direction: column;
+}
+.titlebar {
+  height: 30px;
+  flex: none;
+  background: var(--frame);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  position: relative;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--fill-secondary);
+}
+.titlebar .dots {
+  display: flex;
+  gap: 8px;
+  padding-left: 12px;
+}
+.titlebar .dots i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: block;
+}
+.titlebar .dots i:nth-child(1) {
+  background: #ff5f57;
+}
+.titlebar .dots i:nth-child(2) {
+  background: #febc2e;
+}
+.titlebar .dots i:nth-child(3) {
+  background: #28c840;
+}
+.titlebar .t {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: none;
+}
+.content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.content > .refwright-shell,
+.content > .refwright-split,
+.content > dialog {
+  height: 100% !important;
+  flex: 1;
+}
+dialog {
+  display: flex !important;
+  position: static;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  color: inherit;
+}
+.dlg-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--color-toolbar);
+  border-top: 1px solid var(--color-border);
+}
+button {
+  font: inherit;
+  color: var(--fill-primary);
+  background: var(--color-background);
+  border: 1px solid var(--fill-quarternary);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  padding: 3px 11px;
+  min-height: 24px;
+}
+:root[data-theme="dark"] button {
+  background: #3a3a3a;
+}
+button#apply,
+.dlg-buttons button.accept,
+button.primary {
+  background: var(--accent-blue);
+  border-color: transparent;
+  color: #fff;
+}
+input[type="search"],
+input[type="text"],
+input:not([type]) {
+  font: inherit;
+  color: var(--fill-primary);
+  background: var(--color-background);
+  border: 1px solid var(--fill-quarternary);
+  border-radius: 5px;
+  padding: 3px 7px;
+}
+input[type="checkbox"] {
+  accent-color: var(--accent-blue);
+}
+progress {
+  accent-color: var(--accent-blue);
+}

@@ -12,8 +12,8 @@ Find the PDF. Check it isn't retracted. Check its citation data. Tag it. File it
 <img src="docs/img/icons/lock-keyhole.svg" width="16" align="top" alt=""> No accounts &nbsp;·&nbsp; No analytics &nbsp;·&nbsp; No server &nbsp;·&nbsp; <img src="docs/img/icons/wand-sparkles.svg" width="16" align="top" alt=""> AI is optional
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/img/review-dark.png">
-  <img src="docs/img/review-light.png" alt="RefWright review window" width="760">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/shots/review-dark.png">
+  <img src="docs/img/shots/review-light.png" alt="RefWright review window" width="760">
 </picture>
 
 </div>

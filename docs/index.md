@@ -90,8 +90,30 @@ Sections for PDFs, tags, collections and related items, using Zotero's own color
 
 ## Review in one window
 
-![Review window](img/review-light.png#only-light)
-![Review window](img/review-dark.png#only-dark)
+![Review window](img/shots/review-light.png#only-light)
+![Review window](img/shots/review-dark.png#only-dark)
+
+## More windows
+
+=== "Library health"
+
+    ![Library health](img/shots/health-light.png#only-light)
+    ![Library health](img/shots/health-dark.png#only-dark)
+
+=== "Tag Manager"
+
+    ![Tag Manager](img/shots/tagmanager-light.png#only-light)
+    ![Tag Manager](img/shots/tagmanager-dark.png#only-dark)
+
+=== "Find PDFs"
+
+    ![Find PDFs](img/shots/report-light.png#only-light)
+    ![Find PDFs](img/shots/report-dark.png#only-dark)
+
+=== "Near-duplicates"
+
+    ![Near-duplicate items](img/shots/nearduplicates-light.png#only-light)
+    ![Near-duplicate items](img/shots/nearduplicates-dark.png#only-dark)
 
 !!! note
 

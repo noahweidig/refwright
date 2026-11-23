@@ -60,3 +60,6 @@ Select several items, right-click, then **RefWright > Find Related Items…**.
 3. Click **Link selected**. Nothing is linked until you do.
 
 Scores depend on the similarity method, so offline scores run lower than embedding scores. Look at a few suggestions before choosing a threshold.
+
+![Related items window](img/shots/related-light.png#only-light)
+![Related items window](img/shots/related-dark.png#only-dark)

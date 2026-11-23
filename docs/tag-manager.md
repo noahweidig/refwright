@@ -21,6 +21,9 @@ The window follows Zotero's own layout: views in the left pane, a searchable tab
 | **Formatting**     | Tags that break your [cleanup rules](tags.md#cleanup), each with its fixed form.                                     | no          |
 | **Similar Meaning (AI)** | Groups of synonyms found by your AI provider.                                                                  | tag names and counts |
 
+![Tag Manager, Duplicates view](img/shots/tagmanager-light.png#only-light)
+![Tag Manager, Duplicates view](img/shots/tagmanager-dark.png#only-dark)
+
 ## Merging and renaming
 
 1. Select one or more tags in **All Tags**.
