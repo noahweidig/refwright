@@ -1,5 +1,7 @@
 import { DupDoc, findNearDuplicates } from "../core/nearDup";
 import { allRegularItems, fieldsOf } from "./library";
+import { isNonDup } from "./dupes";
+import { splitByNonDups } from "../core/dupes";
 
 /** DOI prefixes of arXiv, bioRxiv/medRxiv, OSF, Research Square, SSRN and similar preprint servers */
 const PREPRINT_DOI = /^10\.(48550|1101|31219|21203|2139|20944|31234)\//i;
@@ -80,7 +82,16 @@ export async function scanNearDuplicates(
     }
     await Zotero.Promise.delay(0);
   }
-  return groups.map((g) => {
+  const keyed = groups.flatMap((g) =>
+    splitByNonDups(
+      g.ids.map((id) => byId.get(id)!.key),
+      (a, b) => isNonDup(libraryID, a, b),
+    ).map((keys) => ({
+      ...g,
+      ids: keys.map((k) => items.find((i) => i.key === k)!.id),
+    })),
+  );
+  return keyed.map((g) => {
     const infos = g.ids.map((id) => infoOf(byId.get(id)!));
     return {
       score: g.score,

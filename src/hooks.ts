@@ -16,6 +16,7 @@ import { registerReaderHooks, unregisterReaderHooks } from "./zotero/bookmarks";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 import { onItemsAdded } from "./zotero/inbox";
+import { onItemsAddedDup } from "./zotero/dupes";
 import {
   invalidateQueue,
   loadTextStats,
@@ -56,7 +57,10 @@ async function onStartup() {
           invalidateRouter();
           invalidateQueue();
         }
-        if (event === "add" && type === "item") onItemsAdded(ids.map(Number));
+        if (event === "add" && type === "item") {
+          onItemsAdded(ids.map(Number));
+          onItemsAddedDup(ids.map(Number));
+        }
       },
     },
     ["item", "collection", "collection-item", "item-tag", "tag"],

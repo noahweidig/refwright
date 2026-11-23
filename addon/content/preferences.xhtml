@@ -603,6 +603,59 @@
     <checkbox preference="auto.pdf" label="Look up PDFs for queued items" />
   </groupbox>
   <groupbox class="refwright-group">
+    <html:h2>Duplicates</html:h2>
+    <description class="refwright-pref-desc"
+      >Checks items you add against Zotero's duplicate finder. Merging moves
+      notes, attachments, tags and collections to the kept item and trashes the
+      others. Smart fill copies fields the kept item lacks from the duplicates.
+      Non-duplicate marks are stored on this computer only; use export and
+      import to move them.</description
+    >
+    <checkbox preference="dup.detect" label="Check new items for duplicates" />
+    <hbox align="center" class="refwright-pref-row">
+      <label
+        value="On a duplicate"
+        control="refwright-dup-action"
+        style="min-width: 150px"
+      />
+      <menulist id="refwright-dup-action" preference="dup.action"
+        ><menupopup
+          ><menuitem label="Always ask" value="ask" /><menuitem
+            label="Keep new"
+            value="keepNew" /><menuitem
+            label="Keep old"
+            value="keepOld" /><menuitem
+            label="Keep all"
+            value="keepAll" /></menupopup
+      ></menulist>
+    </hbox>
+    <hbox align="center" class="refwright-pref-row">
+      <label
+        value="Item to keep"
+        control="refwright-dup-master"
+        style="min-width: 150px"
+      />
+      <menulist id="refwright-dup-master" preference="dup.master"
+        ><menupopup
+          ><menuitem label="Earliest added" value="oldest" /><menuitem
+            label="Latest added"
+            value="newest" /><menuitem
+            label="Most recently modified"
+            value="modified" /><menuitem
+            label="Most complete"
+            value="complete" /></menupopup
+      ></menulist>
+    </hbox>
+    <checkbox
+      preference="dup.smartFill"
+      label="Smart fill missing fields when merging"
+    />
+    <hbox>
+      <button id="refwright-dup-export" label="Export non-duplicates…" />
+      <button id="refwright-dup-import" label="Import non-duplicates…" />
+    </hbox>
+  </groupbox>
+  <groupbox class="refwright-group">
     <html:h2>Related items</html:h2>
     <description class="refwright-pref-desc"
       >Offline compares title, abstract and tags and needs no key. Embeddings
