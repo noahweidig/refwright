@@ -121,3 +121,5 @@ pref("dup.detect", true);
 pref("dup.action", "ask");
 pref("dup.master", "oldest");
 pref("dup.smartFill", true);
+pref("focus.shortcut", true);
+pref("focus.fullscreen", true);

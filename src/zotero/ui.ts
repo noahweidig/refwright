@@ -1,3 +1,4 @@
+import { toggleFocus } from "./focus";
 import { STATUS_TAGS as T } from "../core/tags";
 import { getLocaleID, getString } from "../utils/locale";
 import { getPref } from "../utils/prefs";
@@ -396,6 +397,11 @@ export function registerMenus() {
             menuType: "menuitem",
             l10nID: getLocaleID("menu-tools-near-dup"),
             onCommand: () => A.nearDupAction(),
+          },
+          {
+            menuType: "menuitem",
+            l10nID: getLocaleID("menu-tools-focus" as any),
+            onCommand: () => toggleFocus(),
           },
           {
             menuType: "menuitem",

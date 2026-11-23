@@ -1,3 +1,4 @@
+import { onReaderReady, toggleFocus } from "./focus";
 import {
   Bookmark,
   BOOKMARK_TAG,
@@ -250,6 +251,7 @@ const onToolbar: _ZoteroTypes.Reader.EventHandler<"renderToolbar"> = ({
   append,
 }) => {
   ztoolkit.log("bookmark: renderToolbar", reader.type, reader.itemID);
+  onReaderReady(reader, doc);
   if (maybePdf(reader)) append(button(doc, reader));
 };
 const onViewMenu: _ZoteroTypes.Reader.EventHandler<"createViewContextMenu"> = ({
@@ -257,6 +259,10 @@ const onViewMenu: _ZoteroTypes.Reader.EventHandler<"createViewContextMenu"> = ({
   append,
 }) => {
   if (!maybePdf(reader)) return;
+  append({
+    label: s("focus-toggle"),
+    onCommand: () => toggleFocus(),
+  });
   append({
     label: s("bookmark-add"),
     onCommand: () => void run(() => addBookmark(reader)),

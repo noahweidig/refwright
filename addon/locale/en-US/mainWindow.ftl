@@ -112,3 +112,5 @@ menu-not-dup =
     .label = They Are Not Duplicates
 menu-is-dup =
     .label = They Are Duplicates
+menu-tools-focus =
+    .label = Toggle Focused Reading Mode

@@ -797,3 +797,8 @@
   align-items: center;
   gap: 4px;
 }
+
+:root[refwright-focus] #tab-bar-container,
+:root[refwright-focus] #titlebar {
+  display: none !important;
+}

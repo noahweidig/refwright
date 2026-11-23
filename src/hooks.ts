@@ -17,6 +17,7 @@ import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 import { onItemsAdded } from "./zotero/inbox";
 import { onItemsAddedDup } from "./zotero/dupes";
+import { attachFocus, detachFocus } from "./zotero/focus";
 import {
   invalidateQueue,
   loadTextStats,
@@ -81,6 +82,7 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
     `${addon.data.config.addonRef}-mainWindow.ftl`,
   );
   injectStyles(win);
+  attachFocus(win);
   if (!addon.data.menusRegistered) {
     registerMenus();
     addon.data.menusRegistered = true;
@@ -88,11 +90,13 @@ async function onMainWindowLoad(win: _ZoteroTypes.MainWindow): Promise<void> {
 }
 
 async function onMainWindowUnload(_win: Window): Promise<void> {
+  detachFocus(_win);
   /* menus, columns and sections are removed by pluginID on shutdown */
 }
 
 async function onShutdown() {
   if (notifierID) Zotero.Notifier.unregisterObserver(notifierID);
+  Zotero.getMainWindows().forEach((w) => detachFocus(w));
   unregisterReaderHooks();
   unregisterReadingHook();
   await flushState();

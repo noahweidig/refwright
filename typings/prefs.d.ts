@@ -130,6 +130,8 @@ declare namespace _ZoteroTypes {
       "dup.action": string;
       "dup.master": string;
       "dup.smartFill": boolean;
+      "focus.shortcut": boolean;
+      "focus.fullscreen": boolean;
     };
   }
 }

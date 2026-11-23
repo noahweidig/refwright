@@ -27,6 +27,7 @@ nav = [
     { "Reading queue" = "reading-queue.md" },
     { "Code and data links" = "code-links.md" },
     { "Bookmarks" = "bookmarks.md" },
+    { "Focused reading" = "focus-mode.md" },
     { "Summaries and related items" = "insights.md" },
   ] },
   { "Reference" = [

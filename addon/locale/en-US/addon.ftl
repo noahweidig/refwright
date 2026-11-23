@@ -281,3 +281,4 @@ dup-keep-old = Keep old
 dup-keep-all = Keep all
 dup-remember = Use this action by default
 dup-auto-merged = Merged { $count } duplicate items
+focus-toggle = Toggle Focused Reading Mode

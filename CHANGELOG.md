@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Focused reading mode: F11 (Ctrl+Cmd+F on macOS) hides the tab bar, reader toolbar, reader sidebar and item pane and enters fullscreen. Also in Tools > RefWright and the reader right-click menu. See [focused reading](docs/focus-mode.md).
+
 - Duplicates: new items are checked against Zotero's duplicate finder (ask, keep new, keep old, keep all, with a remembered default). Merge All Duplicates with a master rule (earliest, latest, modified, most complete), smart fill of missing fields, stop and restore. Mark items as not duplicates from the right-click menu; marks apply to new-item checks, Merge All and near-duplicate scans, and export/import as JSON. See [duplicates](docs/duplicates.md).
 
 ## 0.8.0
