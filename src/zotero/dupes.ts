@@ -44,7 +44,66 @@ export function markNonDups(items: Zotero.Item[], not: boolean) {
       else delete S().nonDups[k];
     }
   saveState();
+  refreshDuplicatesView();
   toast(getString(not ? "dup-marked-not" : "dup-marked-dup"), "success");
+}
+
+/* ---------- hide non-duplicates from Zotero's Duplicate Items view ---------- */
+let origFind: ((...a: any[]) => Promise<void>) | undefined;
+
+export function patchDuplicates() {
+  const P = (Zotero as any).Duplicates?.prototype;
+  if (!P || origFind) return;
+  origFind = P._findDuplicates;
+  P._findDuplicates = async function (this: any, ...args: any[]) {
+    await origFind!.apply(this, args);
+    try {
+      const lib: number = this._libraryID;
+      if (!Object.keys(S().nonDups).length) return;
+      const ids: number[] = this._sets.findAll(true);
+      const seen = new Set<number>();
+      const groups: number[][] = [];
+      for (const id of ids) {
+        if (seen.has(id)) continue;
+        const set: number[] = this.getSetItemsByItemID(id);
+        set.forEach((i) => seen.add(i));
+        const byKey = new Map<string, number>();
+        for (const i of set) {
+          const it = Zotero.Items.get(i) as Zotero.Item;
+          if (it) byKey.set(it.key, i);
+        }
+        for (const g of splitByNonDups([...byKey.keys()], (a, b) =>
+          isNonDup(lib, a, b),
+        ))
+          if (g.length > 1) groups.push(g.map((k) => byKey.get(k)!));
+      }
+      this._sets = new (Zotero as any).DisjointSetForest();
+      for (const g of groups)
+        for (let i = 1; i < g.length; i++)
+          this._sets.union(
+            this._getObjectFromID(g[0]),
+            this._getObjectFromID(g[i]),
+          );
+    } catch (e) {
+      ztoolkit.log("non-dup filter failed", e);
+    }
+  };
+}
+
+export function unpatchDuplicates() {
+  const P = (Zotero as any).Duplicates?.prototype;
+  if (P && origFind) P._findDuplicates = origFind;
+  origFind = undefined;
+}
+
+function refreshDuplicatesView() {
+  for (const win of Zotero.getMainWindows() as any[]) {
+    const pane = win.ZoteroPane;
+    const row = pane?.getCollectionTreeRow?.();
+    if (!row?.isDuplicates?.()) continue;
+    row.clearCache?.();
+    void pane.itemsView?.refreshAndMaintainSelection?.();
+  }
 }
 
 export async function exportNonDupsFile(win: Window) {

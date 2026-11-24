@@ -16,7 +16,11 @@ import { registerReaderHooks, unregisterReaderHooks } from "./zotero/bookmarks";
 import { registerEndpoints } from "./zotero/writeback";
 import { invalidateRouter, warmRouter } from "./zotero/routing";
 import { onItemsAdded } from "./zotero/inbox";
-import { onItemsAddedDup } from "./zotero/dupes";
+import {
+  onItemsAddedDup,
+  patchDuplicates,
+  unpatchDuplicates,
+} from "./zotero/dupes";
 import { attachFocus, detachFocus } from "./zotero/focus";
 import {
   invalidateQueue,
@@ -36,6 +40,7 @@ async function onStartup() {
   initLocale();
   await loadState();
   registerPrefs();
+  patchDuplicates();
   registerEndpoints();
   await registerColumn();
   await registerCitedColumn();
@@ -99,6 +104,7 @@ async function onShutdown() {
   Zotero.getMainWindows().forEach((w) => detachFocus(w));
   unregisterReaderHooks();
   unregisterReadingHook();
+  unpatchDuplicates();
   await flushState();
   ztoolkit.unregisterAll();
   addon.data.alive = false;
