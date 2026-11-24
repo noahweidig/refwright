@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+- Duplicates: items marked as not duplicates are removed from Zotero's Duplicate Items view, which refreshes after marking.
+
 ## 0.9.0
 
 - Focused reading mode: F11 (Ctrl+Cmd+F on macOS) hides the tab bar, reader toolbar, reader sidebar and item pane and enters fullscreen. Also in Tools > RefWright and the reader right-click menu. See [focused reading](docs/focus-mode.md).
